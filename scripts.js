@@ -1,5 +1,5 @@
 // ================= CONFIGURACIÓN IA =================
-const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY = "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";
 const AI_MODEL = "meta-llama/llama-3-8b-instruct:free";
 
 // ================= DATOS =================
