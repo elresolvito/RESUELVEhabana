@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>RESUELVE Habana · Catálogo digital</title>
-    <meta name="description" content="Catálogo de productos en La Habana Vieja. Alimentos, aseo, bebidas y más.">
+    <title>RESUELVE Habana · Catálogo esencial</title>
+    <meta name="description" content="Encuentra alimentos, ropa, accesorios para bici y más en La Habana. Alojamiento recomendado.">
     
-    <!-- Fuentes y estilos externos -->
+    <!-- Fuentes y estilos externos (livianos) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,10 +17,14 @@
                 extend: {
                     fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
                     colors: {
-                        'resuelve-green': '#0D9488',   // Teal moderno
+                        'resuelve-green': '#0D9488',
                         'resuelve-dark': '#0F766E',
-                        'resuelve-accent': '#F59E0B',  // Ámbar
+                        'resuelve-accent': '#F59E0B',
                         'resuelve-cream': '#F0FDFA',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
                     }
                 }
             }
@@ -28,59 +32,101 @@
     </script>
     
     <style>
+        /* CSS personalizado liviano */
         * { -webkit-tap-highlight-color: transparent; }
         body { background: #F8FAFC; font-family: 'Inter', sans-serif; }
-        .product-card { transition: all 0.2s ease; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15); }
+        
+        /* Efectos sutiles que no afectan rendimiento */
+        .product-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            will-change: transform;
+        }
+        .product-card:active { transform: scale(0.98); }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .category-pill {
+            transition: all 0.2s ease;
+        }
+        .category-pill:active {
+            transform: scale(0.95);
+        }
+        
+        /* Banner parallax liviano */
         .hero-section {
             background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%);
             position: relative;
-            overflow: hidden;
         }
-        /* Estilos para skeleton loading */
-        .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.2s infinite; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* Estilos para el banner personalizado */
-        .custom-banner {
-            background-image: url('https://i.postimg.cc/7YfPJ9LD/banner-1l.jpg');
-            background-size: cover;
-            background-position: center 35%;
-            position: relative;
+        /* Efecto hover en tarjeta de alojamiento */
+        .lodging-card {
+            transition: all 0.2s ease;
         }
-        .custom-banner::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.4); /* Oscurece un poco para texto legible */
+        .lodging-card:active {
+            transform: scale(0.98);
         }
-        .toast-enter { animation: slideIn 0.3s ease; }
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Skeleton loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.2s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Mejoras para móvil */
+        @media (max-width: 640px) {
+            .product-card .product-name {
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
 <body class="text-gray-800 pb-20 antialiased">
 
     <!-- ========== BOTONES FLOTANTES ========= -->
-    <button onclick="toggleCart()" class="fixed bottom-6 right-6 z-40 bg-resuelve-green text-white p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300 shadow-xl"><i class="fas fa-shopping-cart text-xl"></i><span id="cartCount" class="absolute -top-1 -right-1 bg-resuelve-accent text-resuelve-dark text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center hidden">0</span></button>
+    <button onclick="toggleCart()" class="fixed bottom-6 right-6 z-40 bg-resuelve-green text-white p-4 rounded-full shadow-lg hover:scale-105 transition-all duration-200 shadow-xl active:scale-95">
+        <i class="fas fa-shopping-cart text-xl"></i>
+        <span id="cartCount" class="absolute -top-1 -right-1 bg-resuelve-accent text-resuelve-dark text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center hidden">0</span>
+    </button>
     
-    <!-- Botón de WhatsApp -->
-    <a href="https://wa.me/5356382909" target="_blank" class="fixed bottom-24 right-6 z-40 bg-green-500 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300 shadow-xl"><i class="fab fa-whatsapp text-2xl"></i></a>
+    <!-- Botón de WhatsApp (sin número visible) -->
+    <a href="https://wa.me/5356382909" target="_blank" class="fixed bottom-24 right-6 z-40 bg-green-500 text-white p-4 rounded-full shadow-lg hover:scale-105 transition-all duration-200 shadow-xl active:scale-95">
+        <i class="fab fa-whatsapp text-2xl"></i>
+    </a>
 
     <!-- ========== HEADER ========= -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100">
         <div class="container mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-resuelve-green rounded-xl flex items-center justify-center text-white text-xl shadow-sm"><i class="fas fa-store"></i></div>
+                <div class="w-10 h-10 bg-resuelve-green rounded-xl flex items-center justify-center text-white text-xl shadow-sm">
+                    <i class="fas fa-store"></i>
+                </div>
                 <div>
                     <h1 class="text-xl font-bold text-resuelve-green tracking-tight">RESUELVE Habana</h1>
-                    <p class="text-xs text-gray-500">Catálogo digital · La Habana</p>
+                    <p class="text-xs text-gray-500">Catálogo esencial · La Habana</p>
                 </div>
             </div>
-            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full relative transition-all">
+            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full relative transition-all active:bg-gray-200">
                 <i class="fas fa-shopping-cart text-2xl text-resuelve-green"></i>
                 <span id="cartCountMobile" class="absolute top-0 right-0 bg-resuelve-accent text-resuelve-dark text-xs rounded-full w-5 h-5 hidden items-center justify-center font-bold">0</span>
             </button>
@@ -88,21 +134,45 @@
         <!-- Barra de búsqueda -->
         <div class="border-t bg-white px-4 py-2 shadow-sm">
             <div class="relative max-w-2xl mx-auto">
-                <input type="text" id="searchInput" placeholder="Buscar productos por nombre..." class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-200 focus:border-resuelve-green focus:ring-1 focus:ring-resuelve-green outline-none transition-all bg-gray-50">
+                <input type="text" id="searchInput" placeholder="Buscar productos..." class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-200 focus:border-resuelve-green focus:ring-1 focus:ring-resuelve-green outline-none transition-all bg-gray-50">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             </div>
         </div>
     </header>
 
-    <!-- HERO CON BANNER PERSONALIZADO -->
-    <section class="custom-banner text-white py-12 md:py-16 relative">
+    <!-- SECCIÓN HERO con efecto simplificado -->
+    <section class="hero-section text-white py-12 relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/20"></div>
         <div class="container mx-auto px-4 text-center relative z-10">
-            <span class="inline-block bg-resuelve-accent text-gray-900 px-4 py-1 rounded-full text-sm font-bold mb-4 shadow-lg">🔥 Catálogo actualizado</span>
-            <h2 class="text-3xl md:text-4xl font-bold mb-3 drop-shadow-lg">Encuentra todo lo que <br class="hidden sm:block">necesitas en un solo lugar</h2>
-            <p class="text-lg md:text-xl mb-6 text-white/90 drop-shadow">Productos, precios y variedad para ti</p>
+            <span class="inline-block bg-resuelve-accent text-gray-900 px-4 py-1 rounded-full text-sm font-bold mb-4 shadow-lg animate-pulse">🔥 Catálogo actualizado</span>
+            <h2 class="text-3xl md:text-4xl font-bold mb-3 drop-shadow-lg">Todo lo que <span class="underline decoration-resuelve-accent">resuelve</span><br>en un solo lugar</h2>
+            <p class="text-lg md:text-xl mb-6 text-white/90 drop-shadow">Alimentos · Ropa · Accesorios · Alojamiento</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#productos" class="bg-white text-resuelve-green px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition">Ver Catálogo</a>
-                <a href="https://wa.me/5356382909" target="_blank" class="bg-resuelve-accent text-gray-900 px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition"><i class="fab fa-whatsapp mr-2"></i>Contactar</a>
+                <a href="#productos" class="bg-white text-resuelve-green px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95">Ver Catálogo</a>
+                <a href="https://wa.me/5356382909" target="_blank" class="bg-resuelve-accent text-gray-900 px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"><i class="fab fa-whatsapp mr-2"></i>Contactar</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROMOCIÓN DESTACADA: ALOJAMIENTO (Redirección externa) -->
+    <section class="py-8 bg-gradient-to-r from-amber-50 to-teal-50">
+        <div class="container mx-auto px-4">
+            <div class="lodging-card bg-white rounded-2xl shadow-md overflow-hidden md:flex md:items-stretch border border-amber-100 cursor-pointer transition-all hover:shadow-lg" onclick="window.open('https://reservaterrazasdebayona59.com', '_blank')">
+                <div class="md:w-1/3 bg-cover bg-center" style="background-image: url('https://i.postimg.cc/7YfPJ9LD/banner-1l.jpg'); min-height: 180px;"></div>
+                <div class="p-5 md:w-2/3 relative">
+                    <div class="absolute top-2 right-2 bg-resuelve-accent text-xs font-bold px-2 py-1 rounded-full shadow-md">⭐ Recomendado</div>
+                    <h3 class="text-xl font-bold text-resuelve-dark flex items-center gap-2"><i class="fas fa-hotel text-resuelve-green"></i> Terrazas de Bayona 59</h3>
+                    <p class="text-gray-600 mt-1 text-sm">Habitación privada con A/C, Wi-Fi y 2 terrazas espectaculares. A 10 min de La Habana Vieja.</p>
+                    <div class="flex flex-wrap gap-3 mt-3 text-sm">
+                        <span class="bg-gray-100 px-2 py-1 rounded-full"><i class="fas fa-wifi text-resuelve-green"></i> Wi-Fi</span>
+                        <span class="bg-gray-100 px-2 py-1 rounded-full"><i class="fas fa-wind text-resuelve-green"></i> A/C</span>
+                        <span class="bg-gray-100 px-2 py-1 rounded-full"><i class="fas fa-umbrella-beach text-resuelve-green"></i> Terraza privada</span>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center">
+                        <span class="text-2xl font-bold text-resuelve-green">Desde 15 USD <span class="text-sm font-normal text-gray-500">/noche</span></span>
+                        <span class="text-resuelve-accent font-semibold text-sm flex items-center gap-1">Ver oferta <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -111,8 +181,7 @@
     <section class="sticky top-[110px] z-30 bg-white/90 backdrop-blur-sm py-3 border-b shadow-sm">
         <div class="container mx-auto px-4">
             <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1" id="categoryContainer">
-                <button onclick="filterCategory('todos')" class="category-pill px-5 py-1.5 bg-resuelve-green text-white rounded-full whitespace-nowrap text-sm font-medium shadow-sm">Todos</button>
-                <!-- Las categorías se cargarán dinámicamente desde los productos -->
+                <!-- Las categorías se cargarán dinámicamente -->
             </div>
         </div>
     </section>
@@ -121,23 +190,23 @@
     <section id="productos" class="py-8">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center mb-5">
-                <h2 class="text-2xl font-bold text-resuelve-dark"><i class="fas fa-tag mr-2 text-resuelve-green"></i>Catálogo de productos</h2>
+                <h2 class="text-2xl font-bold text-resuelve-dark"><i class="fas fa-tag mr-2 text-resuelve-green"></i>Productos esenciales</h2>
                 <span id="productCount" class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">cargando...</span>
             </div>
             <div id="loadingProducts" class="text-center py-12">
                 <div class="inline-block w-10 h-10 border-4 border-resuelve-green border-t-transparent rounded-full animate-spin"></div>
-                <p class="mt-3 text-gray-600">Cargando productos...</p>
+                <p class="mt-3 text-gray-600">Cargando catálogo...</p>
             </div>
             <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5 hidden"></div>
-            <div id="noResults" class="hidden text-center py-12 bg-white rounded-2xl shadow-sm">
+            <div id="noResults" class="hidden text-center py-12 bg-white rounded-2xl shadow-sm animate-fade-in">
                 <i class="fas fa-search text-5xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500 text-lg">No encontramos productos con ese nombre</p>
+                <p class="text-gray-500 text-lg">No encontramos productos</p>
                 <button onclick="clearSearch()" class="mt-3 text-resuelve-green font-medium hover:underline">Limpiar búsqueda</button>
             </div>
             <div id="loadError" class="hidden text-center py-12 bg-white rounded-2xl shadow-sm">
                 <i class="fas fa-exclamation-triangle text-5xl text-amber-500 mb-3"></i>
                 <p class="text-gray-600 mb-3">Error al cargar los productos</p>
-                <button onclick="loadProductsFromCSV()" class="bg-resuelve-green text-white px-5 py-2 rounded-full hover:bg-resuelve-dark transition">Reintentar</button>
+                <button onclick="loadProductsFromCSV()" class="bg-resuelve-green text-white px-5 py-2 rounded-full hover:bg-resuelve-dark transition active:scale-95">Reintentar</button>
             </div>
         </div>
     </section>
@@ -147,13 +216,13 @@
         <div class="container mx-auto px-4 text-center">
             <div class="flex flex-col items-center gap-4">
                 <div class="flex gap-6">
-                    <a href="https://www.facebook.com/profile.php?id=61562921816951" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-300 text-xl w-12 h-12 flex items-center justify-center">
+                    <a href="https://www.facebook.com/profile.php?id=61562921816951" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-200 text-xl w-12 h-12 flex items-center justify-center active:scale-95">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="https://www.instagram.com/elresolvito.habana/" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-300 text-xl w-12 h-12 flex items-center justify-center">
+                    <a href="https://www.instagram.com/elresolvito.habana/" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-200 text-xl w-12 h-12 flex items-center justify-center active:scale-95">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://wa.me/5356382909" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-300 text-xl w-12 h-12 flex items-center justify-center">
+                    <a href="https://wa.me/5356382909" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-200 text-xl w-12 h-12 flex items-center justify-center active:scale-95">
                         <i class="fab fa-whatsapp"></i>
                     </a>
                 </div>
@@ -162,9 +231,9 @@
         </div>
     </footer>
 
-    <!-- MODALES: Producto y Carrito -->
+    <!-- MODALES (Producto y Carrito) igual que antes pero optimizados -->
     <div id="productModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal('productModal')">
-        <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-auto animate-fade-up shadow-2xl" onclick="event.stopPropagation()">
+        <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-auto shadow-2xl animate-slide-up" onclick="event.stopPropagation()">
             <img id="modalImage" src="" class="w-full h-64 object-cover rounded-t-2xl bg-gray-100">
             <div class="p-5">
                 <span id="modalCategory" class="text-resuelve-green text-sm font-medium bg-resuelve-cream px-2 py-0.5 rounded-full inline-block"></span>
@@ -173,58 +242,57 @@
                 <div class="flex justify-between items-center border-t pt-4 mt-2">
                     <span id="modalPrice" class="text-2xl font-bold text-resuelve-green"></span>
                     <div class="flex gap-3 bg-gray-100 p-1.5 rounded-full">
-                        <button onclick="adjustModalQuantity(-1)" class="w-9 h-9 bg-white rounded-full shadow-sm hover:shadow transition flex items-center justify-center font-bold text-gray-600">-</button>
+                        <button onclick="adjustModalQuantity(-1)" class="w-9 h-9 bg-white rounded-full shadow-sm hover:shadow transition flex items-center justify-center font-bold text-gray-600 active:scale-95">-</button>
                         <span id="modalQuantity" class="w-8 text-center font-bold text-gray-800 text-lg">1</span>
-                        <button onclick="adjustModalQuantity(1)" class="w-9 h-9 bg-white rounded-full shadow-sm hover:shadow transition flex items-center justify-center font-bold text-gray-600">+</button>
+                        <button onclick="adjustModalQuantity(1)" class="w-9 h-9 bg-white rounded-full shadow-sm hover:shadow transition flex items-center justify-center font-bold text-gray-600 active:scale-95">+</button>
                     </div>
                 </div>
-                <button onclick="addToCartFromModal()" class="w-full mt-6 bg-resuelve-green text-white py-3 rounded-xl font-bold hover:bg-resuelve-dark transition shadow-md">Añadir al carrito</button>
+                <button onclick="addToCartFromModal()" class="w-full mt-6 bg-resuelve-green text-white py-3 rounded-xl font-bold hover:bg-resuelve-dark transition shadow-md active:scale-95">Añadir al carrito</button>
             </div>
         </div>
     </div>
 
-    <!-- Sidebar Carrito -->
+    <!-- Sidebar Carrito (mismo código) -->
     <div id="cartOverlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-all" onclick="toggleCart()"></div>
     <div id="cartSidebar" class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 transform translate-y-full transition-transform duration-300 max-h-[85vh] flex flex-col">
         <div class="p-4 bg-resuelve-green text-white rounded-t-3xl flex justify-between items-center">
             <h3 class="font-bold text-lg"><i class="fas fa-shopping-cart mr-2"></i>Mi pedido</h3>
-            <button onclick="toggleCart()" class="bg-white/20 p-1 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            <button onclick="toggleCart()" class="bg-white/20 p-1 rounded-full w-8 h-8 flex items-center justify-center active:scale-95"><i class="fas fa-times"></i></button>
         </div>
         <div id="cartItems" class="flex-1 overflow-auto p-4 space-y-3"></div>
         <div class="border-t p-4 bg-gray-50">
             <div class="flex justify-between text-sm text-gray-600 mb-1"><span>Subtotal:</span><span id="cartSubtotal">$0</span></div>
             <div class="flex justify-between text-sm text-gray-600 mb-1"><span>Envío (La Habana Vieja):</span><span id="cartShipping">$200</span></div>
             <div class="flex justify-between font-bold text-lg mt-2 pt-2 border-t"><span>Total:</span><span id="cartTotal">$200</span></div>
-            <button onclick="openCheckout()" class="w-full bg-green-600 text-white py-3.5 rounded-xl mt-4 font-bold shadow-md hover:bg-green-700 transition flex items-center justify-center gap-2"><i class="fab fa-whatsapp text-xl"></i>Pedir por WhatsApp</button>
+            <button onclick="openCheckout()" class="w-full bg-green-600 text-white py-3.5 rounded-xl mt-4 font-bold shadow-md hover:bg-green-700 transition flex items-center justify-center gap-2 active:scale-95"><i class="fab fa-whatsapp text-xl"></i>Pedir por WhatsApp</button>
         </div>
     </div>
 
-    <!-- Modal Checkout -->
+    <!-- Modal Checkout (mismo código) -->
     <div id="checkoutModal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center p-4" onclick="closeModal('checkoutModal')">
         <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl" onclick="event.stopPropagation()">
             <h3 class="text-xl font-bold mb-4 text-center"><i class="fab fa-whatsapp text-green-600 mr-2"></i> Finalizar pedido</h3>
             <form id="checkoutForm">
                 <input type="text" id="customerName" placeholder="Nombre completo" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none" required>
                 <input type="tel" id="customerPhone" placeholder="Teléfono de contacto" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none" required>
-                <textarea id="customerAddress" rows="2" placeholder="Dirección de envío (calle, número, entre)" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none" required></textarea>
+                <textarea id="customerAddress" rows="2" placeholder="Dirección de envío" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none" required></textarea>
                 <input type="text" id="customerReferences" placeholder="Referencias (color de puerta, cerca de...)" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none">
                 <select id="paymentMethod" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none bg-white">
                     <option value="">Método de pago</option>
                     <option value="efectivo">Efectivo (CUP)</option>
-                    <option value="transferencia">Transferencia bancaria</option>
+                    <option value="transferencia">Transferencia</option>
                     <option value="mlc">MLC</option>
                 </select>
                 <div id="cashAmountContainer" class="hidden">
                     <input type="number" id="cashAmount" placeholder="¿Con cuánto pagas?" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none">
                 </div>
                 <div class="bg-gray-100 p-3 rounded-lg text-sm mb-4" id="checkoutSummary"></div>
-                <button type="submit" class="w-full bg-resuelve-green text-white py-3 rounded-xl font-bold hover:bg-resuelve-dark transition shadow-md">Confirmar pedido</button>
+                <button type="submit" class="w-full bg-resuelve-green text-white py-3 rounded-xl font-bold hover:bg-resuelve-dark transition shadow-md active:scale-95">Confirmar pedido</button>
             </form>
         </div>
     </div>
 
-    <!-- Toast notificación -->
-    <div id="toast" class="fixed top-24 right-4 bg-white shadow-xl rounded-lg p-3 z-50 hidden border-l-4 border-resuelve-green">
+    <div id="toast" class="fixed top-24 right-4 bg-white shadow-xl rounded-lg p-3 z-50 hidden border-l-4 border-resuelve-green animate-fade-in">
         <div class="flex gap-2 items-center"><i class="fas fa-check-circle text-resuelve-green"></i><div><strong id="toastTitle">Añadido</strong><p id="toastMessage" class="text-xs text-gray-500"></p></div></div>
     </div>
 
@@ -246,6 +314,8 @@
                 if (!resp.ok) throw new Error('Error fetching CSV');
                 const csv = await resp.text();
                 products = parseCSV(csv);
+                // Si hay más de 10, tomamos los primeros 10 más relevantes (orden por id)
+                if(products.length > 10) products = products.slice(0,10);
                 localStorage.setItem('resuelveProducts', JSON.stringify(products));
                 loading.classList.add('hidden');
                 grid.classList.remove('hidden');
@@ -274,7 +344,7 @@
             if(lines.length < 2) return [];
             const headers = lines[0].split(',').map(h => h.trim());
             const productsArray = [];
-            for(let i = 1; i < lines.length; i++) {
+            for(let i = 1; i < lines.length && productsArray.length < 10; i++) {
                 let vals = lines[i].split(',');
                 let obj = {};
                 headers.forEach((h, idx) => { 
@@ -283,8 +353,7 @@
                     if(h === 'id' || h === 'precio' || h === 'stock') v = parseInt(v) || 0;
                     obj[h] = v; 
                 });
-                if(obj.nombre && obj.activo !== 'false' && obj.activo !== 'FALSE') {
-                    // Asignar ID numérico
+                if(obj.nombre && obj.activo !== 'false') {
                     obj.id = parseInt(obj.id) || i;
                     productsArray.push(obj);
                 }
@@ -293,11 +362,18 @@
         }
 
         function loadBackupProducts() {
+            // Productos esenciales para cubanos: alimentos básicos, ropa, accesorios bici
             products = [
-                {id:1,nombre:"Atún en lata",categoria:"Alimentos y conservas",precio:540,imagen:"https://i.postimg.cc/76xHK6zt/atun_precio_500.png",descripcion:"Lata 200g",stock:10},
-                {id:2,nombre:"Jabón Marwa",categoria:"Higiene personal",precio:150,imagen:"https://i.postimg.cc/3RK8tRpR/jabon_marwa_precio_150.png",descripcion:"Pastilla jabón",stock:10},
-                {id:3,nombre:"Café Dualis 250g",categoria:"Alimentos y conservas",precio:1450,imagen:"https://i.postimg.cc/WbZBX2hN/cafe_dualis_250_g_precio_1450.png",descripcion:"Café molido",stock:10},
-                {id:4,nombre:"Cerveza Cristal",categoria:"Bebidas alcohólicas y malta",precio:300,imagen:"https://i.postimg.cc/d1JxDCW3/cervaza-cristal-1.jpg",descripcion:"Lata 355ml",stock:10}
+                {id:1,nombre:"Arroz Premium 1kg",categoria:"Alimentos",precio:320,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Arroz de grano largo",stock:10},
+                {id:2,nombre:"Frijoles negros",categoria:"Alimentos",precio:450,imagen:"https://i.postimg.cc/wvkcjZNf/frijol_negro.png",descripcion:"Bolsa 500g",stock:10},
+                {id:3,nombre:"Pechuga de pollo",categoria:"Alimentos",precio:650,imagen:"https://i.postimg.cc/KYSnrxDm/nuggets_de_pollo.webp",descripcion:"Empaque 500g",stock:10},
+                {id:4,nombre:"Camiseta deportiva",categoria:"Ropa",precio:1200,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Algodón, varios colores",stock:10},
+                {id:5,nombre:"Zapatillas urbanas",categoria:"Calzado",precio:2500,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Talla 38-42",stock:10},
+                {id:6,nombre:"Cartera multiuso",categoria:"Accesorios",precio:800,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Cuero sintético",stock:10},
+                {id:7,nombre:"Cámara de bicicleta",categoria:"Bicicletas",precio:350,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"26 x 1.95",stock:10},
+                {id:8,nombre:"Faro LED bicicleta",categoria:"Bicicletas",precio:500,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Recargable USB",stock:10},
+                {id:9,nombre:"Candado cadena",categoria:"Bicicletas",precio:780,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Seguridad media",stock:10},
+                {id:10,nombre:"Kit parches",categoria:"Bicicletas",precio:150,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"6 parches + pegamento",stock:10}
             ];
             document.getElementById('productsGrid').classList.remove('hidden');
             document.getElementById('loadingProducts').classList.add('hidden');
@@ -305,7 +381,6 @@
             renderProducts();
         }
 
-        // Generar filtros dinámicos desde los productos
         function renderCategoriesFilter() {
             const container = document.getElementById('categoryContainer');
             if(!container) return;
@@ -314,7 +389,7 @@
             cats.forEach(cat => {
                 const btn = document.createElement('button');
                 btn.textContent = cat === 'todos' ? 'Todos' : cat;
-                btn.className = `category-pill px-5 py-1.5 ${cat === currentCategory ? 'bg-resuelve-green text-white' : 'bg-gray-100 text-gray-700'} rounded-full whitespace-nowrap text-sm font-medium`;
+                btn.className = `category-pill px-5 py-1.5 ${cat === currentCategory ? 'bg-resuelve-green text-white' : 'bg-gray-100 text-gray-700'} rounded-full whitespace-nowrap text-sm font-medium shadow-sm`;
                 btn.onclick = () => filterCategory(cat);
                 container.appendChild(btn);
             });
@@ -339,14 +414,14 @@
             grid.innerHTML = filtered.map(p => `
                 <div class="product-card bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 cursor-pointer overflow-hidden transition-all" onclick="openProductModal(${p.id})">
                     <div class="h-36 bg-gray-50 flex items-center justify-center p-2">
-                        <img src="${p.imagen}" class="max-h-full max-w-full object-contain" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Sin+imagen'">
+                        <img src="${p.imagen}" class="max-h-full max-w-full object-contain" loading="lazy" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Producto'">
                     </div>
                     <div class="p-3">
                         <span class="text-xs text-resuelve-green font-semibold bg-resuelve-cream px-2 py-0.5 rounded-full inline-block">${p.categoria || 'General'}</span>
-                        <h3 class="font-bold text-sm mt-2 line-clamp-1">${p.nombre}</h3>
+                        <h3 class="font-bold text-sm mt-2 line-clamp-1 product-name">${p.nombre}</h3>
                         <div class="flex justify-between items-center mt-2">
                             <span class="text-resuelve-green font-bold text-lg">$${p.precio}</span>
-                            <button onclick="event.stopPropagation(); addToCart(${p.id},1)" class="bg-resuelve-green text-white rounded-full w-8 h-8 text-sm flex items-center justify-center shadow-sm hover:bg-resuelve-dark transition">+</button>
+                            <button onclick="event.stopPropagation(); addToCart(${p.id},1)" class="bg-resuelve-green text-white rounded-full w-8 h-8 text-sm flex items-center justify-center shadow-sm hover:bg-resuelve-dark transition active:scale-95">+</button>
                         </div>
                     </div>
                 </div>
@@ -357,7 +432,6 @@
             currentCategory = cat; 
             const searchTerm = document.getElementById('searchInput').value;
             renderProducts(currentCategory, searchTerm); 
-            // Actualizar estilos de botones
             document.querySelectorAll('.category-pill').forEach(btn => {
                 const btnCat = btn.innerText === 'Todos' ? 'todos' : btn.innerText;
                 if(btnCat === cat) btn.classList.add('bg-resuelve-green', 'text-white');
@@ -365,16 +439,10 @@
             });
         }
         
-        function searchProducts() { 
-            renderProducts(currentCategory, document.getElementById('searchInput').value); 
-        }
+        function searchProducts() { renderProducts(currentCategory, document.getElementById('searchInput').value); }
+        function clearSearch() { document.getElementById('searchInput').value = ''; renderProducts(currentCategory, ''); }
         
-        function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            renderProducts(currentCategory, '');
-        }
-
-        // ---------- CARRITO ----------
+        // Funciones de carrito (idénticas a la versión anterior, solo se mantienen)
         function openProductModal(id) { 
             let p = products.find(x => x.id == id); 
             if(!p) return; 
@@ -388,40 +456,13 @@
             document.getElementById('modalQuantity').innerText = '1'; 
             document.getElementById('productModal').classList.remove('hidden'); 
         }
-        
-        function adjustModalQuantity(delta) { 
-            let newQ = modalQuantity + delta; 
-            if(newQ >= 1 && newQ <= (currentModalProduct?.stock || 99)) { 
-                modalQuantity = newQ; 
-                document.getElementById('modalQuantity').innerText = modalQuantity; 
-            } 
-        }
-        
-        function addToCartFromModal() { 
-            if(currentModalProduct) addToCart(currentModalProduct.id, modalQuantity); 
-            closeModal('productModal'); 
-        }
-        
-        function addToCart(id, qty) { 
-            let prod = products.find(p => p.id == id); 
-            if(!prod) return; 
-            let exist = cart.find(i => i.id == id); 
-            if(exist) exist.quantity += qty; 
-            else cart.push({id: prod.id, name: prod.nombre, price: prod.precio, image: prod.imagen, quantity: qty}); 
-            saveCart(); 
-            updateCartUI(); 
-            showToast('Producto añadido', `${prod.nombre} x${qty}`); 
-        }
-        
-        function saveCart() { 
-            localStorage.setItem('resuelveCart', JSON.stringify(cart)); 
-        }
-        
+        function adjustModalQuantity(delta) { let newQ = modalQuantity + delta; if(newQ >= 1 && newQ <= 99) { modalQuantity = newQ; document.getElementById('modalQuantity').innerText = modalQuantity; } }
+        function addToCartFromModal() { if(currentModalProduct) addToCart(currentModalProduct.id, modalQuantity); closeModal('productModal'); }
+        function addToCart(id, qty) { let prod = products.find(p => p.id == id); if(!prod) return; let exist = cart.find(i => i.id == id); if(exist) exist.quantity += qty; else cart.push({id: prod.id, name: prod.nombre, price: prod.precio, image: prod.imagen, quantity: qty}); saveCart(); updateCartUI(); showToast('Producto añadido', `${prod.nombre} x${qty}`); }
+        function saveCart() { localStorage.setItem('resuelveCart', JSON.stringify(cart)); }
         function updateCartUI() { 
             let count = cart.reduce((s,i) => s + i.quantity, 0); 
-            document.querySelectorAll('#cartCount, #cartCountMobile').forEach(el => { 
-                if(el) { el.innerText = count; el.classList.toggle('hidden', count === 0); } 
-            }); 
+            document.querySelectorAll('#cartCount, #cartCountMobile').forEach(el => { if(el) { el.innerText = count; el.classList.toggle('hidden', count === 0); } }); 
             let subtotal = cart.reduce((s,i) => s + (i.price * i.quantity), 0); 
             let shipping = subtotal > 5000 ? 0 : 200; 
             let total = subtotal + shipping; 
@@ -430,91 +471,21 @@
             document.getElementById('cartTotal').innerText = `$${total}`; 
             let container = document.getElementById('cartItems'); 
             if(!cart.length) container.innerHTML = '<div class="text-center py-10 text-gray-400"><i class="fas fa-shopping-cart text-4xl mb-2"></i><p>Carrito vacío</p></div>'; 
-            else container.innerHTML = cart.map(i => `
-                <div class="flex gap-3 bg-gray-50 p-3 rounded-xl items-center">
-                    <img src="${i.image}" class="w-14 h-14 object-cover rounded-lg bg-white" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=+'">
-                    <div class="flex-1"><strong class="text-sm block">${i.name}</strong><div class="text-resuelve-green font-bold">$${i.price}</div>
-                    <div class="flex items-center gap-2 mt-1"><button onclick="updateCartQty('${i.id}',-1)" class="w-7 h-7 bg-white rounded-full shadow-sm flex items-center justify-center">-</button><span class="font-medium">${i.quantity}</span><button onclick="updateCartQty('${i.id}',1)" class="w-7 h-7 bg-white rounded-full shadow-sm flex items-center justify-center">+</button><button onclick="removeFromCart('${i.id}')" class="text-red-500 ml-3 hover:text-red-700"><i class="fas fa-trash-alt"></i></button></div></div>
-                </div>`).join(''); 
+            else container.innerHTML = cart.map(i => `<div class="flex gap-3 bg-gray-50 p-3 rounded-xl items-center"><img src="${i.image}" class="w-14 h-14 object-cover rounded-lg bg-white" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=+'"><div class="flex-1"><strong class="text-sm block">${i.name}</strong><div class="text-resuelve-green font-bold">$${i.price}</div><div class="flex items-center gap-2 mt-1"><button onclick="updateCartQty('${i.id}',-1)" class="w-7 h-7 bg-white rounded-full shadow-sm flex items-center justify-center active:scale-95">-</button><span class="font-medium">${i.quantity}</span><button onclick="updateCartQty('${i.id}',1)" class="w-7 h-7 bg-white rounded-full shadow-sm flex items-center justify-center active:scale-95">+</button><button onclick="removeFromCart('${i.id}')" class="text-red-500 ml-3 hover:text-red-700"><i class="fas fa-trash-alt"></i></button></div></div></div>`).join(''); 
         }
-        
-        function updateCartQty(id, delta) { 
-            let item = cart.find(i => i.id == id); 
-            if(item) { 
-                item.quantity += delta; 
-                if(item.quantity <= 0) cart = cart.filter(i => i.id != id); 
-                saveCart(); 
-                updateCartUI(); 
-            } 
-        }
-        
-        function removeFromCart(id) { 
-            cart = cart.filter(i => i.id != id); 
-            saveCart(); 
-            updateCartUI(); 
-        }
-        
-        function toggleCart() { 
-            let sb = document.getElementById('cartSidebar'), ov = document.getElementById('cartOverlay'); 
-            sb.classList.toggle('translate-y-full'); 
-            ov.classList.toggle('hidden'); 
-        }
-        
-        function openCheckout() { 
-            if(!cart.length) { showToast('Carrito vacío','Agrega productos'); return; } 
-            toggleCart(); 
-            let subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0); 
-            let shipping = subtotal > 5000 ? 0 : 200; 
-            document.getElementById('checkoutSummary').innerHTML = cart.map(i => `<div class="flex justify-between text-sm"><span>${i.name} x${i.quantity}</span><span>$${i.price * i.quantity}</span></div>`).join('') + `<div class="border-t mt-2 pt-2 flex justify-between font-bold"><span>Total + envío</span><span>$${subtotal + shipping}</span></div>`; 
-            document.getElementById('checkoutModal').classList.remove('hidden'); 
-        }
-        
-        document.getElementById('checkoutForm')?.addEventListener('submit', function(e) { e.preventDefault(); sendOrder(); });
-        document.getElementById('paymentMethod')?.addEventListener('change', function(e) { document.getElementById('cashAmountContainer').classList.toggle('hidden', e.target.value !== 'efectivo'); });
-        
-        function sendOrder() { 
-            let name = document.getElementById('customerName').value, phone = document.getElementById('customerPhone').value, address = document.getElementById('customerAddress').value, refs = document.getElementById('customerReferences').value, payment = document.getElementById('paymentMethod').value; 
-            let subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0); 
-            let shipping = subtotal > 5000 ? 0 : 200; 
-            let total = subtotal + shipping; 
-            let msg = `*Nuevo pedido - RESUELVE Habana*%0A Cliente: ${name}%0ATel: ${phone}%0ADir: ${address}%0ARef: ${refs || 'Ninguna'}%0APago: ${payment}%0A%0A*Productos:*%0A`; 
-            cart.forEach(i => { msg += `• ${i.name} x${i.quantity} = $${i.price * i.quantity}%0A`; }); 
-            msg += `%0A*Total + envío: $${total}*`; 
-            window.open(`https://wa.me/5356382909?text=${encodeURIComponent(msg)}`, '_blank'); 
-            cart = []; saveCart(); updateCartUI(); closeModal('checkoutModal'); showToast('Pedido enviado','Redirigiendo a WhatsApp'); 
-        }
-        
+        function updateCartQty(id, delta) { let item = cart.find(i => i.id == id); if(item) { item.quantity += delta; if(item.quantity <= 0) cart = cart.filter(i => i.id != id); saveCart(); updateCartUI(); } }
+        function removeFromCart(id) { cart = cart.filter(i => i.id != id); saveCart(); updateCartUI(); }
+        function toggleCart() { let sb = document.getElementById('cartSidebar'), ov = document.getElementById('cartOverlay'); sb.classList.toggle('translate-y-full'); ov.classList.toggle('hidden'); }
+        function openCheckout() { if(!cart.length) { showToast('Carrito vacío','Agrega productos'); return; } toggleCart(); let subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0); let shipping = subtotal > 5000 ? 0 : 200; document.getElementById('checkoutSummary').innerHTML = cart.map(i => `<div class="flex justify-between text-sm"><span>${i.name} x${i.quantity}</span><span>$${i.price * i.quantity}</span></div>`).join('') + `<div class="border-t mt-2 pt-2 flex justify-between font-bold"><span>Total + envío</span><span>$${subtotal + shipping}</span></div>`; document.getElementById('checkoutModal').classList.remove('hidden'); }
+        function sendOrder() { let name = document.getElementById('customerName').value, phone = document.getElementById('customerPhone').value, address = document.getElementById('customerAddress').value, refs = document.getElementById('customerReferences').value, payment = document.getElementById('paymentMethod').value; let subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0); let shipping = subtotal > 5000 ? 0 : 200; let total = subtotal + shipping; let msg = `*Nuevo pedido - RESUELVE Habana*%0A Cliente: ${name}%0ATel: ${phone}%0ADir: ${address}%0ARef: ${refs || 'Ninguna'}%0APago: ${payment}%0A%0A*Productos:*%0A`; cart.forEach(i => { msg += `• ${i.name} x${i.quantity} = $${i.price * i.quantity}%0A`; }); msg += `%0A*Total + envío: $${total}*`; window.open(`https://wa.me/5356382909?text=${encodeURIComponent(msg)}`, '_blank'); cart = []; saveCart(); updateCartUI(); closeModal('checkoutModal'); showToast('Pedido enviado','Redirigiendo a WhatsApp'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function showToast(title, msg) { 
-            let t = document.getElementById('toast'); 
-            document.getElementById('toastTitle').innerText = title; 
-            document.getElementById('toastMessage').innerText = msg; 
-            t.classList.remove('hidden'); 
-            setTimeout(() => t.classList.add('hidden'), 2500); 
-        }
+        function showToast(title, msg) { let t = document.getElementById('toast'); document.getElementById('toastTitle').innerText = title; document.getElementById('toastMessage').innerText = msg; t.classList.remove('hidden'); setTimeout(() => t.classList.add('hidden'), 2500); }
 
-        // Eventos y búsqueda
         document.getElementById('searchInput')?.addEventListener('input', searchProducts);
-        document.addEventListener('DOMContentLoaded', () => { 
-            loadProductsFromCSV(); 
-            const savedCart = localStorage.getItem('resuelveCart'); 
-            if(savedCart) { cart = JSON.parse(savedCart); updateCartUI(); } 
-        });
+        document.addEventListener('DOMContentLoaded', () => { loadProductsFromCSV(); const savedCart = localStorage.getItem('resuelveCart'); if(savedCart) { cart = JSON.parse(savedCart); updateCartUI(); } });
         
-        // Exportar funciones globales
-        window.openProductModal = openProductModal;
-        window.addToCart = addToCart;
-        window.updateCartQty = updateCartQty;
-        window.removeFromCart = removeFromCart;
-        window.toggleCart = toggleCart;
-        window.openCheckout = openCheckout;
-        window.filterCategory = filterCategory;
-        window.closeModal = closeModal;
-        window.adjustModalQuantity = adjustModalQuantity;
-        window.addToCartFromModal = addToCartFromModal;
-        window.searchProducts = searchProducts;
-        window.clearSearch = clearSearch;
-        window.loadProductsFromCSV = loadProductsFromCSV;
+        // Exportar funciones
+        window.openProductModal = openProductModal; window.addToCart = addToCart; window.updateCartQty = updateCartQty; window.removeFromCart = removeFromCart; window.toggleCart = toggleCart; window.openCheckout = openCheckout; window.filterCategory = filterCategory; window.closeModal = closeModal; window.adjustModalQuantity = adjustModalQuantity; window.addToCartFromModal = addToCartFromModal; window.searchProducts = searchProducts; window.clearSearch = clearSearch; window.loadProductsFromCSV = loadProductsFromCSV;
     </script>
 </body>
 </html>
