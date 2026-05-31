@@ -14,17 +14,15 @@
         theme: {
             extend: {
                 colors: {
-                    error: "#ba1a1a", "error-container": "#ffdad6", "background": "#f3fcf0", "surface": "#f3fcf0",
-                    primary: "#00535b", "secondary-container": "#ffb702", "secondary": "#7d5800", "tertiary": "#990030",
+                    error: "#ba1a1a", background: "#f3fcf0", surface: "#f3fcf0",
+                    primary: "#00535b", "secondary-container": "#ffb702", secondary: "#7d5800", tertiary: "#990030",
                     "surface-container-lowest": "#ffffff", "surface-container-low": "#edf6ea", "outline-variant": "#bec8ca",
-                    "on-surface-variant": "#3e494a", "on-primary": "#ffffff", "on-secondary-container": "#6b4b00",
-                    "surface-container-high": "#e2ebdf", "inverse-primary": "#82d3de", "surface-container": "#e7f0e5",
-                    "on-surface": "#161d16", "primary-container": "#006d77", "outline": "#6f797a"
+                    "on-surface-variant": "#3e494a", "on-primary": "#ffffff"
                 },
                 borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
                 spacing: { md: "24px", lg: "48px", base: "8px", sm: "12px", xl: "80px", "container-max": "1200px", xs: "4px", gutter: "16px" },
-                fontFamily: { "headline-md": ["Montserrat"], "display-lg": ["Montserrat"], "body-md": ["Quicksand"], "display-lg-mobile": ["Montserrat"], "body-lg": ["Quicksand"], "label-sm": ["Quicksand"] },
-                fontSize: { "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "600" }], "display-lg": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }], "body-md": ["16px", { lineHeight: "1.6", fontWeight: "500" }], "display-lg-mobile": ["32px", { lineHeight: "1.2", fontWeight: "700" }], "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "500" }], "label-sm": ["14px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "700" }] }
+                fontFamily: { "headline-md": ["Montserrat"], "body-md": ["Quicksand"], "display-lg-mobile": ["Montserrat"], "label-sm": ["Quicksand"] },
+                fontSize: { "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "600" }], "body-md": ["16px", { lineHeight: "1.6", fontWeight: "500" }], "display-lg-mobile": ["32px", { lineHeight: "1.2", fontWeight: "700" }], "label-sm": ["14px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "700" }] }
             }
         }
     }
@@ -33,6 +31,8 @@
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
     body { font-family: 'Quicksand', sans-serif; background-color: #f3fcf0; }
     .cart-badge { display: none; }
+    .product-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
 </style>
 </head>
 <body class="bg-background text-on-surface">
@@ -53,26 +53,27 @@
 
 <main class="max-w-container-max mx-auto px-gutter py-md pb-28">
     <!-- Hero -->
-    <section class="bg-primary-container rounded-2xl p-6 mb-8 text-center">
+    <section class="bg-primary-container rounded-2xl p-6 mb-8 text-center text-white" style="background-color: #006d77;">
         <h2 class="font-display-lg-mobile text-white mb-2">Resuelve fácil, ahorra datos.</h2>
         <p class="text-white/80">Entregas locales rápidas en La Habana. Calidad garantizada.</p>
     </section>
 
     <!-- Search -->
     <div class="mb-6">
-        <input id="searchInput" type="text" placeholder="🔍 Buscar productos..." class="w-full p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/30 focus:ring-2 focus:ring-primary outline-none">
+        <input id="searchInput" type="text" placeholder="🔍 Buscar productos (nombre o categoría)..." class="w-full p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/30 focus:ring-2 focus:ring-primary outline-none">
     </div>
 
-    <!-- Categories -->
-    <div class="flex gap-2 overflow-x-auto pb-4 mb-6">
-        <button data-cat="all" class="cat-filter active px-4 py-2 bg-primary text-white rounded-full text-sm whitespace-nowrap">Todo</button>
-        <button data-cat="Alimentos" class="cat-filter px-4 py-2 bg-surface-container-high rounded-full text-sm whitespace-nowrap">🍽️ Alimentos</button>
-        <button data-cat="Aseo" class="cat-filter px-4 py-2 bg-surface-container-high rounded-full text-sm whitespace-nowrap">🧼 Aseo</button>
+    <!-- Categories (dinámicas desde el catálogo) -->
+    <div class="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar" id="categoriesContainer">
+        <button data-cat="all" class="cat-filter active px-4 py-2 bg-primary text-white rounded-full text-sm whitespace-nowrap">📦 Todos</button>
     </div>
 
     <!-- Products Grid -->
     <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
-    <div id="noProducts" class="text-center py-12 text-on-surface-variant hidden">No se encontraron productos</div>
+    <div id="noProducts" class="text-center py-12 text-on-surface-variant hidden">😕 No se encontraron productos</div>
+    
+    <!-- Contador de productos -->
+    <div id="productCount" class="text-center text-sm text-on-surface-variant mt-6"></div>
 </main>
 
 <!-- Bottom Nav -->
@@ -91,17 +92,45 @@
     <p class="text-sm text-on-surface-variant">© 2025 RESUELVEhabana · Admin: 56382909</p>
 </footer>
 
+<style>.no-scrollbar::-webkit-scrollbar { display: none; }</style>
+
 <script>
     let currentFilter = "all";
     let searchTerm = "";
-
+    
+    // Cargar categorías dinámicamente
+    function loadCategories() {
+        const categories = getAllCategories();
+        const container = document.getElementById("categoriesContainer");
+        const allBtn = '<button data-cat="all" class="cat-filter active px-4 py-2 bg-primary text-white rounded-full text-sm whitespace-nowrap">📦 Todos</button>';
+        const catButtons = categories.map(cat => 
+            `<button data-cat="${cat}" class="cat-filter px-4 py-2 bg-surface-container-high hover:bg-primary/20 rounded-full text-sm whitespace-nowrap transition">📁 ${cat}</button>`
+        ).join("");
+        container.innerHTML = allBtn + catButtons;
+        
+        // Re-asignar eventos
+        document.querySelectorAll(".cat-filter").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".cat-filter").forEach(b => {
+                    b.classList.remove("active", "bg-primary", "text-white");
+                    b.classList.add("bg-surface-container-high");
+                });
+                btn.classList.add("active", "bg-primary", "text-white");
+                currentFilter = btn.dataset.cat;
+                renderProducts();
+            });
+        });
+    }
+    
     function renderProducts() {
         const grid = document.getElementById("productsGrid");
         let filtered = PRODUCTS_CATALOG.filter(p => {
             if (currentFilter !== "all" && p.category !== currentFilter) return false;
-            if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+            if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase()) && !p.category.toLowerCase().includes(searchTerm.toLowerCase())) return false;
             return true;
         });
+        
+        document.getElementById("productCount").innerHTML = `📊 ${filtered.length} productos encontrados`;
         
         if (filtered.length === 0) {
             grid.innerHTML = "";
@@ -111,16 +140,19 @@
         document.getElementById("noProducts").classList.add("hidden");
         
         grid.innerHTML = filtered.map(product => `
-            <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all cursor-pointer border border-outline-variant/20" onclick="goToProduct('${product.id}')">
+            <div class="product-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer border border-outline-variant/20" onclick="goToProduct('${product.id}')">
                 <div class="aspect-square overflow-hidden bg-surface-container-low">
-                    <img src="${product.img}" alt="${product.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    <img src="${product.img}" alt="${product.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/e2ebe0/00535b?text=Producto'">
                 </div>
                 <div class="p-3">
                     <span class="text-xs text-outline uppercase">${product.category}</span>
-                    <h3 class="font-bold text-primary text-sm mt-1">${product.name}</h3>
+                    <h3 class="font-bold text-primary text-sm mt-1 line-clamp-2">${product.name}</h3>
                     <div class="flex justify-between items-center mt-2">
-                        <span class="font-bold text-secondary">${product.price} CUP</span>
-                        <button class="add-to-cart-btn w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center hover:scale-110 transition-transform" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-priceusd="${product.priceUSD}" data-category="${product.category}" data-img="${product.img}">
+                        <div>
+                            <span class="font-bold text-secondary">${product.price.toLocaleString()} CUP</span>
+                            <span class="text-xs text-outline ml-1">$${product.priceUSD.toFixed(2)}</span>
+                        </div>
+                        <button class="add-to-cart-btn w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center hover:scale-110 transition-transform shadow" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-priceusd="${product.priceUSD}" data-category="${product.category}" data-img="${product.img}">
                             <span class="material-symbols-outlined text-sm">add</span>
                         </button>
                     </div>
@@ -148,23 +180,12 @@
         window.location.href = `product-detail.html?id=${productId}`;
     }
     
-    document.querySelectorAll(".cat-filter").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".cat-filter").forEach(b => {
-                b.classList.remove("active", "bg-primary", "text-white");
-                b.classList.add("bg-surface-container-high");
-            });
-            btn.classList.add("active", "bg-primary", "text-white");
-            currentFilter = btn.dataset.cat;
-            renderProducts();
-        });
-    });
-    
     document.getElementById("searchInput").addEventListener("input", (e) => {
         searchTerm = e.target.value;
         renderProducts();
     });
     
+    loadCategories();
     renderProducts();
 </script>
 </body>
