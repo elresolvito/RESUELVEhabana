@@ -162,4 +162,56 @@
             });
         });
         
-        document.querySelectorAll(".qty
+        document.querySelectorAll(".qty-inc").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.dataset.id;
+                const item = cart.find(i => i.id === id);
+                if (item) {
+                    updateCartItem(id, item.quantity + 1);
+                    renderCart();
+                }
+            });
+        });
+        
+        updateTotals();
+    }
+    
+    function updateTotals() {
+        const subtotalUSD = getCartSubtotalUSD();
+        const shipping = 2.50;
+        const total = subtotalUSD + shipping;
+        document.getElementById("subtotalDisplay").innerText = `$${subtotalUSD.toFixed(2)} USD`;
+        document.getElementById("totalDisplay").innerHTML = `$${total.toFixed(2)} USD`;
+    }
+    
+    document.getElementById("checkoutForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const cart = getCart();
+        if (cart.length === 0) {
+            alert("⚠️ Tu carrito está vacío. Agrega productos primero.");
+            return;
+        }
+        
+        const name = document.getElementById("checkoutName").value.trim();
+        const address = document.getElementById("checkoutAddress").value.trim();
+        const phone = document.getElementById("checkoutPhone").value.trim();
+        
+        if (!name || !address || !phone) {
+            alert("Por favor completa todos tus datos.");
+            return;
+        }
+        
+        let productList = cart.map(item => `- ${item.name} x${item.quantity} → $${(item.priceUSD * item.quantity).toFixed(2)} USD`).join("\n");
+        const subtotal = getCartSubtotalUSD();
+        const total = subtotal + 2.50;
+        
+        const message = `🛒 *NUEVO PEDIDO - RESUELVEhabana*%0A%0A*Cliente:* ${name}%0A*Teléfono:* ${phone}%0A*Dirección:* ${address}%0A%0A*Productos:*%0A${encodeURIComponent(productList).replace(/%0A/g,'%0A')}%0A%0A📦 *Subtotal:* $${subtotal.toFixed(2)} USD%0A🚚 *Envío:* $2.50 USD%0A💰 *TOTAL:* $${total.toFixed(2)} USD%0A%0A✅ ¡Confirmar entrega!`;
+        
+        window.open(`https://wa.me/5356382909?text=${encodeURIComponent(message)}`, '_blank');
+    });
+    
+    window.addEventListener('cartUpdated', () => renderCart());
+    renderCart();
+</script>
+</body>
+</html>
