@@ -2,490 +2,445 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>RESUELVE Habana · Catálogo esencial</title>
-    <meta name="description" content="Encuentra alimentos, ropa, accesorios para bici y más en La Habana. Alojamiento recomendado.">
-    
-    <!-- Fuentes y estilos externos (livianos) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RESUELVEhabana · Directorio de vendedores</title>
+    <meta name="description" content="Directorio de productos y servicios en La Habana. Compra fácil, contacta directo al vendedor. Delivery gestionado.">
+    <meta name="theme-color" content="#0d3b33">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
-                    colors: {
-                        'resuelve-green': '#0D9488',
-                        'resuelve-dark': '#0F766E',
-                        'resuelve-accent': '#F59E0B',
-                        'resuelve-cream': '#F0FDFA',
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.3s ease-out',
-                    }
-                }
-            }
-        }
-    </script>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
+
     <style>
-        /* CSS personalizado liviano */
+        :root {
+            --primary-color: #0d3b33;
+            --accent-color: #c94a37;
+            --text-dark: #1f2937;
+            --text-medium: #4b5563;
+        }
         * { -webkit-tap-highlight-color: transparent; }
-        body { background: #F8FAFC; font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; scroll-behavior: smooth; }
         
-        /* Efectos sutiles que no afectan rendimiento */
-        .product-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            will-change: transform;
-        }
-        .product-card:active { transform: scale(0.98); }
+        /* Animaciones y efectos */
+        .fade-in-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .is-visible { opacity: 1; transform: none; }
+        .seller-card { transition: all 0.3s ease; border: 1px solid #e5e7eb; }
+        .seller-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-color: var(--accent-color); }
+        .contact-btn { background: linear-gradient(135deg, #25D366, #128C7E); transition: all 0.2s; }
+        .contact-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
+        .category-btn { background-color: #f3f4f6; color: var(--text-medium); padding: 8px 16px; border-radius: 9999px; font-weight: 600; transition: all 0.2s; }
+        .category-btn.active { background-color: var(--primary-color); color: white; }
+        .modal-overlay { opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        .modal-content { transform: translateY(-20px); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .modal-overlay.show .modal-content { transform: translateY(0); opacity: 1; }
+        #mobile-menu { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
+        #mobile-menu.open { transform: translateX(0); }
+        #mobile-backdrop { opacity: 0; visibility: hidden; transition: opacity 0.3s; }
+        #mobile-backdrop.open { opacity: 1; visibility: visible; }
+        .hero-mask { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; overflow: hidden; }
+        .font-script { font-family: 'Kaushan Script', cursive; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { transform: translateY(10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        /* Spinner de carga */
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--accent-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .category-pill {
-            transition: all 0.2s ease;
-        }
-        .category-pill:active {
-            transform: scale(0.95);
-        }
-        
-        /* Banner parallax liviano */
-        .hero-section {
-            background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%);
-            position: relative;
-        }
-        
-        /* Efecto hover en tarjeta de alojamiento */
-        .lodging-card {
-            transition: all 0.2s ease;
-        }
-        .lodging-card:active {
-            transform: scale(0.98);
-        }
-        
-        /* Scroll suave */
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        /* Skeleton loading */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.2s infinite;
-        }
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        
-        /* Mejoras para móvil */
-        @media (max-width: 640px) {
-            .product-card .product-name {
-                font-size: 0.85rem;
-            }
-        }
+        /* Toast */
+        #toastMessage { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background-color: var(--primary-color); color: white; padding: 12px 20px; border-radius: 8px; opacity: 0; transition: opacity 0.3s; z-index: 9999; pointer-events: none; }
+        #toastMessage.show { opacity: 1; }
     </style>
 </head>
-<body class="text-gray-800 pb-20 antialiased">
+<body>
 
-    <!-- ========== BOTONES FLOTANTES ========= -->
-    <button onclick="toggleCart()" class="fixed bottom-6 right-6 z-40 bg-resuelve-green text-white p-4 rounded-full shadow-lg hover:scale-105 transition-all duration-200 shadow-xl active:scale-95">
-        <i class="fas fa-shopping-cart text-xl"></i>
-        <span id="cartCount" class="absolute -top-1 -right-1 bg-resuelve-accent text-resuelve-dark text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center hidden">0</span>
-    </button>
-    
-    <!-- Botón de WhatsApp (sin número visible) -->
-    <a href="https://wa.me/5356382909" target="_blank" class="fixed bottom-24 right-6 z-40 bg-green-500 text-white p-4 rounded-full shadow-lg hover:scale-105 transition-all duration-200 shadow-xl active:scale-95">
-        <i class="fab fa-whatsapp text-2xl"></i>
-    </a>
+<!-- ================= HEADER FIJO ================= -->
+<header id="mainHeader" class="fixed top-0 left-0 right-0 z-50 bg-[#0d3b33] shadow-md">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <button id="mobile-menu-button" class="md:hidden text-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+            </button>
+            <a href="#" class="flex items-center gap-3">
+                <img src="https://i.postimg.cc/s2FHrX2Y/logo_el_resolvito.jpg" alt="Logo" class="h-10 w-10 rounded-full object-cover border-2 border-white">
+                <span class="text-white text-xl font-bold hidden sm:block">RESUELVE<span class="font-light">habana</span></span>
+            </a>
+        </div>
+        <nav class="hidden md:flex items-center gap-6 text-white font-semibold">
+            <a href="#mercado" class="hover:text-[var(--accent-color)] transition">Directorio</a>
+            <a href="#como-comprar" class="hover:text-[var(--accent-color)] transition">Ayuda</a>
+            <button onclick="openHowToSellModal()" class="hover:text-[var(--accent-color)] transition">Vender</button>
+        </nav>
+    </div>
+</header>
 
-    <!-- ========== HEADER ========= -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100">
-        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-resuelve-green rounded-xl flex items-center justify-center text-white text-xl shadow-sm">
-                    <i class="fas fa-store"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-resuelve-green tracking-tight">RESUELVE Habana</h1>
-                    <p class="text-xs text-gray-500">Catálogo esencial · La Habana</p>
-                </div>
+<!-- ================= MENÚ MÓVIL ================= -->
+<div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-[#0d3b33] z-50 shadow-xl">
+    <div class="p-6">
+        <div class="flex justify-between items-center mb-8">
+            <span class="text-white text-xl font-bold">RESUELVEhabana</span>
+            <button id="close-mobile-menu" class="text-white text-3xl">&times;</button>
+        </div>
+        <nav class="flex flex-col space-y-4 text-white font-semibold">
+            <a href="#mercado" class="hover:text-gray-300 mobile-nav-link">Directorio</a>
+            <a href="#como-comprar" class="hover:text-gray-300 mobile-nav-link">Cómo comprar</a>
+            <button onclick="openHowToSellModal(); closeMobileMenu()" class="text-left hover:text-gray-300">Vender gratis</button>
+        </nav>
+    </div>
+</div>
+<div id="mobile-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+
+<!-- ================= HERO ================= -->
+<section class="relative pt-28 pb-12 bg-white overflow-hidden">
+    <div class="container mx-auto px-4 flex flex-col-reverse md:flex-row items-center gap-8">
+        <div class="md:w-1/2 text-center md:text-left fade-in-up">
+            <span class="inline-block bg-blue-50 text-[#0d3b33] text-xs font-bold px-3 py-1 rounded-full mb-4">📢 DIRECTORIO DE VENDEDORES</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800">Compra y vende <br><span class="font-script text-[#c94a37] text-5xl md:text-6xl block">en La Habana</span></h1>
+            <p class="text-gray-500 text-lg my-6">Encuentra productos de vendedores locales. Nosotros gestionamos el delivery.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                <a href="#mercado" class="bg-[#0d3b33] text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition">Ver Directorio</a>
+                <button onclick="openHowToSellModal()" class="border-2 border-gray-200 text-[#0d3b33] px-6 py-3 rounded-full font-bold hover:border-[#c94a37] transition">Vender Gratis</button>
             </div>
-            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full relative transition-all active:bg-gray-200">
-                <i class="fas fa-shopping-cart text-2xl text-resuelve-green"></i>
-                <span id="cartCountMobile" class="absolute top-0 right-0 bg-resuelve-accent text-resuelve-dark text-xs rounded-full w-5 h-5 hidden items-center justify-center font-bold">0</span>
+        </div>
+        <div class="md:w-1/2 flex justify-center fade-in-right">
+            <div class="hero-mask w-64 h-64 md:w-80 md:h-80">
+                <img src="https://i.postimg.cc/rsCKV7LZ/1755367982611.jpg" alt="Delivery" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= VENTAJAS ================= -->
+<section class="py-10 bg-white border-b">
+    <div class="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div><svg class="w-8 h-8 text-[#0d3b33] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><h3 class="font-bold">Contacto Directo</h3></div>
+        <div><svg class="w-8 h-8 text-[#0d3b33] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><h3 class="font-bold">Sin Comisiones</h3></div>
+        <div><svg class="w-8 h-8 text-[#0d3b33] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m0-4v8a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h10a2 2 0 012 2v4a2 2 0 002 2h2"/></svg><h3 class="font-bold">Delivery Gestionado</h3></div>
+        <div><svg class="w-8 h-8 text-[#0d3b33] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.007 12.007 0 002 12c0 2.755 1.056 5.409 2.944 7.318A11.955 11.955 0 0112 21.056c2.755 0 5.409-1.056 7.318-2.944A12.007 12.007 0 0022 12c0-2.755-1.056-5.409-2.944-7.318z"/></svg><h3 class="font-bold">Variedad Local</h3></div>
+    </div>
+</section>
+
+<!-- ================= DIRECTORIO ================= -->
+<section id="mercado" class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Directorio de Vendedores</h2>
+            <p class="text-gray-500 mt-2">Selecciona una categoría y contacta directo al vendedor</p>
+        </div>
+
+        <!-- Pestañas de departamentos -->
+        <div class="sticky top-[70px] z-30 bg-gray-50 py-3 rounded-xl mb-6">
+            <div class="grid grid-cols-3 gap-2 max-w-md mx-auto">
+                <button onclick="switchDepartment('mercado')" id="tab-mercado" class="department-tab active bg-[#0d3b33] text-white py-2 rounded-full font-bold">🛒 Alimentos</button>
+                <button onclick="switchDepartment('ropa')" id="tab-ropa" class="department-tab bg-white text-gray-600 py-2 rounded-full font-bold">👕 Ropa</button>
+                <button onclick="switchDepartment('electro')" id="tab-electro" class="department-tab bg-white text-gray-600 py-2 rounded-full font-bold">⚡ Electro</button>
+            </div>
+        </div>
+
+        <!-- Banner de servicio de delivery -->
+        <div class="bg-white border-2 border-dashed border-green-200 p-4 rounded-xl text-center mb-8">
+            <h3 class="font-bold text-[#0d3b33]">🚚 Delivery gestionado por RESUELVEhabana</h3>
+            <p class="text-sm text-gray-600">El vendedor coordina el producto contigo. Nosotros gestionamos el envío.</p>
+        </div>
+
+        <!-- Buscador y actualizar -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar producto o vendedor..." class="flex-1 px-4 py-2 border rounded-full focus:ring-2 focus:ring-[#0d3b33] outline-none">
+            <button onclick="forceReload()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full font-semibold transition flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Actualizar catálogo
             </button>
         </div>
-        <!-- Barra de búsqueda -->
-        <div class="border-t bg-white px-4 py-2 shadow-sm">
-            <div class="relative max-w-2xl mx-auto">
-                <input type="text" id="searchInput" placeholder="Buscar productos..." class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-200 focus:border-resuelve-green focus:ring-1 focus:ring-resuelve-green outline-none transition-all bg-gray-50">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            </div>
-        </div>
-    </header>
 
-    <!-- SECCIÓN HERO con efecto simplificado -->
-    <section class="hero-section text-white py-12 relative overflow-hidden">
-        <div class="absolute inset-0 bg-black/20"></div>
-        <div class="container mx-auto px-4 text-center relative z-10">
-            <span class="inline-block bg-resuelve-accent text-gray-900 px-4 py-1 rounded-full text-sm font-bold mb-4 shadow-lg animate-pulse">🔥 Catálogo actualizado</span>
-            <h2 class="text-3xl md:text-4xl font-bold mb-3 drop-shadow-lg">Todo lo que <span class="underline decoration-resuelve-accent">resuelve</span><br>en un solo lugar</h2>
-            <p class="text-lg md:text-xl mb-6 text-white/90 drop-shadow">Alimentos · Ropa · Accesorios · Alojamiento</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#productos" class="bg-white text-resuelve-green px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95">Ver Catálogo</a>
-                <a href="https://wa.me/5356382909" target="_blank" class="bg-resuelve-accent text-gray-900 px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"><i class="fab fa-whatsapp mr-2"></i>Contactar</a>
-            </div>
-        </div>
-    </section>
+        <!-- Filtros de categoría -->
+        <div id="categoryFilters" class="flex flex-wrap justify-center gap-2 mb-8"></div>
 
-    <!-- PROMOCIÓN DESTACADA: ALOJAMIENTO (Redirección externa) -->
-    <section class="py-8 bg-gradient-to-r from-amber-50 to-teal-50">
-        <div class="container mx-auto px-4">
-            <div class="lodging-card bg-white rounded-2xl shadow-md overflow-hidden md:flex md:items-stretch border border-amber-100 cursor-pointer transition-all hover:shadow-lg" onclick="window.open('https://reservaterrazasdebayona59.com', '_blank')">
-                <div class="md:w-1/3 bg-cover bg-center" style="background-image: url('https://i.postimg.cc/02jKbzjb/habitacion-2-s.jpg'); min-height: 180px;"></div>
-                <div class="p-5 md:w-2/3 relative">
-                    <div class="absolute top-2 right-2 bg-resuelve-accent text-xs font-bold px-2 py-1 rounded-full shadow-md">⭐ Recomendado</div>
-                    <h3 class="text-xl font-bold text-resuelve-dark flex items-center gap-2"><i class="fas fa-hotel text-resuelve-green"></i> Terrazas de Bayona 59</h3>
-                    <p class="text-gray-600 mt-1 text-sm">Habitación privada con A/C, Wi-Fi y 2 terrazas espectaculares. A 10 min de La Habana Vieja.</p>
-                    <div class="flex flex-wrap gap-3 mt-3 text-sm">
-                        <span class="bg-gray-100 px-2 py-1 rounded-full"><i class="fas fa-wifi text-resuelve-green"></i> Wi-Fi</span>
-                        <span class="bg-gray-100 px-2 py-1 rounded-full"><i class="fas fa-wind text-resuelve-green"></i> A/C</span>
-                        <span class="bg-gray-100 px-2 py-1 rounded-full"><i class="fas fa-umbrella-beach text-resuelve-green"></i> Terraza privada</span>
-                    </div>
-                    <div class="mt-3 flex justify-between items-center">
-                        <span class="text-2xl font-bold text-resuelve-green">Desde 15 USD <span class="text-sm font-normal text-gray-500">/noche</span></span>
-                        <span class="text-resuelve-accent font-semibold text-sm flex items-center gap-1">Ver oferta <i class="fas fa-arrow-right"></i></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        <!-- Grid de productos -->
+        <div id="productGrid" class="min-h-[400px]"></div>
+        <div id="noResults" class="hidden text-center py-10 text-gray-500">No se encontraron productos</div>
+    </div>
+</section>
 
-    <!-- CATEGORIAS filtro -->
-    <section class="sticky top-[110px] z-30 bg-white/90 backdrop-blur-sm py-3 border-b shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1" id="categoryContainer">
-                <!-- Las categorías se cargarán dinámicamente -->
+<!-- ================= SECCIÓN DE AYUDA ================= -->
+<section id="como-comprar" class="py-16 bg-white">
+    <div class="container mx-auto px-4 max-w-3xl">
+        <h2 class="text-3xl font-bold text-center mb-8">❓ Preguntas Frecuentes</h2>
+        <div class="space-y-4">
+            <div class="border rounded-lg">
+                <button onclick="toggleFAQ(1)" class="w-full text-left p-4 font-bold flex justify-between">¿Cómo compro? <span id="faq-icon-1">+</span></button>
+                <div id="faq-1" class="hidden px-4 pb-4 text-gray-600">1. Busca el producto. 2. Haz clic en "Contactar vendedor". 3. Acuerda precio y entrega. 4. RESUELVEhabana gestiona el delivery.</div>
             </div>
-        </div>
-    </section>
-
-    <!-- PRODUCTOS (Catálogo desde CSV) -->
-    <section id="productos" class="py-8">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center mb-5">
-                <h2 class="text-2xl font-bold text-resuelve-dark"><i class="fas fa-tag mr-2 text-resuelve-green"></i>Productos esenciales</h2>
-                <span id="productCount" class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">cargando...</span>
+            <div class="border rounded-lg">
+                <button onclick="toggleFAQ(2)" class="w-full text-left p-4 font-bold flex justify-between">¿Cómo es el delivery? <span id="faq-icon-2">+</span></button>
+                <div id="faq-2" class="hidden px-4 pb-4 text-gray-600">Nosotros coordinamos la recogida con el vendedor y la entrega contigo. Tú pagas el envío al mensajero.</div>
             </div>
-            <div id="loadingProducts" class="text-center py-12">
-                <div class="inline-block w-10 h-10 border-4 border-resuelve-green border-t-transparent rounded-full animate-spin"></div>
-                <p class="mt-3 text-gray-600">Cargando catálogo...</p>
-            </div>
-            <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5 hidden"></div>
-            <div id="noResults" class="hidden text-center py-12 bg-white rounded-2xl shadow-sm animate-fade-in">
-                <i class="fas fa-search text-5xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500 text-lg">No encontramos productos</p>
-                <button onclick="clearSearch()" class="mt-3 text-resuelve-green font-medium hover:underline">Limpiar búsqueda</button>
-            </div>
-            <div id="loadError" class="hidden text-center py-12 bg-white rounded-2xl shadow-sm">
-                <i class="fas fa-exclamation-triangle text-5xl text-amber-500 mb-3"></i>
-                <p class="text-gray-600 mb-3">Error al cargar los productos</p>
-                <button onclick="loadProductsFromCSV()" class="bg-resuelve-green text-white px-5 py-2 rounded-full hover:bg-resuelve-dark transition active:scale-95">Reintentar</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- REDES SOCIALES -->
-    <footer class="bg-white border-t mt-12 py-8">
-        <div class="container mx-auto px-4 text-center">
-            <div class="flex flex-col items-center gap-4">
-                <div class="flex gap-6">
-                    <a href="https://www.facebook.com/profile.php?id=61562921816951" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-200 text-xl w-12 h-12 flex items-center justify-center active:scale-95">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://www.instagram.com/elresolvito.habana/" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-200 text-xl w-12 h-12 flex items-center justify-center active:scale-95">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://wa.me/5356382909" target="_blank" class="bg-gray-100 hover:bg-resuelve-green text-gray-600 hover:text-white p-3 rounded-full transition-all duration-200 text-xl w-12 h-12 flex items-center justify-center active:scale-95">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                </div>
-                <p class="text-sm text-gray-500">© 2025 RESUELVE Habana · Tu catálogo de confianza en La Habana</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- MODALES (Producto y Carrito) igual que antes pero optimizados -->
-    <div id="productModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal('productModal')">
-        <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-auto shadow-2xl animate-slide-up" onclick="event.stopPropagation()">
-            <img id="modalImage" src="" class="w-full h-64 object-cover rounded-t-2xl bg-gray-100">
-            <div class="p-5">
-                <span id="modalCategory" class="text-resuelve-green text-sm font-medium bg-resuelve-cream px-2 py-0.5 rounded-full inline-block"></span>
-                <h3 id="modalTitle" class="text-xl font-bold mt-2 text-gray-800"></h3>
-                <p id="modalDescription" class="text-gray-500 text-sm my-3 leading-relaxed"></p>
-                <div class="flex justify-between items-center border-t pt-4 mt-2">
-                    <span id="modalPrice" class="text-2xl font-bold text-resuelve-green"></span>
-                    <div class="flex gap-3 bg-gray-100 p-1.5 rounded-full">
-                        <button onclick="adjustModalQuantity(-1)" class="w-9 h-9 bg-white rounded-full shadow-sm hover:shadow transition flex items-center justify-center font-bold text-gray-600 active:scale-95">-</button>
-                        <span id="modalQuantity" class="w-8 text-center font-bold text-gray-800 text-lg">1</span>
-                        <button onclick="adjustModalQuantity(1)" class="w-9 h-9 bg-white rounded-full shadow-sm hover:shadow transition flex items-center justify-center font-bold text-gray-600 active:scale-95">+</button>
-                    </div>
-                </div>
-                <button onclick="addToCartFromModal()" class="w-full mt-6 bg-resuelve-green text-white py-3 rounded-xl font-bold hover:bg-resuelve-dark transition shadow-md active:scale-95">Añadir al carrito</button>
+            <div class="border rounded-lg">
+                <button onclick="toggleFAQ(3)" class="w-full text-left p-4 font-bold flex justify-between">¿Quiero vender, qué hago? <span id="faq-icon-3">+</span></button>
+                <div id="faq-3" class="hidden px-4 pb-4 text-gray-600">Contáctanos por WhatsApp, envía las fotos y datos de tu producto. Lo publicamos gratis.</div>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Sidebar Carrito (mismo código) -->
-    <div id="cartOverlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-all" onclick="toggleCart()"></div>
-    <div id="cartSidebar" class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 transform translate-y-full transition-transform duration-300 max-h-[85vh] flex flex-col">
-        <div class="p-4 bg-resuelve-green text-white rounded-t-3xl flex justify-between items-center">
-            <h3 class="font-bold text-lg"><i class="fas fa-shopping-cart mr-2"></i>Mi pedido</h3>
-            <button onclick="toggleCart()" class="bg-white/20 p-1 rounded-full w-8 h-8 flex items-center justify-center active:scale-95"><i class="fas fa-times"></i></button>
+<!-- ================= MODAL "VENDER" ================= -->
+<div id="howToSellModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+    <div class="modal-content bg-white rounded-xl max-w-md w-full p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-2xl font-bold text-[#0d3b33]">📢 ¿Quieres vender?</h3>
+            <button onclick="closeHowToSellModal()" class="text-3xl text-gray-500">&times;</button>
         </div>
-        <div id="cartItems" class="flex-1 overflow-auto p-4 space-y-3"></div>
-        <div class="border-t p-4 bg-gray-50">
-            <div class="flex justify-between text-sm text-gray-600 mb-1"><span>Subtotal:</span><span id="cartSubtotal">$0</span></div>
-            <div class="flex justify-between text-sm text-gray-600 mb-1"><span>Envío (La Habana Vieja):</span><span id="cartShipping">$200</span></div>
-            <div class="flex justify-between font-bold text-lg mt-2 pt-2 border-t"><span>Total:</span><span id="cartTotal">$200</span></div>
-            <button onclick="openCheckout()" class="w-full bg-green-600 text-white py-3.5 rounded-xl mt-4 font-bold shadow-md hover:bg-green-700 transition flex items-center justify-center gap-2 active:scale-95"><i class="fab fa-whatsapp text-xl"></i>Pedir por WhatsApp</button>
+        <div class="space-y-4">
+            <div class="flex gap-3"><span class="bg-[#0d3b33] text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span><span>Contáctame por WhatsApp</span></div>
+            <div class="flex gap-3"><span class="bg-[#0d3b33] text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span><span>Envía fotos, precio y tu número</span></div>
+            <div class="flex gap-3"><span class="bg-[#0d3b33] text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span><span>Yo publico tu producto gratis</span></div>
+        </div>
+        <button onclick="contactAdminToSell()" class="mt-6 w-full bg-green-500 text-white py-3 rounded-full font-bold hover:bg-green-600 transition flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M12.04 2C7.38 2 3.51 5.87 3.51 10.53c0 1.49.39 2.88 1.07 4.07L3.32 20.02l5.44-1.26c1.14.58 2.41.93 3.76.93 4.66 0 8.53-3.87 8.53-8.53 0-4.66-3.87-8.53-8.53-8.53z"/></svg>
+            Contactar para publicar
+        </button>
+    </div>
+</div>
+
+<!-- ================= MODAL DE PRODUCTO ================= -->
+<div id="productModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div class="modal-content bg-white rounded-xl max-w-md w-full">
+        <img id="modalImage" src="" alt="Producto" class="w-full h-56 object-cover rounded-t-xl">
+        <div class="p-5">
+            <div class="flex justify-between items-start">
+                <span id="modalCategory" class="text-sm bg-gray-100 px-2 py-1 rounded-full text-[#0d3b33]"></span>
+                <span id="modalPrice" class="text-2xl font-bold text-[#c94a37]"></span>
+            </div>
+            <h3 id="modalTitle" class="text-xl font-bold mt-2"></h3>
+            <p id="modalDescription" class="text-gray-500 text-sm my-3"></p>
+            <p class="text-sm text-gray-500 mb-4"><strong>📍 Ubicación:</strong> <span id="modalLocation"></span><br><strong>👤 Vendedor:</strong> <span id="modalSeller"></span></p>
+            <button id="contactSellerBtn" class="w-full contact-btn text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M12.04 2C7.38 2 3.51 5.87 3.51 10.53c0 1.49.39 2.88 1.07 4.07L3.32 20.02l5.44-1.26c1.14.58 2.41.93 3.76.93 4.66 0 8.53-3.87 8.53-8.53 0-4.66-3.87-8.53-8.53-8.53z"/></svg>
+                Contactar vendedor
+            </button>
         </div>
     </div>
+</div>
 
-    <!-- Modal Checkout (mismo código) -->
-    <div id="checkoutModal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center p-4" onclick="closeModal('checkoutModal')">
-        <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl" onclick="event.stopPropagation()">
-            <h3 class="text-xl font-bold mb-4 text-center"><i class="fab fa-whatsapp text-green-600 mr-2"></i> Finalizar pedido</h3>
-            <form id="checkoutForm">
-                <input type="text" id="customerName" placeholder="Nombre completo" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none" required>
-                <input type="tel" id="customerPhone" placeholder="Teléfono de contacto" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none" required>
-                <textarea id="customerAddress" rows="2" placeholder="Dirección de envío" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none" required></textarea>
-                <input type="text" id="customerReferences" placeholder="Referencias (color de puerta, cerca de...)" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none">
-                <select id="paymentMethod" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none bg-white">
-                    <option value="">Método de pago</option>
-                    <option value="efectivo">Efectivo (CUP)</option>
-                    <option value="transferencia">Transferencia</option>
-                    <option value="mlc">MLC</option>
-                </select>
-                <div id="cashAmountContainer" class="hidden">
-                    <input type="number" id="cashAmount" placeholder="¿Con cuánto pagas?" class="w-full border rounded-lg p-2.5 mb-3 focus:border-resuelve-green outline-none">
-                </div>
-                <div class="bg-gray-100 p-3 rounded-lg text-sm mb-4" id="checkoutSummary"></div>
-                <button type="submit" class="w-full bg-resuelve-green text-white py-3 rounded-xl font-bold hover:bg-resuelve-dark transition shadow-md active:scale-95">Confirmar pedido</button>
-            </form>
-        </div>
-    </div>
+<!-- ================= TOAST ================= -->
+<div id="toastMessage" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm z-[9999]"></div>
 
-    <div id="toast" class="fixed top-24 right-4 bg-white shadow-xl rounded-lg p-3 z-50 hidden border-l-4 border-resuelve-green animate-fade-in">
-        <div class="flex gap-2 items-center"><i class="fas fa-check-circle text-resuelve-green"></i><div><strong id="toastTitle">Añadido</strong><p id="toastMessage" class="text-xs text-gray-500"></p></div></div>
-    </div>
+<script>
+    // ================= CONFIGURACIÓN =================
+    // 🔴 CAMBIA ESTE NÚMERO POR TU WHATSAPP (el que recibirá las notificaciones de los pedidos)
+    const ADMIN_WHATSAPP = "5356382909";  // ← PON AQUÍ TU NÚMERO
 
-    <script>
-        // ---------- CATÁLOGO Y CARRITO (desde CSV) ----------
-        let products = [];
-        let cart = [];
-        let currentCategory = 'todos';
-        let currentModalProduct = null;
-        let modalQuantity = 1;
-        const CSV_URL = 'Productos_ElResolvito - Productos_ElResolvito.csv';
+    // ================= BASE DE DATOS DE PRODUCTOS =================
+    let sellers = [
+        { id: 1, productName: "Café Dualis 250g", category: "Alimentos", price: 1450, image: "https://i.postimg.cc/WbZBX2hN/cafe_dualis-250-g-precio-1450.png", description: "Café molido de alta calidad.", sellerName: "María González", sellerWhatsapp: "5351234567", location: "Centro Habana" },
+        { id: 2, productName: "Camiseta deportiva", category: "Ropa", price: 1200, image: "https://i.postimg.cc/DZ2vxZsT/Gemini-Generated-Image-824rio824rio824r.png", description: "Algodón, talla M.", sellerName: "Carlos Pérez", sellerWhatsapp: "5352345678", location: "Vedado" },
+        { id: 3, productName: "Cámara de bicicleta 26", category: "Electrodomésticos", price: 350, image: "https://i.postimg.cc/DZ2vxZsT/Gemini-Generated-Image-824rio824rio824r.png", description: "Válvula Schrader.", sellerName: "Laura Rodríguez", sellerWhatsapp: "5353456789", location: "La Habana Vieja" },
+        { id: 4, productName: "Frijoles negros 500g", category: "Alimentos", price: 450, image: "https://i.postimg.cc/wvkcjZNf/frijol-negro.png", description: "Granos seleccionados.", sellerName: "Ana Fernández", sellerWhatsapp: "5355678901", location: "Centro Habana" },
+        { id: 5, productName: "Zapatillas deportivas", category: "Ropa", price: 2500, image: "https://i.postimg.cc/DZ2vxZsT/Gemini-Generated-Image-824rio824rio824r.png", description: "Talla 40, nuevas.", sellerName: "Jorge Luis", sellerWhatsapp: "5356789012", location: "Vedado" },
+        { id: 6, productName: "Lavadora automática", category: "Electrodomésticos", price: 15000, image: "https://i.postimg.cc/DZ2vxZsT/Gemini-Generated-Image-824rio824rio824r.png", description: "Semiautomática 5kg.", sellerName: "Roberto Sánchez", sellerWhatsapp: "5358901234", location: "Plaza" }
+    ];
 
-        async function loadProductsFromCSV() {
-            const grid = document.getElementById('productsGrid');
-            const loading = document.getElementById('loadingProducts');
-            const errorDiv = document.getElementById('loadError');
-            try {
-                const resp = await fetch(CSV_URL);
-                if (!resp.ok) throw new Error('Error fetching CSV');
-                const csv = await resp.text();
-                products = parseCSV(csv);
-                // Si hay más de 10, tomamos los primeros 10 más relevantes (orden por id)
-                if(products.length > 10) products = products.slice(0,10);
-                localStorage.setItem('resuelveProducts', JSON.stringify(products));
-                loading.classList.add('hidden');
-                grid.classList.remove('hidden');
-                renderCategoriesFilter();
-                renderProducts();
-            } catch(e) {
-                console.warn(e);
-                const saved = localStorage.getItem('resuelveProducts');
-                if(saved) { 
-                    products = JSON.parse(saved); 
-                    loading.classList.add('hidden'); 
-                    grid.classList.remove('hidden'); 
-                    renderCategoriesFilter();
-                    renderProducts(); 
-                    showToast('Modo offline','Últimos productos guardados'); 
-                } else { 
-                    loading.classList.add('hidden'); 
-                    errorDiv.classList.remove('hidden'); 
-                    loadBackupProducts(); 
-                }
-            }
+    // ================= VARIABLES GLOBALES =================
+    let currentDepartment = 'mercado';
+    let currentCategory = 'all';
+    let currentProduct = null;
+    let searchTimeout;
+
+    // Mapeo de departamentos a categorías principales
+    const departmentMap = { 'mercado': 'Alimentos', 'ropa': 'Ropa', 'electro': 'Electrodomésticos' };
+
+    // ================= FUNCIONES PRINCIPALES =================
+    function switchDepartment(dept) {
+        currentDepartment = dept;
+        document.querySelectorAll('.department-tab').forEach(btn => {
+            btn.classList.remove('bg-[#0d3b33]', 'text-white');
+            btn.classList.add('bg-white', 'text-gray-600');
+        });
+        document.getElementById(`tab-${dept}`).classList.add('bg-[#0d3b33]', 'text-white');
+        currentCategory = 'all';
+        renderProducts();
+    }
+
+    function renderProducts() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const deptCategory = departmentMap[currentDepartment];
+        
+        let filtered = sellers.filter(p => {
+            const matchDept = p.category === deptCategory;
+            const matchCat = (currentCategory === 'all' || p.category === currentCategory);
+            const matchSearch = p.productName.toLowerCase().includes(searchTerm) || p.sellerName.toLowerCase().includes(searchTerm);
+            return matchDept && matchCat && matchSearch;
+        });
+
+        // Actualizar filtros de categoría
+        const categories = ['all', ...new Set(filtered.map(p => p.category))];
+        const filtersContainer = document.getElementById('categoryFilters');
+        filtersContainer.innerHTML = categories.map(cat => `<button class="category-btn ${cat === currentCategory ? 'active' : ''}" onclick="setCategory('${cat}')">${cat === 'all' ? 'Todos' : cat}</button>`).join('');
+
+        // Mostrar u ocultar no results
+        const grid = document.getElementById('productGrid');
+        const noResults = document.getElementById('noResults');
+        if (filtered.length === 0) {
+            grid.innerHTML = '';
+            noResults.classList.remove('hidden');
+            return;
         }
+        noResults.classList.add('hidden');
 
-        function parseCSV(csvText) {
-            const lines = csvText.trim().split(/\r?\n/);
-            if(lines.length < 2) return [];
-            const headers = lines[0].split(',').map(h => h.trim());
-            const productsArray = [];
-            for(let i = 1; i < lines.length && productsArray.length < 10; i++) {
-                let vals = lines[i].split(',');
-                let obj = {};
-                headers.forEach((h, idx) => { 
-                    let v = vals[idx]?.trim() || ''; 
-                    if(v.startsWith('"') && v.endsWith('"')) v = v.slice(1,-1);
-                    if(h === 'id' || h === 'precio' || h === 'stock') v = parseInt(v) || 0;
-                    obj[h] = v; 
-                });
-                if(obj.nombre && obj.activo !== 'false') {
-                    obj.id = parseInt(obj.id) || i;
-                    productsArray.push(obj);
-                }
-            }
-            return productsArray;
-        }
-
-        function loadBackupProducts() {
-            // Productos esenciales para cubanos: alimentos básicos, ropa, accesorios bici
-            products = [
-                {id:1,nombre:"Arroz Premium 1kg",categoria:"Alimentos",precio:320,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Arroz de grano largo",stock:10},
-                {id:2,nombre:"Frijoles negros",categoria:"Alimentos",precio:450,imagen:"https://i.postimg.cc/wvkcjZNf/frijol_negro.png",descripcion:"Bolsa 500g",stock:10},
-                {id:3,nombre:"Pechuga de pollo",categoria:"Alimentos",precio:650,imagen:"https://i.postimg.cc/KYSnrxDm/nuggets_de_pollo.webp",descripcion:"Empaque 500g",stock:10},
-                {id:4,nombre:"Camiseta deportiva",categoria:"Ropa",precio:1200,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Algodón, varios colores",stock:10},
-                {id:5,nombre:"Zapatillas urbanas",categoria:"Calzado",precio:2500,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Talla 38-42",stock:10},
-                {id:6,nombre:"Cartera multiuso",categoria:"Accesorios",precio:800,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Cuero sintético",stock:10},
-                {id:7,nombre:"Cámara de bicicleta",categoria:"Bicicletas",precio:350,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"26 x 1.95",stock:10},
-                {id:8,nombre:"Faro LED bicicleta",categoria:"Bicicletas",precio:500,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Recargable USB",stock:10},
-                {id:9,nombre:"Candado cadena",categoria:"Bicicletas",precio:780,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"Seguridad media",stock:10},
-                {id:10,nombre:"Kit parches",categoria:"Bicicletas",precio:150,imagen:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",descripcion:"6 parches + pegamento",stock:10}
-            ];
-            document.getElementById('productsGrid').classList.remove('hidden');
-            document.getElementById('loadingProducts').classList.add('hidden');
-            renderCategoriesFilter();
-            renderProducts();
-        }
-
-        function renderCategoriesFilter() {
-            const container = document.getElementById('categoryContainer');
-            if(!container) return;
-            const cats = ['todos', ...new Set(products.map(p => p.categoria).filter(c => c && c !== ''))];
-            container.innerHTML = '';
-            cats.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.textContent = cat === 'todos' ? 'Todos' : cat;
-                btn.className = `category-pill px-5 py-1.5 ${cat === currentCategory ? 'bg-resuelve-green text-white' : 'bg-gray-100 text-gray-700'} rounded-full whitespace-nowrap text-sm font-medium shadow-sm`;
-                btn.onclick = () => filterCategory(cat);
-                container.appendChild(btn);
-            });
-        }
-
-        function renderProducts(filter = currentCategory, search = '') {
-            let filtered = products.filter(p => {
-                const matchCategory = (filter === 'todos' || p.categoria === filter);
-                const matchSearch = p.nombre.toLowerCase().includes(search.toLowerCase()) || (p.descripcion && p.descripcion.toLowerCase().includes(search.toLowerCase()));
-                return matchCategory && matchSearch;
-            });
-            
-            document.getElementById('productCount').innerText = filtered.length + ' productos';
-            const grid = document.getElementById('productsGrid');
-            if(!filtered.length) { 
-                grid.innerHTML = ''; 
-                document.getElementById('noResults').classList.remove('hidden'); 
-                return; 
-            }
-            document.getElementById('noResults').classList.add('hidden');
-            
-            grid.innerHTML = filtered.map(p => `
-                <div class="product-card bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 cursor-pointer overflow-hidden transition-all" onclick="openProductModal(${p.id})">
-                    <div class="h-36 bg-gray-50 flex items-center justify-center p-2">
-                        <img src="${p.imagen}" class="max-h-full max-w-full object-contain" loading="lazy" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Producto'">
+        // Renderizar grid
+        grid.innerHTML = `<div class="flex flex-col gap-4 max-w-4xl mx-auto">
+            ${filtered.map(p => `
+                <div class="seller-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer flex flex-row" onclick='openProductModal(${JSON.stringify(p).replace(/'/g, "&apos;")})'>
+                    <div class="w-28 h-28 flex-shrink-0 p-2 flex items-center justify-center bg-gray-50">
+                        <img src="${p.image}" class="w-full h-full object-contain" loading="lazy" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Producto'">
                     </div>
-                    <div class="p-3">
-                        <span class="text-xs text-resuelve-green font-semibold bg-resuelve-cream px-2 py-0.5 rounded-full inline-block">${p.categoria || 'General'}</span>
-                        <h3 class="font-bold text-sm mt-2 line-clamp-1 product-name">${p.nombre}</h3>
+                    <div class="p-3 flex-grow flex flex-col justify-center">
+                        <h3 class="font-bold text-gray-800">${p.productName}</h3>
+                        <p class="text-xs text-gray-500">📦 ${p.category}</p>
                         <div class="flex justify-between items-center mt-2">
-                            <span class="text-resuelve-green font-bold text-lg">$${p.precio}</span>
-                            <button onclick="event.stopPropagation(); addToCart(${p.id},1)" class="bg-resuelve-green text-white rounded-full w-8 h-8 text-sm flex items-center justify-center shadow-sm hover:bg-resuelve-dark transition active:scale-95">+</button>
+                            <span class="text-xl font-bold text-[#c94a37]">$${p.price.toLocaleString()}</span>
+                            <span class="text-sm text-gray-500">👤 ${p.sellerName}</span>
                         </div>
                     </div>
                 </div>
-            `).join('');
-        }
+            `).join('')}
+        </div>`;
+    }
 
-        function filterCategory(cat) { 
-            currentCategory = cat; 
-            const searchTerm = document.getElementById('searchInput').value;
-            renderProducts(currentCategory, searchTerm); 
-            document.querySelectorAll('.category-pill').forEach(btn => {
-                const btnCat = btn.innerText === 'Todos' ? 'todos' : btn.innerText;
-                if(btnCat === cat) btn.classList.add('bg-resuelve-green', 'text-white');
-                else btn.classList.remove('bg-resuelve-green', 'text-white');
+    function setCategory(cat) {
+        currentCategory = cat;
+        renderProducts();
+    }
+
+    function openProductModal(product) {
+        currentProduct = product;
+        document.getElementById('modalImage').src = product.image;
+        document.getElementById('modalTitle').innerText = product.productName;
+        document.getElementById('modalDescription').innerText = product.description;
+        document.getElementById('modalPrice').innerText = `$${product.price.toLocaleString()}`;
+        document.getElementById('modalCategory').innerText = product.category;
+        document.getElementById('modalLocation').innerText = product.location;
+        document.getElementById('modalSeller').innerText = product.sellerName;
+        document.getElementById('productModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        // Configurar botón de contacto
+        const btn = document.getElementById('contactSellerBtn');
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        newBtn.onclick = () => contactSeller(product);
+    }
+
+    // ================= CONTACTO Y NOTIFICACIONES =================
+    function contactSeller(seller) {
+        // Mensaje para el VENDEDOR
+        const msgToSeller = `🛒 *NUEVO CLIENTE - RESUELVEhabana*
+
+*Producto:* ${seller.productName}
+*Precio:* $${seller.price.toLocaleString()}
+*Ubicación:* ${seller.location}
+
+━━━━━━━━━━━━━━━━━━━━━━
+*IMPORTANTE: EL DELIVERY ES GESTIONADO POR NOSOTROS*
+
+1. Contacta al cliente para confirmar disponibilidad y precio final.
+2. Nosotros (RESUELVEhabana) coordinaremos la recogida y el envío.
+
+Gracias por vender con nosotros.`;
+        
+        // Abrir WhatsApp del VENDEDOR
+        window.open(`https://wa.me/${seller.sellerWhatsapp}?text=${encodeURIComponent(msgToSeller)}`, '_blank');
+        
+        // NOTIFICAR AL ADMIN (TÚ) para que gestiones el delivery
+        const msgToAdmin = `📦 *NUEVO PEDIDO PARA GESTIONAR*
+
+*Producto:* ${seller.productName}
+*Vendedor:* ${seller.sellerName}
+*Teléfono Vendedor:* ${seller.sellerWhatsapp}
+
+**Acción:** Coordinar la recogida y el delivery con el vendedor y el comprador.`;
+        
+        window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(msgToAdmin)}`, '_blank');
+        
+        // Guardar registro local
+        let registros = JSON.parse(localStorage.getItem('resuelve_pedidos') || '[]');
+        registros.push({ producto: seller.productName, vendedor: seller.sellerName, fecha: new Date().toISOString() });
+        localStorage.setItem('resuelve_pedidos', JSON.stringify(registros));
+        
+        showToast('✅ Pedido en proceso. El vendedor y administrador han sido notificados.');
+        closeModal('productModal');
+    }
+
+    // ================= FUNCIONES ADMIN =================
+    function openHowToSellModal() { showModal('howToSellModal'); }
+    function closeHowToSellModal() { closeModal('howToSellModal'); }
+    
+    function contactAdminToSell() {
+        const msg = "Hola, quiero publicar un producto en RESUELVEhabana. ¿Cómo te envío la información?";
+        window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+        closeHowToSellModal();
+        showToast('📢 Contactando administrador');
+    }
+
+    // ================= UTILIDADES =================
+    function showModal(id) { document.getElementById(id).classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); document.body.style.overflow = ''; }
+    function showToast(msg) { 
+        const toast = document.getElementById('toastMessage');
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
+    function toggleFAQ(id) {
+        const content = document.getElementById(`faq-${id}`);
+        const icon = document.getElementById(`faq-icon-${id}`);
+        content.classList.toggle('hidden');
+        icon.innerText = content.classList.contains('hidden') ? '+' : '−';
+    }
+    
+    function forceReload() {
+        showToast('🔄 Actualizando catálogo...');
+        setTimeout(() => location.reload(), 500);
+    }
+    
+    function closeMobileMenu() {
+        document.getElementById('mobile-menu').classList.remove('open');
+        document.getElementById('mobile-backdrop').classList.remove('open');
+    }
+    
+    // ================= EVENTOS E INICIALIZACIÓN =================
+    document.addEventListener('DOMContentLoaded', () => {
+        renderProducts();
+        
+        // Scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => e.target.classList.add('is-visible'));
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+        
+        // Search
+        document.getElementById('searchInput').addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(renderProducts, 300);
+        });
+        
+        // Mobile menu
+        document.getElementById('mobile-menu-button').onclick = () => {
+            document.getElementById('mobile-menu').classList.add('open');
+            document.getElementById('mobile-backdrop').classList.add('open');
+        };
+        document.getElementById('close-mobile-menu').onclick = closeMobileMenu;
+        document.getElementById('mobile-backdrop').onclick = closeMobileMenu;
+        document.querySelectorAll('.mobile-nav-link').forEach(link => link.onclick = closeMobileMenu);
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
-        }
-        
-        function searchProducts() { renderProducts(currentCategory, document.getElementById('searchInput').value); }
-        function clearSearch() { document.getElementById('searchInput').value = ''; renderProducts(currentCategory, ''); }
-        
-        // Funciones de carrito (idénticas a la versión anterior, solo se mantienen)
-        function openProductModal(id) { 
-            let p = products.find(x => x.id == id); 
-            if(!p) return; 
-            currentModalProduct = p; 
-            modalQuantity = 1; 
-            document.getElementById('modalImage').src = p.imagen; 
-            document.getElementById('modalTitle').innerText = p.nombre; 
-            document.getElementById('modalDescription').innerText = p.descripcion || 'Producto de calidad'; 
-            document.getElementById('modalPrice').innerText = `$${p.precio}`; 
-            document.getElementById('modalCategory').innerText = p.categoria; 
-            document.getElementById('modalQuantity').innerText = '1'; 
-            document.getElementById('productModal').classList.remove('hidden'); 
-        }
-        function adjustModalQuantity(delta) { let newQ = modalQuantity + delta; if(newQ >= 1 && newQ <= 99) { modalQuantity = newQ; document.getElementById('modalQuantity').innerText = modalQuantity; } }
-        function addToCartFromModal() { if(currentModalProduct) addToCart(currentModalProduct.id, modalQuantity); closeModal('productModal'); }
-        function addToCart(id, qty) { let prod = products.find(p => p.id == id); if(!prod) return; let exist = cart.find(i => i.id == id); if(exist) exist.quantity += qty; else cart.push({id: prod.id, name: prod.nombre, price: prod.precio, image: prod.imagen, quantity: qty}); saveCart(); updateCartUI(); showToast('Producto añadido', `${prod.nombre} x${qty}`); }
-        function saveCart() { localStorage.setItem('resuelveCart', JSON.stringify(cart)); }
-        function updateCartUI() { 
-            let count = cart.reduce((s,i) => s + i.quantity, 0); 
-            document.querySelectorAll('#cartCount, #cartCountMobile').forEach(el => { if(el) { el.innerText = count; el.classList.toggle('hidden', count === 0); } }); 
-            let subtotal = cart.reduce((s,i) => s + (i.price * i.quantity), 0); 
-            let shipping = subtotal > 5000 ? 0 : 200; 
-            let total = subtotal + shipping; 
-            document.getElementById('cartSubtotal').innerText = `$${subtotal}`; 
-            document.getElementById('cartShipping').innerText = `$${shipping}`; 
-            document.getElementById('cartTotal').innerText = `$${total}`; 
-            let container = document.getElementById('cartItems'); 
-            if(!cart.length) container.innerHTML = '<div class="text-center py-10 text-gray-400"><i class="fas fa-shopping-cart text-4xl mb-2"></i><p>Carrito vacío</p></div>'; 
-            else container.innerHTML = cart.map(i => `<div class="flex gap-3 bg-gray-50 p-3 rounded-xl items-center"><img src="${i.image}" class="w-14 h-14 object-cover rounded-lg bg-white" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=+'"><div class="flex-1"><strong class="text-sm block">${i.name}</strong><div class="text-resuelve-green font-bold">$${i.price}</div><div class="flex items-center gap-2 mt-1"><button onclick="updateCartQty('${i.id}',-1)" class="w-7 h-7 bg-white rounded-full shadow-sm flex items-center justify-center active:scale-95">-</button><span class="font-medium">${i.quantity}</span><button onclick="updateCartQty('${i.id}',1)" class="w-7 h-7 bg-white rounded-full shadow-sm flex items-center justify-center active:scale-95">+</button><button onclick="removeFromCart('${i.id}')" class="text-red-500 ml-3 hover:text-red-700"><i class="fas fa-trash-alt"></i></button></div></div></div>`).join(''); 
-        }
-        function updateCartQty(id, delta) { let item = cart.find(i => i.id == id); if(item) { item.quantity += delta; if(item.quantity <= 0) cart = cart.filter(i => i.id != id); saveCart(); updateCartUI(); } }
-        function removeFromCart(id) { cart = cart.filter(i => i.id != id); saveCart(); updateCartUI(); }
-        function toggleCart() { let sb = document.getElementById('cartSidebar'), ov = document.getElementById('cartOverlay'); sb.classList.toggle('translate-y-full'); ov.classList.toggle('hidden'); }
-        function openCheckout() { if(!cart.length) { showToast('Carrito vacío','Agrega productos'); return; } toggleCart(); let subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0); let shipping = subtotal > 5000 ? 0 : 200; document.getElementById('checkoutSummary').innerHTML = cart.map(i => `<div class="flex justify-between text-sm"><span>${i.name} x${i.quantity}</span><span>$${i.price * i.quantity}</span></div>`).join('') + `<div class="border-t mt-2 pt-2 flex justify-between font-bold"><span>Total + envío</span><span>$${subtotal + shipping}</span></div>`; document.getElementById('checkoutModal').classList.remove('hidden'); }
-        function sendOrder() { let name = document.getElementById('customerName').value, phone = document.getElementById('customerPhone').value, address = document.getElementById('customerAddress').value, refs = document.getElementById('customerReferences').value, payment = document.getElementById('paymentMethod').value; let subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0); let shipping = subtotal > 5000 ? 0 : 200; let total = subtotal + shipping; let msg = `*Nuevo pedido - RESUELVE Habana*%0A Cliente: ${name}%0ATel: ${phone}%0ADir: ${address}%0ARef: ${refs || 'Ninguna'}%0APago: ${payment}%0A%0A*Productos:*%0A`; cart.forEach(i => { msg += `• ${i.name} x${i.quantity} = $${i.price * i.quantity}%0A`; }); msg += `%0A*Total + envío: $${total}*`; window.open(`https://wa.me/5356382909?text=${encodeURIComponent(msg)}`, '_blank'); cart = []; saveCart(); updateCartUI(); closeModal('checkoutModal'); showToast('Pedido enviado','Redirigiendo a WhatsApp'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function showToast(title, msg) { let t = document.getElementById('toast'); document.getElementById('toastTitle').innerText = title; document.getElementById('toastMessage').innerText = msg; t.classList.remove('hidden'); setTimeout(() => t.classList.add('hidden'), 2500); }
-
-        document.getElementById('searchInput')?.addEventListener('input', searchProducts);
-        document.addEventListener('DOMContentLoaded', () => { loadProductsFromCSV(); const savedCart = localStorage.getItem('resuelveCart'); if(savedCart) { cart = JSON.parse(savedCart); updateCartUI(); } });
-        
-        // Exportar funciones
-        window.openProductModal = openProductModal; window.addToCart = addToCart; window.updateCartQty = updateCartQty; window.removeFromCart = removeFromCart; window.toggleCart = toggleCart; window.openCheckout = openCheckout; window.filterCategory = filterCategory; window.closeModal = closeModal; window.adjustModalQuantity = adjustModalQuantity; window.addToCartFromModal = addToCartFromModal; window.searchProducts = searchProducts; window.clearSearch = clearSearch; window.loadProductsFromCSV = loadProductsFromCSV;
-    </script>
+        });
+    });
+</script>
 </body>
 </html>
