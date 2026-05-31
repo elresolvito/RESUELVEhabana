@@ -1,446 +1,171 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="light" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>RESUELVEhabana · Directorio de vendedores</title>
-    <meta name="description" content="Directorio de productos y servicios en La Habana. Compra fácil, contacta directo al vendedor. Delivery gestionado.">
-    <meta name="theme-color" content="#0d3b33">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary-color: #0d3b33;
-            --accent-color: #c94a37;
-            --text-dark: #1f2937;
-            --text-medium: #4b5563;
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>RESUELVEhabana | Tienda - Productos en La Habana</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="js/cart-state.js"></script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    error: "#ba1a1a", "error-container": "#ffdad6", "background": "#f3fcf0", "surface": "#f3fcf0",
+                    primary: "#00535b", "secondary-container": "#ffb702", "secondary": "#7d5800", "tertiary": "#990030",
+                    "surface-container-lowest": "#ffffff", "surface-container-low": "#edf6ea", "outline-variant": "#bec8ca",
+                    "on-surface-variant": "#3e494a", "on-primary": "#ffffff", "on-secondary-container": "#6b4b00",
+                    "surface-container-high": "#e2ebdf", "inverse-primary": "#82d3de", "surface-container": "#e7f0e5",
+                    "on-surface": "#161d16", "primary-container": "#006d77", "outline": "#6f797a"
+                },
+                borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+                spacing: { md: "24px", lg: "48px", base: "8px", sm: "12px", xl: "80px", "container-max": "1200px", xs: "4px", gutter: "16px" },
+                fontFamily: { "headline-md": ["Montserrat"], "display-lg": ["Montserrat"], "body-md": ["Quicksand"], "display-lg-mobile": ["Montserrat"], "body-lg": ["Quicksand"], "label-sm": ["Quicksand"] },
+                fontSize: { "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "600" }], "display-lg": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }], "body-md": ["16px", { lineHeight: "1.6", fontWeight: "500" }], "display-lg-mobile": ["32px", { lineHeight: "1.2", fontWeight: "700" }], "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "500" }], "label-sm": ["14px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "700" }] }
+            }
         }
-        * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; scroll-behavior: smooth; }
-        
-        /* Animaciones y efectos */
-        .fade-in-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
-        .is-visible { opacity: 1; transform: none; }
-        .seller-card { transition: all 0.3s ease; border: 1px solid #e5e7eb; }
-        .seller-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-color: var(--accent-color); }
-        .contact-btn { background: linear-gradient(135deg, #25D366, #128C7E); transition: all 0.2s; }
-        .contact-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
-        .category-btn { background-color: #f3f4f6; color: var(--text-medium); padding: 8px 16px; border-radius: 9999px; font-weight: 600; transition: all 0.2s; }
-        .category-btn.active { background-color: var(--primary-color); color: white; }
-        .modal-overlay { opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-        .modal-overlay.show { opacity: 1; visibility: visible; }
-        .modal-content { transform: translateY(-20px); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; }
-        .modal-overlay.show .modal-content { transform: translateY(0); opacity: 1; }
-        #mobile-menu { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
-        #mobile-menu.open { transform: translateX(0); }
-        #mobile-backdrop { opacity: 0; visibility: hidden; transition: opacity 0.3s; }
-        #mobile-backdrop.open { opacity: 1; visibility: visible; }
-        .hero-mask { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; overflow: hidden; }
-        .font-script { font-family: 'Kaushan Script', cursive; }
-        
-        /* Spinner de carga */
-        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--accent-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Toast */
-        #toastMessage { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background-color: var(--primary-color); color: white; padding: 12px 20px; border-radius: 8px; opacity: 0; transition: opacity 0.3s; z-index: 9999; pointer-events: none; }
-        #toastMessage.show { opacity: 1; }
-    </style>
+    }
+</script>
+<style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    body { font-family: 'Quicksand', sans-serif; background-color: #f3fcf0; }
+    .cart-badge { display: none; }
+</style>
 </head>
-<body>
+<body class="bg-background text-on-surface">
 
-<!-- ================= HEADER FIJO ================= -->
-<header id="mainHeader" class="fixed top-0 left-0 right-0 z-50 bg-[#0d3b33] shadow-md">
-    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <button id="mobile-menu-button" class="md:hidden text-white">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
-            </button>
-            <a href="#" class="flex items-center gap-3">
-                <img src="https://i.postimg.cc/s2FHrX2Y/logo_el_resolvito.jpg" alt="Logo" class="h-10 w-10 rounded-full object-cover border-2 border-white">
-                <span class="text-white text-xl font-bold hidden sm:block">RESUELVE<span class="font-light">habana</span></span>
-            </a>
-        </div>
-        <nav class="hidden md:flex items-center gap-6 text-white font-semibold">
-            <a href="#mercado" class="hover:text-[var(--accent-color)] transition">Directorio</a>
-            <a href="#como-comprar" class="hover:text-[var(--accent-color)] transition">Ayuda</a>
-            <button onclick="openHowToSellModal()" class="hover:text-[var(--accent-color)] transition">Vender</button>
-        </nav>
+<!-- Top App Bar -->
+<header class="flex justify-between items-center w-full px-gutter h-16 sticky top-0 z-50 bg-surface shadow-[0_4px_12px_rgba(0,109,119,0.08)]">
+    <div class="flex items-center gap-sm">
+        <h1 class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tight">RESUELVEhabana</h1>
+    </div>
+    <div class="flex items-center gap-xs">
+        <button class="material-symbols-outlined text-primary p-2 hover:bg-surface-variant rounded-full transition-colors">search</button>
+        <a href="cart.html" class="relative block">
+            <span class="material-symbols-outlined text-primary p-2 bg-surface-variant rounded-full transition-colors">shopping_cart</span>
+            <span class="cart-badge absolute top-1 right-1 bg-tertiary text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">0</span>
+        </a>
     </div>
 </header>
 
-<!-- ================= MENÚ MÓVIL ================= -->
-<div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-[#0d3b33] z-50 shadow-xl">
-    <div class="p-6">
-        <div class="flex justify-between items-center mb-8">
-            <span class="text-white text-xl font-bold">RESUELVEhabana</span>
-            <button id="close-mobile-menu" class="text-white text-3xl">&times;</button>
-        </div>
-        <nav class="flex flex-col space-y-4 text-white font-semibold">
-            <a href="#mercado" class="hover:text-gray-300 mobile-nav-link">Directorio</a>
-            <a href="#como-comprar" class="hover:text-gray-300 mobile-nav-link">Cómo comprar</a>
-            <button onclick="openHowToSellModal(); closeMobileMenu()" class="text-left hover:text-gray-300">Vender gratis</button>
-        </nav>
+<main class="max-w-container-max mx-auto px-gutter py-md pb-28">
+    <!-- Hero -->
+    <section class="bg-primary-container rounded-2xl p-6 mb-8 text-center">
+        <h2 class="font-display-lg-mobile text-white mb-2">Resuelve fácil, ahorra datos.</h2>
+        <p class="text-white/80">Entregas locales rápidas en La Habana. Calidad garantizada.</p>
+    </section>
+
+    <!-- Search -->
+    <div class="mb-6">
+        <input id="searchInput" type="text" placeholder="🔍 Buscar productos..." class="w-full p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/30 focus:ring-2 focus:ring-primary outline-none">
     </div>
-</div>
-<div id="mobile-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
 
-<!-- ================= HERO ================= -->
-<section class="relative pt-28 pb-12 bg-white overflow-hidden">
-    <div class="container mx-auto px-4 flex flex-col-reverse md:flex-row items-center gap-8">
-        <div class="md:w-1/2 text-center md:text-left fade-in-up">
-            <span class="inline-block bg-blue-50 text-[#0d3b33] text-xs font-bold px-3 py-1 rounded-full mb-4">📢 DIRECTORIO DE VENDEDORES</span>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800">Compra y vende <br><span class="font-script text-[#c94a37] text-5xl md:text-6xl block">en La Habana</span></h1>
-            <p class="text-gray-500 text-lg my-6">Encuentra productos de vendedores locales. Nosotros gestionamos el delivery.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <a href="#mercado" class="bg-[#0d3b33] text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition">Ver Directorio</a>
-                <button onclick="openHowToSellModal()" class="border-2 border-gray-200 text-[#0d3b33] px-6 py-3 rounded-full font-bold hover:border-[#c94a37] transition">Vender Gratis</button>
-            </div>
-        </div>
-        <div class="md:w-1/2 flex justify-center fade-in-right">
-            <div class="hero-mask w-64 h-64 md:w-80 md:h-80">
-                <img src="https://i.postimg.cc/rsCKV7LZ/1755367982611.jpg" alt="Delivery" class="w-full h-full object-cover">
-            </div>
-        </div>
+    <!-- Categories -->
+    <div class="flex gap-2 overflow-x-auto pb-4 mb-6">
+        <button data-cat="all" class="cat-filter active px-4 py-2 bg-primary text-white rounded-full text-sm whitespace-nowrap">Todo</button>
+        <button data-cat="Alimentos" class="cat-filter px-4 py-2 bg-surface-container-high rounded-full text-sm whitespace-nowrap">🍽️ Alimentos</button>
+        <button data-cat="Aseo" class="cat-filter px-4 py-2 bg-surface-container-high rounded-full text-sm whitespace-nowrap">🧼 Aseo</button>
     </div>
-</section>
 
-<!-- ================= VENTAJAS ================= -->
-<section class="py-10 bg-white border-b">
-    <div class="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        <div><svg class="w-8 h-8 text-[#0d3b33] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><h3 class="font-bold">Contacto Directo</h3></div>
-        <div><svg class="w-8 h-8 text-[#0d3b33] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><h3 class="font-bold">Sin Comisiones</h3></div>
-        <div><svg class="w-8 h-8 text-[#0d3b33] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m0-4v8a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h10a2 2 0 012 2v4a2 2 0 002 2h2"/></svg><h3 class="font-bold">Delivery Gestionado</h3></div>
-        <div><svg class="w-8 h-8 text-[#0d3b33] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.007 12.007 0 002 12c0 2.755 1.056 5.409 2.944 7.318A11.955 11.955 0 0112 21.056c2.755 0 5.409-1.056 7.318-2.944A12.007 12.007 0 0022 12c0-2.755-1.056-5.409-2.944-7.318z"/></svg><h3 class="font-bold">Variedad Local</h3></div>
-    </div>
-</section>
+    <!-- Products Grid -->
+    <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    <div id="noProducts" class="text-center py-12 text-on-surface-variant hidden">No se encontraron productos</div>
+</main>
 
-<!-- ================= DIRECTORIO ================= -->
-<section id="mercado" class="py-16 bg-gray-50">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-800">Directorio de Vendedores</h2>
-            <p class="text-gray-500 mt-2">Selecciona una categoría y contacta directo al vendedor</p>
-        </div>
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface-container-lowest border-t shadow-[0_-4px_12px_rgba(0,109,119,0.08)] rounded-t-xl">
+    <a href="index.html" class="flex flex-col items-center text-primary">
+        <span class="material-symbols-outlined">storefront</span>
+        <span class="font-label-sm text-label-sm">Tienda</span>
+    </a>
+    <a href="cart.html" class="flex flex-col items-center text-on-surface-variant">
+        <span class="material-symbols-outlined">shopping_basket</span>
+        <span class="font-label-sm text-label-sm">Carrito</span>
+    </a>
+</nav>
 
-        <!-- Pestañas de departamentos -->
-        <div class="sticky top-[70px] z-30 bg-gray-50 py-3 rounded-xl mb-6">
-            <div class="grid grid-cols-3 gap-2 max-w-md mx-auto">
-                <button onclick="switchDepartment('mercado')" id="tab-mercado" class="department-tab active bg-[#0d3b33] text-white py-2 rounded-full font-bold">🛒 Alimentos</button>
-                <button onclick="switchDepartment('ropa')" id="tab-ropa" class="department-tab bg-white text-gray-600 py-2 rounded-full font-bold">👕 Ropa</button>
-                <button onclick="switchDepartment('electro')" id="tab-electro" class="department-tab bg-white text-gray-600 py-2 rounded-full font-bold">⚡ Electro</button>
-            </div>
-        </div>
-
-        <!-- Banner de servicio de delivery -->
-        <div class="bg-white border-2 border-dashed border-green-200 p-4 rounded-xl text-center mb-8">
-            <h3 class="font-bold text-[#0d3b33]">🚚 Delivery gestionado por RESUELVEhabana</h3>
-            <p class="text-sm text-gray-600">El vendedor coordina el producto contigo. Nosotros gestionamos el envío.</p>
-        </div>
-
-        <!-- Buscador y actualizar -->
-        <div class="flex flex-col sm:flex-row gap-4 mb-8">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar producto o vendedor..." class="flex-1 px-4 py-2 border rounded-full focus:ring-2 focus:ring-[#0d3b33] outline-none">
-            <button onclick="forceReload()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full font-semibold transition flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                Actualizar catálogo
-            </button>
-        </div>
-
-        <!-- Filtros de categoría -->
-        <div id="categoryFilters" class="flex flex-wrap justify-center gap-2 mb-8"></div>
-
-        <!-- Grid de productos -->
-        <div id="productGrid" class="min-h-[400px]"></div>
-        <div id="noResults" class="hidden text-center py-10 text-gray-500">No se encontraron productos</div>
-    </div>
-</section>
-
-<!-- ================= SECCIÓN DE AYUDA ================= -->
-<section id="como-comprar" class="py-16 bg-white">
-    <div class="container mx-auto px-4 max-w-3xl">
-        <h2 class="text-3xl font-bold text-center mb-8">❓ Preguntas Frecuentes</h2>
-        <div class="space-y-4">
-            <div class="border rounded-lg">
-                <button onclick="toggleFAQ(1)" class="w-full text-left p-4 font-bold flex justify-between">¿Cómo compro? <span id="faq-icon-1">+</span></button>
-                <div id="faq-1" class="hidden px-4 pb-4 text-gray-600">1. Busca el producto. 2. Haz clic en "Contactar vendedor". 3. Acuerda precio y entrega. 4. RESUELVEhabana gestiona el delivery.</div>
-            </div>
-            <div class="border rounded-lg">
-                <button onclick="toggleFAQ(2)" class="w-full text-left p-4 font-bold flex justify-between">¿Cómo es el delivery? <span id="faq-icon-2">+</span></button>
-                <div id="faq-2" class="hidden px-4 pb-4 text-gray-600">Nosotros coordinamos la recogida con el vendedor y la entrega contigo. Tú pagas el envío al mensajero.</div>
-            </div>
-            <div class="border rounded-lg">
-                <button onclick="toggleFAQ(3)" class="w-full text-left p-4 font-bold flex justify-between">¿Quiero vender, qué hago? <span id="faq-icon-3">+</span></button>
-                <div id="faq-3" class="hidden px-4 pb-4 text-gray-600">Contáctanos por WhatsApp, envía las fotos y datos de tu producto. Lo publicamos gratis.</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ================= MODAL "VENDER" ================= -->
-<div id="howToSellModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
-    <div class="modal-content bg-white rounded-xl max-w-md w-full p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-2xl font-bold text-[#0d3b33]">📢 ¿Quieres vender?</h3>
-            <button onclick="closeHowToSellModal()" class="text-3xl text-gray-500">&times;</button>
-        </div>
-        <div class="space-y-4">
-            <div class="flex gap-3"><span class="bg-[#0d3b33] text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span><span>Contáctame por WhatsApp</span></div>
-            <div class="flex gap-3"><span class="bg-[#0d3b33] text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span><span>Envía fotos, precio y tu número</span></div>
-            <div class="flex gap-3"><span class="bg-[#0d3b33] text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span><span>Yo publico tu producto gratis</span></div>
-        </div>
-        <button onclick="contactAdminToSell()" class="mt-6 w-full bg-green-500 text-white py-3 rounded-full font-bold hover:bg-green-600 transition flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M12.04 2C7.38 2 3.51 5.87 3.51 10.53c0 1.49.39 2.88 1.07 4.07L3.32 20.02l5.44-1.26c1.14.58 2.41.93 3.76.93 4.66 0 8.53-3.87 8.53-8.53 0-4.66-3.87-8.53-8.53-8.53z"/></svg>
-            Contactar para publicar
-        </button>
-    </div>
-</div>
-
-<!-- ================= MODAL DE PRODUCTO ================= -->
-<div id="productModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
-    <div class="modal-content bg-white rounded-xl max-w-md w-full">
-        <img id="modalImage" src="" alt="Producto" class="w-full h-56 object-cover rounded-t-xl">
-        <div class="p-5">
-            <div class="flex justify-between items-start">
-                <span id="modalCategory" class="text-sm bg-gray-100 px-2 py-1 rounded-full text-[#0d3b33]"></span>
-                <span id="modalPrice" class="text-2xl font-bold text-[#c94a37]"></span>
-            </div>
-            <h3 id="modalTitle" class="text-xl font-bold mt-2"></h3>
-            <p id="modalDescription" class="text-gray-500 text-sm my-3"></p>
-            <p class="text-sm text-gray-500 mb-4"><strong>📍 Ubicación:</strong> <span id="modalLocation"></span><br><strong>👤 Vendedor:</strong> <span id="modalSeller"></span></p>
-            <button id="contactSellerBtn" class="w-full contact-btn text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M12.04 2C7.38 2 3.51 5.87 3.51 10.53c0 1.49.39 2.88 1.07 4.07L3.32 20.02l5.44-1.26c1.14.58 2.41.93 3.76.93 4.66 0 8.53-3.87 8.53-8.53 0-4.66-3.87-8.53-8.53-8.53z"/></svg>
-                Contactar vendedor
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- ================= TOAST ================= -->
-<div id="toastMessage" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm z-[9999]"></div>
+<footer class="w-full px-gutter py-6 text-center bg-surface-container-low border-t border-outline-variant/20 mt-8">
+    <p class="text-sm text-on-surface-variant">© 2025 RESUELVEhabana · Admin: 56382909</p>
+</footer>
 
 <script>
-    // ================= CONFIGURACIÓN =================
-    // 🔴 CAMBIA ESTE NÚMERO POR TU WHATSAPP (el que recibirá las notificaciones de los pedidos)
-    const ADMIN_WHATSAPP = "5356382909";  // ← PON AQUÍ TU NÚMERO
-
-    // ================= BASE DE DATOS DE PRODUCTOS =================
-    let sellers = [
-        { id: 1, productName: "Café Dualis 250g", category: "Alimentos", price: 1450, image: "https://i.postimg.cc/WbZBX2hN/cafe_dualis-250-g-precio-1450.png", description: "Café molido de alta calidad.", sellerName: "María González", sellerWhatsapp: "5351234567", location: "Centro Habana" },
-        { id: 2, productName: "Camiseta deportiva", category: "Ropa", price: 1200, image: "https://i.postimg.cc/DZ2vxZsT/Gemini-Generated-Image-824rio824rio824r.png", description: "Algodón, talla M.", sellerName: "Carlos Pérez", sellerWhatsapp: "5352345678", location: "Vedado" },
-        { id: 3, productName: "Cámara de bicicleta 26", category: "Electrodomésticos", price: 350, image: "https://i.postimg.cc/DZ2vxZsT/Gemini-Generated-Image-824rio824rio824r.png", description: "Válvula Schrader.", sellerName: "Laura Rodríguez", sellerWhatsapp: "5353456789", location: "La Habana Vieja" },
-        { id: 4, productName: "Frijoles negros 500g", category: "Alimentos", price: 450, image: "https://i.postimg.cc/wvkcjZNf/frijol-negro.png", description: "Granos seleccionados.", sellerName: "Ana Fernández", sellerWhatsapp: "5355678901", location: "Centro Habana" },
-        { id: 5, productName: "Zapatillas deportivas", category: "Ropa", price: 2500, image: "https://i.postimg.cc/DZ2vxZsT/Gemini-Generated-Image-824rio824rio824r.png", description: "Talla 40, nuevas.", sellerName: "Jorge Luis", sellerWhatsapp: "5356789012", location: "Vedado" },
-        { id: 6, productName: "Lavadora automática", category: "Electrodomésticos", price: 15000, image: "https://i.postimg.cc/DZ2vxZsT/Gemini-Generated-Image-824rio824rio824r.png", description: "Semiautomática 5kg.", sellerName: "Roberto Sánchez", sellerWhatsapp: "5358901234", location: "Plaza" }
-    ];
-
-    // ================= VARIABLES GLOBALES =================
-    let currentDepartment = 'mercado';
-    let currentCategory = 'all';
-    let currentProduct = null;
-    let searchTimeout;
-
-    // Mapeo de departamentos a categorías principales
-    const departmentMap = { 'mercado': 'Alimentos', 'ropa': 'Ropa', 'electro': 'Electrodomésticos' };
-
-    // ================= FUNCIONES PRINCIPALES =================
-    function switchDepartment(dept) {
-        currentDepartment = dept;
-        document.querySelectorAll('.department-tab').forEach(btn => {
-            btn.classList.remove('bg-[#0d3b33]', 'text-white');
-            btn.classList.add('bg-white', 'text-gray-600');
-        });
-        document.getElementById(`tab-${dept}`).classList.add('bg-[#0d3b33]', 'text-white');
-        currentCategory = 'all';
-        renderProducts();
-    }
+    let currentFilter = "all";
+    let searchTerm = "";
 
     function renderProducts() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const deptCategory = departmentMap[currentDepartment];
-        
-        let filtered = sellers.filter(p => {
-            const matchDept = p.category === deptCategory;
-            const matchCat = (currentCategory === 'all' || p.category === currentCategory);
-            const matchSearch = p.productName.toLowerCase().includes(searchTerm) || p.sellerName.toLowerCase().includes(searchTerm);
-            return matchDept && matchCat && matchSearch;
+        const grid = document.getElementById("productsGrid");
+        let filtered = PRODUCTS_CATALOG.filter(p => {
+            if (currentFilter !== "all" && p.category !== currentFilter) return false;
+            if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+            return true;
         });
-
-        // Actualizar filtros de categoría
-        const categories = ['all', ...new Set(filtered.map(p => p.category))];
-        const filtersContainer = document.getElementById('categoryFilters');
-        filtersContainer.innerHTML = categories.map(cat => `<button class="category-btn ${cat === currentCategory ? 'active' : ''}" onclick="setCategory('${cat}')">${cat === 'all' ? 'Todos' : cat}</button>`).join('');
-
-        // Mostrar u ocultar no results
-        const grid = document.getElementById('productGrid');
-        const noResults = document.getElementById('noResults');
+        
         if (filtered.length === 0) {
-            grid.innerHTML = '';
-            noResults.classList.remove('hidden');
+            grid.innerHTML = "";
+            document.getElementById("noProducts").classList.remove("hidden");
             return;
         }
-        noResults.classList.add('hidden');
-
-        // Renderizar grid
-        grid.innerHTML = `<div class="flex flex-col gap-4 max-w-4xl mx-auto">
-            ${filtered.map(p => `
-                <div class="seller-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer flex flex-row" onclick='openProductModal(${JSON.stringify(p).replace(/'/g, "&apos;")})'>
-                    <div class="w-28 h-28 flex-shrink-0 p-2 flex items-center justify-center bg-gray-50">
-                        <img src="${p.image}" class="w-full h-full object-contain" loading="lazy" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Producto'">
-                    </div>
-                    <div class="p-3 flex-grow flex flex-col justify-center">
-                        <h3 class="font-bold text-gray-800">${p.productName}</h3>
-                        <p class="text-xs text-gray-500">📦 ${p.category}</p>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-xl font-bold text-[#c94a37]">$${p.price.toLocaleString()}</span>
-                            <span class="text-sm text-gray-500">👤 ${p.sellerName}</span>
-                        </div>
+        document.getElementById("noProducts").classList.add("hidden");
+        
+        grid.innerHTML = filtered.map(product => `
+            <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all cursor-pointer border border-outline-variant/20" onclick="goToProduct('${product.id}')">
+                <div class="aspect-square overflow-hidden bg-surface-container-low">
+                    <img src="${product.img}" alt="${product.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                </div>
+                <div class="p-3">
+                    <span class="text-xs text-outline uppercase">${product.category}</span>
+                    <h3 class="font-bold text-primary text-sm mt-1">${product.name}</h3>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="font-bold text-secondary">${product.price} CUP</span>
+                        <button class="add-to-cart-btn w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center hover:scale-110 transition-transform" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-priceusd="${product.priceUSD}" data-category="${product.category}" data-img="${product.img}">
+                            <span class="material-symbols-outlined text-sm">add</span>
+                        </button>
                     </div>
                 </div>
-            `).join('')}
-        </div>`;
-    }
-
-    function setCategory(cat) {
-        currentCategory = cat;
-        renderProducts();
-    }
-
-    function openProductModal(product) {
-        currentProduct = product;
-        document.getElementById('modalImage').src = product.image;
-        document.getElementById('modalTitle').innerText = product.productName;
-        document.getElementById('modalDescription').innerText = product.description;
-        document.getElementById('modalPrice').innerText = `$${product.price.toLocaleString()}`;
-        document.getElementById('modalCategory').innerText = product.category;
-        document.getElementById('modalLocation').innerText = product.location;
-        document.getElementById('modalSeller').innerText = product.sellerName;
-        document.getElementById('productModal').classList.add('show');
-        document.body.style.overflow = 'hidden';
+            </div>
+        `).join("");
         
-        // Configurar botón de contacto
-        const btn = document.getElementById('contactSellerBtn');
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        newBtn.onclick = () => contactSeller(product);
-    }
-
-    // ================= CONTACTO Y NOTIFICACIONES =================
-    function contactSeller(seller) {
-        // Mensaje para el VENDEDOR
-        const msgToSeller = `🛒 *NUEVO CLIENTE - RESUELVEhabana*
-
-*Producto:* ${seller.productName}
-*Precio:* $${seller.price.toLocaleString()}
-*Ubicación:* ${seller.location}
-
-━━━━━━━━━━━━━━━━━━━━━━
-*IMPORTANTE: EL DELIVERY ES GESTIONADO POR NOSOTROS*
-
-1. Contacta al cliente para confirmar disponibilidad y precio final.
-2. Nosotros (RESUELVEhabana) coordinaremos la recogida y el envío.
-
-Gracias por vender con nosotros.`;
-        
-        // Abrir WhatsApp del VENDEDOR
-        window.open(`https://wa.me/${seller.sellerWhatsapp}?text=${encodeURIComponent(msgToSeller)}`, '_blank');
-        
-        // NOTIFICAR AL ADMIN (TÚ) para que gestiones el delivery
-        const msgToAdmin = `📦 *NUEVO PEDIDO PARA GESTIONAR*
-
-*Producto:* ${seller.productName}
-*Vendedor:* ${seller.sellerName}
-*Teléfono Vendedor:* ${seller.sellerWhatsapp}
-
-**Acción:** Coordinar la recogida y el delivery con el vendedor y el comprador.`;
-        
-        window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(msgToAdmin)}`, '_blank');
-        
-        // Guardar registro local
-        let registros = JSON.parse(localStorage.getItem('resuelve_pedidos') || '[]');
-        registros.push({ producto: seller.productName, vendedor: seller.sellerName, fecha: new Date().toISOString() });
-        localStorage.setItem('resuelve_pedidos', JSON.stringify(registros));
-        
-        showToast('✅ Pedido en proceso. El vendedor y administrador han sido notificados.');
-        closeModal('productModal');
-    }
-
-    // ================= FUNCIONES ADMIN =================
-    function openHowToSellModal() { showModal('howToSellModal'); }
-    function closeHowToSellModal() { closeModal('howToSellModal'); }
-    
-    function contactAdminToSell() {
-        const msg = "Hola, quiero publicar un producto en RESUELVEhabana. ¿Cómo te envío la información?";
-        window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
-        closeHowToSellModal();
-        showToast('📢 Contactando administrador');
-    }
-
-    // ================= UTILIDADES =================
-    function showModal(id) { document.getElementById(id).classList.add('show'); document.body.style.overflow = 'hidden'; }
-    function closeModal(id) { document.getElementById(id).classList.remove('show'); document.body.style.overflow = ''; }
-    function showToast(msg) { 
-        const toast = document.getElementById('toastMessage');
-        toast.innerText = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-    
-    function toggleFAQ(id) {
-        const content = document.getElementById(`faq-${id}`);
-        const icon = document.getElementById(`faq-icon-${id}`);
-        content.classList.toggle('hidden');
-        icon.innerText = content.classList.contains('hidden') ? '+' : '−';
-    }
-    
-    function forceReload() {
-        showToast('🔄 Actualizando catálogo...');
-        setTimeout(() => location.reload(), 500);
-    }
-    
-    function closeMobileMenu() {
-        document.getElementById('mobile-menu').classList.remove('open');
-        document.getElementById('mobile-backdrop').classList.remove('open');
-    }
-    
-    // ================= EVENTOS E INICIALIZACIÓN =================
-    document.addEventListener('DOMContentLoaded', () => {
-        renderProducts();
-        
-        // Scroll animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => e.target.classList.add('is-visible'));
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
-        
-        // Search
-        document.getElementById('searchInput').addEventListener('input', () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(renderProducts, 300);
-        });
-        
-        // Mobile menu
-        document.getElementById('mobile-menu-button').onclick = () => {
-            document.getElementById('mobile-menu').classList.add('open');
-            document.getElementById('mobile-backdrop').classList.add('open');
-        };
-        document.getElementById('close-mobile-menu').onclick = closeMobileMenu;
-        document.getElementById('mobile-backdrop').onclick = closeMobileMenu;
-        document.querySelectorAll('.mobile-nav-link').forEach(link => link.onclick = closeMobileMenu);
-        
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const product = {
+                    id: btn.dataset.id,
+                    name: btn.dataset.name,
+                    price: parseFloat(btn.dataset.price),
+                    priceUSD: parseFloat(btn.dataset.priceusd),
+                    category: btn.dataset.category,
+                    img: btn.dataset.img
+                };
+                addToCart(product, 1);
             });
         });
+    }
+    
+    function goToProduct(productId) {
+        window.location.href = `product-detail.html?id=${productId}`;
+    }
+    
+    document.querySelectorAll(".cat-filter").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".cat-filter").forEach(b => {
+                b.classList.remove("active", "bg-primary", "text-white");
+                b.classList.add("bg-surface-container-high");
+            });
+            btn.classList.add("active", "bg-primary", "text-white");
+            currentFilter = btn.dataset.cat;
+            renderProducts();
+        });
     });
+    
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+        searchTerm = e.target.value;
+        renderProducts();
+    });
+    
+    renderProducts();
 </script>
 </body>
 </html>
