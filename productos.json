@@ -8,7 +8,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/76xHK6zt/atun_precio_500.png",
-        "fallback_icon": "🐟"
+        "fallback_icon": "🐟",
+        "stock": 8
     },
     {
         "id": 2,
@@ -19,7 +20,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/gjjYPTNv/pasta_tomate_precio_350.png",
-        "fallback_icon": "🍅"
+        "fallback_icon": "🍅",
+        "stock": 12
     },
     {
         "id": 3,
@@ -30,7 +32,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/4yyJTSBj/pimiento_presio_750.png",
-        "fallback_icon": "🫑"
+        "fallback_icon": "🫑",
+        "stock": 5
     },
     {
         "id": 4,
@@ -41,7 +44,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/WbZBX2hN/cafe_dualis_250_g_precio_1450.png",
-        "fallback_icon": "☕"
+        "fallback_icon": "☕",
+        "stock": 3
     },
     {
         "id": 5,
@@ -52,7 +56,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/hG26fv31/cafe_Dufiltro_250_g_precio_1450.png",
-        "fallback_icon": "☕"
+        "fallback_icon": "☕",
+        "stock": 7
     },
     {
         "id": 6,
@@ -63,7 +68,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/nhY6f04N/cafe_enepa_precio_450.png",
-        "fallback_icon": "☕"
+        "fallback_icon": "☕",
+        "stock": 15
     },
     {
         "id": 7,
@@ -74,7 +80,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/sDWkwVvv/carton_de_huevo_30_u_precio_3000.png",
-        "fallback_icon": "🥚"
+        "fallback_icon": "🥚",
+        "stock": 4
     },
     {
         "id": 8,
@@ -85,7 +92,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/tT2XwjtT/leche_condensada.png",
-        "fallback_icon": "🥛"
+        "fallback_icon": "🥛",
+        "stock": 6
     },
     {
         "id": 9,
@@ -96,7 +104,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/3xc2NHFB/harina_blanca1_kg.png",
-        "fallback_icon": "🌾"
+        "fallback_icon": "🌾",
+        "stock": 10
     },
     {
         "id": 10,
@@ -107,7 +116,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/1zv2fXjZ/chicoticos_pelly_90_g_precio_400.png",
-        "fallback_icon": "🍪"
+        "fallback_icon": "🍪",
+        "stock": 20
     },
     {
         "id": 11,
@@ -118,7 +128,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/cLgrDtf9/papitas_campesinas_precio_690.png",
-        "fallback_icon": "🥔"
+        "fallback_icon": "🥔",
+        "stock": 0
     },
     {
         "id": 12,
@@ -129,7 +140,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/pdQV7frX/pelly_jamon_precio_580.png",
-        "fallback_icon": "🍖"
+        "fallback_icon": "🍖",
+        "stock": 9
     },
     {
         "id": 13,
@@ -140,7 +152,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/KzJZw2rR/mayonesa_precio_850.png",
-        "fallback_icon": "🥫"
+        "fallback_icon": "🥫",
+        "stock": 14
     },
     {
         "id": 14,
@@ -151,7 +164,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/Px2t9jzz/mayonesa_precio1100.png",
-        "fallback_icon": "🥫"
+        "fallback_icon": "🥫",
+        "stock": 11
     },
     {
         "id": 15,
@@ -162,7 +176,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/8CdkdW7x/cuchilla_de_afeitar_precio_100.png",
-        "fallback_icon": "🪒"
+        "fallback_icon": "🪒",
+        "stock": 25
     },
     {
         "id": 16,
@@ -173,7 +188,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/3RK8tRpR/jabon_marwa_precio_150.png",
-        "fallback_icon": "🧼"
+        "fallback_icon": "🧼",
+        "stock": 30
     },
     {
         "id": 17,
@@ -184,7 +200,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/bwW289qD/papel_sanitario_precio_490i.png",
-        "fallback_icon": "🧻"
+        "fallback_icon": "🧻",
+        "stock": 8
     },
     {
         "id": 18,
@@ -195,7 +212,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/KjjZyH0b/toallas_sanitarias_precio_450.png",
-        "fallback_icon": "🌸"
+        "fallback_icon": "🌸",
+        "stock": 5
     },
     {
         "id": 19,
@@ -206,7 +224,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/W4ZSP3cw/toallas_humedas_precio_690.png",
-        "fallback_icon": "🧴"
+        "fallback_icon": "🧴",
+        "stock": 7
     },
     {
         "id": 20,
@@ -217,7 +236,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/V6YfK6Mz/jabon_de_lavar_precio_250.png",
-        "fallback_icon": "🧺"
+        "fallback_icon": "🧺",
+        "stock": 18
     },
     {
         "id": 21,
@@ -228,7 +248,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/vTgJRyhp/perfume_candy_precio_3100.png",
-        "fallback_icon": "🌸"
+        "fallback_icon": "🌸",
+        "stock": 4
     },
     {
         "id": 22,
@@ -239,7 +260,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/ZKrT0PPG/perfume_precio_3100.png",
-        "fallback_icon": "🌸"
+        "fallback_icon": "🌸",
+        "stock": 6
     },
     {
         "id": 23,
@@ -250,7 +272,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/CL03P3Dn/perfume_q_precio_3100.png",
-        "fallback_icon": "🌸"
+        "fallback_icon": "🌸",
+        "stock": 3
     },
     {
         "id": 24,
@@ -261,7 +284,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/PxtXSxD2/desodorante_obao_precio_1100.png",
-        "fallback_icon": "🧴"
+        "fallback_icon": "🧴",
+        "stock": 12
     },
     {
         "id": 25,
@@ -272,7 +296,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/FR9rTRS8/desodorante_rush_blanco_precio_1000.png",
-        "fallback_icon": "🧴"
+        "fallback_icon": "🧴",
+        "stock": 10
     },
     {
         "id": 26,
@@ -283,7 +308,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/sXVjTXSF/desodorante_rush_precio_1000.png",
-        "fallback_icon": "🧴"
+        "fallback_icon": "🧴",
+        "stock": 9
     },
     {
         "id": 27,
@@ -294,7 +320,8 @@
         "seller_phone": "5353456789",
         "seller_name": "Aseo y Hogar Habana",
         "img": "https://i.postimg.cc/G3v04rsM/colonia_nina.png",
-        "fallback_icon": "🌸"
+        "fallback_icon": "🌸",
+        "stock": 5
     },
     {
         "id": 28,
@@ -305,7 +332,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/Hsmz1H69/macarrones_precio_300.png",
-        "fallback_icon": "🍝"
+        "fallback_icon": "🍝",
+        "stock": 16
     },
     {
         "id": 29,
@@ -316,7 +344,8 @@
         "seller_phone": "5351234567",
         "seller_name": "Alimentos La Confianza",
         "img": "https://i.postimg.cc/FzNTpQqK/sopas_instantaneas_precio_160.png",
-        "fallback_icon": "🍜"
+        "fallback_icon": "🍜",
+        "stock": 22
     },
     {
         "id": 30,
@@ -327,7 +356,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/59YT2x5p/licor_de_fresa_precio_2500.png",
-        "fallback_icon": "🍓"
+        "fallback_icon": "🍓",
+        "stock": 7
     },
     {
         "id": 31,
@@ -338,7 +368,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/7ZDW90Fz/locor_cocobay_precio_2500.png",
-        "fallback_icon": "🥥"
+        "fallback_icon": "🥥",
+        "stock": 5
     },
     {
         "id": 32,
@@ -349,7 +380,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/4N8W6q1t/tea_precio_320.png",
-        "fallback_icon": "🥃"
+        "fallback_icon": "🥃",
+        "stock": 12
     },
     {
         "id": 33,
@@ -360,7 +392,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/cLyrb4T0/whisky_1L_precio_1350.png",
-        "fallback_icon": "🥃"
+        "fallback_icon": "🥃",
+        "stock": 8
     },
     {
         "id": 34,
@@ -371,7 +404,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/y84kbYnC/whisky_sir_albin_precio_550.png",
-        "fallback_icon": "🥃"
+        "fallback_icon": "🥃",
+        "stock": 4
     },
     {
         "id": 35,
@@ -382,7 +416,8 @@
         "seller_phone": "5352345678",
         "seller_name": "Snacks El Goloso",
         "img": "https://i.postimg.cc/XNLLWmmx/vino_pluvium_precio_1200.png",
-        "fallback_icon": "🍷"
+        "fallback_icon": "🍷",
+        "stock": 6
     },
     {
         "id": 36,
@@ -393,6 +428,7 @@
         "seller_phone": "5354567890",
         "seller_name": "Tecno Express",
         "img": "https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png",
-        "fallback_icon": "🔋"
+        "fallback_icon": "🔋",
+        "stock": 15
     }
 ]
