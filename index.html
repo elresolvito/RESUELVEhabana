@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>El Resolvito · Tu tienda en La Habana</title>
+    <meta name="description" content="Tienda online en La Habana Vieja. Alimentos, ropa, manualidades, servicios y alquileres.">
+    
+    <!-- OneSignal (notificaciones) -->
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    
+    <!-- Fuentes y estilos externos -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Kaushan+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'hand': ['Kaushan Script', 'cursive'],
+                    },
+                    colors: {
+                        'cuban-green': '#2E7D32',
+                        'cuban-dark': '#1B5E20',
+                        'cuban-yellow': '#FFB300',
+                        'cuban-blue': '#0277BD',
+                        'cuban-cream': '#FFF8E1',
+                        'cuban-orange': '#FF6F00'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body { background: #FEF9E6; font-family: 'Inter', sans-serif; }
+        .product-card { transition: all 0.2s ease; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15); }
+        .hero-gradient {
+            background: linear-gradient(125deg, #1B5E20 0%, #2E7D32 40%, #0277BD 100%);
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .btn-whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+        .toast-enter { animation: slideIn 0.3s ease; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        /* skeleton loading */
+        .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.2s infinite; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    </style>
+</head>
+<body class="text-gray-800 pb-20 antialiased">
+
+    <!-- ========== BOTONES FLOTANTES ========= -->
+    <button id="notificationBtn" class="fixed top-20 right-4 z-40 bg-cuban-blue text-white p-3 rounded-full shadow-lg hidden hover:bg-blue-700 transition"><i class="fas fa-bell"></i><span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">1</span></button>
+    <a href="https://wa.me/5356382909" target="_blank" class="fixed bottom-20 right-4 z-40 btn-whatsapp text-white p-4 rounded-full shadow-lg hover:scale-110 transition"><i class="fab fa-whatsapp text-2xl"></i></a>
+    <button onclick="toggleCart()" class="fixed bottom-4 right-4 z-40 bg-cuban-green text-white p-4 rounded-full shadow-lg hover:scale-110 transition"><i class="fas fa-shopping-cart text-xl"></i><span id="cartCount" class="absolute -top-1 -right-1 bg-cuban-yellow text-cuban-dark text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center hidden">0</span></button>
+
+    <!-- ========== HEADER ========= -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <button onclick="toggleMenu()" class="p-2 hover:bg-gray-100 rounded-lg lg:hidden"><i class="fas fa-bars text-2xl text-cuban-green"></i></button>
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-cuban-green rounded-full flex items-center justify-center text-white text-xl"><i class="fas fa-store"></i></div>
+                <div><h1 class="text-xl font-bold text-cuban-green">El Resolvito</h1><p class="text-xs text-gray-500">La Habana Vieja</p></div>
+            </div>
+            <nav class="hidden lg:flex gap-6 text-sm font-medium"><a href="#inicio" class="hover:text-cuban-green">Inicio</a><a href="#mercado" class="hover:text-cuban-green">Mercado</a><a href="#reservas" class="hover:text-cuban-green">Alojamientos</a><a href="#servicios" class="hover:text-cuban-green">Servicios</a><a href="#mayor" class="hover:text-cuban-green">Por Mayor</a><a href="#blog" class="hover:text-cuban-green">Blog</a></nav>
+            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-lg relative lg:hidden"><i class="fas fa-shopping-cart text-2xl text-cuban-green"></i><span id="cartCountMobile" class="absolute top-0 right-0 bg-cuban-yellow text-cuban-dark text-xs rounded-full w-5 h-5 hidden items-center justify-center">0</span></button>
+        </div>
+        <div class="border-t px-4 py-2"><div class="relative max-w-2xl mx-auto"><input type="text" id="searchInput" placeholder="Buscar productos, servicios..." class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:border-cuban-green"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
+    </header>
+
+    <!-- menu movil -->
+    <div id="mobileMenu" class="fixed inset-0 bg-black/50 z-50 hidden" onclick="toggleMenu()"><div class="bg-white w-3/4 max-w-sm h-full p-6" onclick="event.stopPropagation()"><div class="flex justify-between mb-6"><h2 class="text-xl font-bold text-cuban-green">Menú</h2><button onclick="toggleMenu()"><i class="fas fa-times text-2xl"></i></button></div><nav class="space-y-3"><a href="#inicio" onclick="toggleMenu()" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fas fa-home mr-3 text-cuban-green"></i>Inicio</a><a href="#mercado" onclick="toggleMenu()" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fas fa-shopping-basket mr-3 text-cuban-green"></i>Mercado</a><a href="#reservas" onclick="toggleMenu()" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fas fa-bed mr-3 text-cuban-green"></i>Alojamientos</a><a href="#servicios" onclick="toggleMenu()" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fas fa-tools mr-3 text-cuban-green"></i>Servicios</a><a href="#mayor" onclick="toggleMenu()" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fas fa-boxes mr-3 text-cuban-green"></i>Venta Mayor</a><a href="#blog" onclick="toggleMenu()" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fas fa-newspaper mr-3 text-cuban-green"></i>Blog</a><a href="https://instagram.com/elresolvito.habana" target="_blank" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fab fa-instagram mr-3 text-pink-600"></i>Instagram</a></nav></div></div>
+
+    <!-- HERO -->
+    <section id="inicio" class="hero-gradient text-white py-16 px-4 relative">
+        <div class="container mx-auto text-center"><span class="inline-block bg-cuban-yellow text-cuban-dark px-4 py-1 rounded-full text-sm font-bold mb-4 animate-pulse">🎉 Envío solo $200 en La Habana Vieja</span><h2 class="text-3xl md:text-5xl font-bold mb-4">Todo lo que necesitas, <br>al alcance de tu mano</h2><p class="text-lg md:text-xl mb-6">Productos frescos, alojamientos, servicios y más</p><div class="flex flex-col sm:flex-row gap-4 justify-center"><a href="#mercado" class="bg-white text-cuban-green px-8 py-3 rounded-full font-bold shadow-lg">Ver Productos</a><a href="https://wa.me/5356382909" target="_blank" class="bg-cuban-yellow text-cuban-dark px-8 py-3 rounded-full font-bold shadow-lg"><i class="fab fa-whatsapp mr-2"></i>WhatsApp</a></div></div>
+    </section>
+
+    <!-- CATEGORIAS filtro -->
+    <section class="sticky top-[116px] z-30 bg-white/90 backdrop-blur-sm py-3 border-b shadow-sm"><div class="container mx-auto px-4"><div class="flex gap-3 overflow-x-auto hide-scrollbar" id="categoryContainer"><button onclick="filterCategory('todos')" class="category-pill px-5 py-1.5 bg-cuban-green text-white rounded-full whitespace-nowrap text-sm font-medium">Todos</button><button onclick="filterCategory('Alimentos y conservas')" class="category-pill px-5 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Alimentos</button><button onclick="filterCategory('Snacks y golosinas')" class="category-pill px-5 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Snacks</button><button onclick="filterCategory('Higiene personal')" class="category-pill px-5 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Higiene</button><button onclick="filterCategory('Bebidas alcohólicas y malta')" class="category-pill px-5 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Bebidas</button><button onclick="filterCategory('Salsas')" class="category-pill px-5 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Salsas</button><button onclick="filterCategory('Perfumes y desodorantes')" class="category-pill px-5 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Perfumes</button></div></div></section>
+
+    <!-- PRODUCTOS (catalogo CSV) -->
+    <section id="mercado" class="py-8"><div class="container mx-auto px-4"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-cuban-dark"><i class="fas fa-shopping-basket mr-2 text-cuban-green"></i>Catálogo</h2><span id="productCount" class="text-sm text-gray-500">cargando...</span></div><div id="loadingProducts" class="text-center py-12"><div class="inline-block w-10 h-10 border-4 border-cuban-green border-t-transparent rounded-full animate-spin"></div><p class="mt-3">Cargando productos...</p></div><div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 hidden"></div><div id="noResults" class="hidden text-center py-12"><i class="fas fa-search text-4xl text-gray-300"></i><p class="text-gray-500 mt-2">No se encontraron productos</p></div><div id="loadError" class="hidden text-center py-12"><i class="fas fa-exclamation-triangle text-4xl text-yellow-500"></i><p class="mb-2">Error al cargar productos</p><button onclick="loadProductsFromCSV()" class="text-cuban-green underline">Reintentar</button></div></div></section>
+
+    <!-- ALOJAMIENTOS preview -->
+    <section id="reservas" class="py-10 bg-white"><div class="container mx-auto px-4"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold text-cuban-dark"><i class="fas fa-bed mr-2 text-cuban-blue"></i>Alojamientos</h2><a href="#" onclick="alert('Próximamente: reservas con calendario')" class="text-cuban-green text-sm font-medium">Ver todos →</a></div><div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"><div class="bg-white rounded-xl shadow overflow-hidden"><img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500" class="h-48 w-full object-cover"><div class="p-4"><h3 class="font-bold text-lg">Apartamento Centro Histórico</h3><p class="text-gray-500 text-sm">La Habana Vieja</p><div class="flex gap-3 mt-2 text-sm"><span><i class="fas fa-user"></i> 4 huéspedes</span><span><i class="fas fa-wifi"></i> WiFi</span></div><div class="flex justify-between items-center mt-3"><span class="text-2xl font-bold text-cuban-green">$2,500</span><button onclick="openReservationModal('Apartamento Centro Histórico')" class="bg-cuban-blue text-white px-4 py-2 rounded-lg text-sm">Reservar</button></div></div></div><div class="bg-white rounded-xl shadow overflow-hidden"><img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500" class="h-48 w-full object-cover"><div class="p-4"><h3 class="font-bold text-lg">Casa Colonial Completa</h3><p class="text-gray-500 text-sm">Centro Habana</p><div class="flex gap-3 mt-2 text-sm"><span><i class="fas fa-user"></i> 6 huéspedes</span><span><i class="fas fa-car"></i> Parqueo</span></div><div class="flex justify-between items-center mt-3"><span class="text-2xl font-bold text-cuban-green">$4,000</span><button onclick="openReservationModal('Casa Colonial Completa')" class="bg-cuban-blue text-white px-4 py-2 rounded-lg text-sm">Reservar</button></div></div></div><div class="bg-white rounded-xl shadow overflow-hidden"><img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=500" class="h-48 w-full object-cover"><div class="p-4"><h3 class="font-bold text-lg">Estudio Moderno</h3><p class="text-gray-500 text-sm">Vedado</p><div class="flex gap-3 mt-2 text-sm"><span><i class="fas fa-user"></i> 2 huéspedes</span><span><i class="fas fa-snowflake"></i> A/C</span></div><div class="flex justify-between items-center mt-3"><span class="text-2xl font-bold text-cuban-green">$1,800</span><button onclick="openReservationModal('Estudio Moderno')" class="bg-cuban-blue text-white px-4 py-2 rounded-lg text-sm">Reservar</button></div></div></div></div></div></section>
+
+    <!-- SERVICIOS -->
+    <section id="servicios" class="py-10 bg-cuban-cream"><div class="container mx-auto px-4"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold text-cuban-dark"><i class="fas fa-tools mr-2 text-cuban-orange"></i>Servicios</h2><a href="#" onclick="alert('Pronto más servicios')" class="text-cuban-green text-sm">Ver todos →</a></div><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div class="bg-white p-5 rounded-xl shadow cursor-pointer" onclick="openServiceDetail('barbero')"><div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl mb-3">💈</div><h3 class="font-bold">Barbero a domicilio</h3><p class="text-xs text-gray-500 mt-1">Desde $300</p></div><div class="bg-white p-5 rounded-xl shadow cursor-pointer" onclick="openServiceDetail('tapiceria')"><div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-2xl mb-3">🛋️</div><h3 class="font-bold">Tapicería</h3><p class="text-xs text-gray-500 mt-1">Presupuesto gratis</p></div><div class="bg-white p-5 rounded-xl shadow cursor-pointer" onclick="openServiceDetail('electricidad')"><div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-2xl mb-3">⚡</div><h3 class="font-bold">Electricidad</h3><p class="text-xs text-gray-500 mt-1">Urgencias 24h</p></div><div class="bg-white p-5 rounded-xl shadow cursor-pointer" onclick="openServiceDetail('plomeria')"><div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center text-2xl mb-3">🔧</div><h3 class="font-bold">Plomería</h3><p class="text-xs text-gray-500 mt-1">Servicio rápido</p></div></div></div></section>
+
+    <!-- MAYORISTA -->
+    <section id="mayor" class="py-10 bg-gradient-to-r from-cuban-dark to-cuban-green text-white"><div class="container mx-auto px-4"><div class="flex flex-col md:flex-row justify-between items-center mb-6"><h2 class="text-2xl font-bold"><i class="fas fa-boxes mr-2 text-cuban-yellow"></i>Venta al por Mayor</h2><a href="#" onclick="alert('Catálogo mayorista pronto')" class="bg-cuban-yellow text-cuban-dark px-5 py-2 rounded-full text-sm font-bold">Ver catálogo</a></div><div class="grid md:grid-cols-3 gap-5"><div class="bg-white/10 backdrop-blur rounded-xl p-4"><div class="flex gap-3 items-center"><img src="https://i.postimg.cc/WbZBX2hN/cafe_dualis_250_g_precio_1450.png" class="w-14 h-14 object-cover rounded bg-white"><div><h3 class="font-bold">Café Dualis</h3><p class="text-xs opacity-80">Caja 10u</p></div></div><div class="flex justify-between mt-2"><span class="text-xl font-bold text-cuban-yellow">$13,000</span><span class="line-through text-sm">$14,500</span></div><button onclick="addMayorToCart('Café Dualis caja (Mayor)',13000,1)" class="w-full mt-3 bg-white text-cuban-dark py-1.5 rounded-full text-sm font-medium">Añadir pedido</button></div><div class="bg-white/10 backdrop-blur rounded-xl p-4"><div class="flex gap-3 items-center"><img src="https://i.postimg.cc/sDWkwVvv/carton_de_huevo_30_u_precio_3000.png" class="w-14 h-14 object-cover rounded bg-white"><div><h3 class="font-bold">Huevos</h3><p class="text-xs opacity-80">3 cartones (90u)</p></div></div><div class="flex justify-between mt-2"><span class="text-xl font-bold text-cuban-yellow">$8,400</span><span class="line-through text-sm">$9,000</span></div><button onclick="addMayorToCart('Huevos 3 cartones Mayor',8400,1)" class="w-full mt-3 bg-white text-cuban-dark py-1.5 rounded-full text-sm font-medium">Añadir pedido</button></div><div class="bg-white/10 backdrop-blur rounded-xl p-4"><div class="flex gap-3 items-center"><img src="https://i.postimg.cc/76xHK6zt/atun_precio_500.png" class="w-14 h-14 object-cover rounded bg-white"><div><h3 class="font-bold">Atún pack 12u</h3><p class="text-xs opacity-80">12 latas</p></div></div><div class="flex justify-between mt-2"><span class="text-xl font-bold text-cuban-yellow">$6,000</span><span class="line-through text-sm">$6,480</span></div><button onclick="addMayorToCart('Atún pack 12 mayor',6000,1)" class="w-full mt-3 bg-white text-cuban-dark py-1.5 rounded-full text-sm font-medium">Añadir pedido</button></div></div></div></section>
+
+    <!-- BLOG preview -->
+    <section id="blog" class="py-10 bg-white"><div class="container mx-auto px-4"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold text-cuban-dark"><i class="fas fa-newspaper mr-2 text-cuban-blue"></i>Blog & Noticias</h2><a href="#" onclick="alert('Próximamente artículos')" class="text-cuban-green text-sm">Ver todos →</a></div><div class="grid md:grid-cols-3 gap-6"><div class="rounded-xl shadow overflow-hidden cursor-pointer" onclick="openArticle(1)"><img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500" class="h-44 w-full object-cover"><div class="p-4"><span class="text-xs text-cuban-green font-semibold">Gastronomía</span><h3 class="font-bold mt-1">5 recetas fáciles</h3><p class="text-sm text-gray-500">Con productos básicos</p></div></div><div class="rounded-xl shadow overflow-hidden cursor-pointer" onclick="openArticle(2)"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500" class="h-44 w-full object-cover"><div class="p-4"><span class="text-xs text-cuban-green font-semibold">Turismo</span><h3 class="font-bold mt-1">Guía para alquilar</h3><p class="text-sm text-gray-500">La Habana Vieja</p></div></div><div class="rounded-xl shadow overflow-hidden cursor-pointer" onclick="openArticle(3)"><img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=500" class="h-44 w-full object-cover"><div class="p-4"><span class="text-xs text-cuban-green font-semibold">Servicios</span><h3 class="font-bold mt-1">Mantenimiento del hogar</h3><p class="text-sm text-gray-500">Consejos útiles</p></div></div></div></div></section>
+
+    <!-- FOOTER -->
+    <footer class="bg-cuban-dark text-white py-10"><div class="container mx-auto px-4 grid md:grid-cols-4 gap-6 text-sm"><div><h3 class="font-bold text-lg mb-2">El Resolvito</h3><p class="opacity-70">Tu solución integral en La Habana.</p></div><div><h4 class="font-bold mb-2">Enlaces</h4><ul class="space-y-1 opacity-80"><li><a href="#mercado">Tienda</a></li><li><a href="#reservas">Alojamientos</a></li><li><a href="#servicios">Servicios</a></li></ul></div><div><h4 class="font-bold mb-2">Contacto</h4><ul class="space-y-1 opacity-80"><li><i class="fab fa-whatsapp mr-1"></i> 5356382909</li><li><i class="fas fa-envelope mr-1"></i> elresolvito@gmail.com</li></ul></div><div><h4 class="font-bold mb-2">Síguenos</h4><div class="flex gap-3"><a href="https://instagram.com/elresolvito.habana" class="bg-white/10 p-2 rounded-full"><i class="fab fa-instagram"></i></a><a href="https://whatsapp.com/channel/0029VbAdqJO2f3EL764Cro3G" class="bg-white/10 p-2 rounded-full"><i class="fab fa-whatsapp"></i></a></div></div></div><div class="text-center text-xs opacity-50 mt-8">© 2025 El Resolvito · Hecho en La Habana</div></footer>
+
+    <!-- MODALES (producto, carrito, checkout) -->
+    <div id="productModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="closeModal('productModal')"><div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-auto" onclick="event.stopPropagation()"><img id="modalImage" src="" class="w-full h-56 object-cover rounded-t-2xl"><div class="p-5"><span id="modalCategory" class="text-cuban-green text-sm font-medium"></span><h3 id="modalTitle" class="text-xl font-bold mt-1"></h3><p id="modalDescription" class="text-gray-500 text-sm my-2"></p><div class="flex justify-between items-center"><span id="modalPrice" class="text-2xl font-bold text-cuban-green"></span><div class="flex gap-2 bg-gray-100 p-1 rounded"><button onclick="adjustModalQuantity(-1)" class="w-8 h-8 bg-white rounded shadow">-</button><span id="modalQuantity" class="w-8 text-center font-bold">1</span><button onclick="adjustModalQuantity(1)" class="w-8 h-8 bg-white rounded shadow">+</button></div></div><button onclick="addToCartFromModal()" class="w-full mt-5 bg-cuban-green text-white py-3 rounded-xl font-bold">Añadir al carrito</button></div></div></div>
+
+    <div id="cartOverlay" class="fixed inset-0 bg-black/50 z-50 hidden" onclick="toggleCart()"></div>
+    <div id="cartSidebar" class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 transform translate-y-full cart-slide max-h-[85vh] flex flex-col"><div class="p-4 bg-cuban-green text-white rounded-t-3xl flex justify-between"><h3 class="font-bold"><i class="fas fa-shopping-cart mr-2"></i>Carrito</h3><button onclick="toggleCart()"><i class="fas fa-times"></i></button></div><div id="cartItems" class="flex-1 overflow-auto p-3 space-y-3"></div><div class="border-t p-4 bg-gray-50"><div class="flex justify-between text-sm"><span>Subtotal:</span><span id="cartSubtotal">$0</span></div><div class="flex justify-between text-sm"><span>Envío (La Habana Vieja):</span><span id="cartShipping">$200</span></div><div class="flex justify-between font-bold text-lg"><span>Total:</span><span id="cartTotal">$200</span></div><button onclick="openCheckout()" class="w-full btn-whatsapp text-white py-3 rounded-xl mt-2 font-bold">Pedir por WhatsApp</button></div></div>
+
+    <div id="checkoutModal" class="fixed inset-0 bg-black/50 z-[60] hidden items-center justify-center p-4" onclick="closeModal('checkoutModal')"><div class="bg-white rounded-2xl max-w-md w-full p-5" onclick="event.stopPropagation()"><h3 class="text-xl font-bold mb-3"><i class="fab fa-whatsapp text-green-500"></i> Finalizar pedido</h3><form id="checkoutForm"><input type="text" id="customerName" placeholder="Nombre completo" class="w-full border rounded-lg p-2 mb-2" required><input type="tel" id="customerPhone" placeholder="Teléfono" class="w-full border rounded-lg p-2 mb-2" required><textarea id="customerAddress" rows="2" placeholder="Dirección" class="w-full border rounded-lg p-2 mb-2" required></textarea><input type="text" id="customerReferences" placeholder="Referencias (color puerta, etc)" class="w-full border rounded-lg p-2 mb-2"><select id="paymentMethod" class="w-full border rounded-lg p-2 mb-2"><option value="">Método de pago</option><option value="efectivo">Efectivo (CUP)</option><option value="transferencia">Transferencia</option><option value="mlc">MLC</option></select><div id="cashAmountContainer" class="hidden"><input type="number" id="cashAmount" placeholder="¿Con cuánto pagas?" class="w-full border rounded-lg p-2 mb-2"></div><div class="bg-gray-100 p-3 rounded-lg text-sm" id="checkoutSummary"></div><button type="submit" class="w-full bg-cuban-green text-white py-3 rounded-xl font-bold mt-3">Confirmar pedido</button></form></div></div>
+
+    <div id="toast" class="fixed top-24 right-4 bg-white shadow-lg rounded-lg p-3 z-50 hidden"><div class="flex gap-2"><i class="fas fa-check-circle text-cuban-green"></i><div><strong id="toastTitle">Añadido</strong><p id="toastMessage" class="text-xs text-gray-500"></p></div></div></div>
+
+    <!-- CHATBOT INTELIGENTE (vendedor+guia) -->
+    <style>
+        .chat-container { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
+        .chat-btn { width: 60px; height: 60px; background: linear-gradient(135deg,#2E7D32,#1B5E20); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); color: white; font-size: 28px; position: relative; }
+        .chat-window { position: fixed; bottom: 90px; left: 20px; width: 340px; max-width: calc(100vw - 40px); height: 500px; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; animation: fadeUp 0.2s ease; z-index: 1001; }
+        .chat-window.open { display: flex; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+        .chat-header { background: #1B5E20; color: white; padding: 12px; display: flex; justify-content: space-between; }
+        .chat-msgs { flex:1; overflow-y: auto; background: #f4f3ef; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .msg { display: flex; gap: 8px; max-width: 85%; }
+        .msg.bot { align-self: flex-start; }
+        .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+        .msg-bubble { background: white; padding: 8px 12px; border-radius: 18px; font-size: 13px; box-shadow: 0 1px 1px rgba(0,0,0,0.05); }
+        .msg.user .msg-bubble { background: #2E7D32; color: white; }
+        .quick-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .quick-chip { background: #e8f5e9; color: #2E7D32; border-radius: 20px; padding: 4px 12px; font-size: 12px; cursor: pointer; border: 1px solid #2E7D32; }
+        .typing span { display: inline-block; width: 6px; height: 6px; background: #aaa; border-radius: 50%; margin: 0 2px; animation: blink 1.2s infinite; }
+        @keyframes blink { 0%,100%{ opacity:0.3; } 50%{ opacity:1; } }
+        .product-mini { background: #fff8e1; border-radius: 12px; padding: 8px; margin-top: 8px; display: flex; align-items: center; gap: 8px; cursor: pointer; border-left: 3px solid #FFB300; }
+        .product-mini img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; background: white; }
+        .chat-input-area { display: flex; padding: 10px; border-top: 1px solid #ddd; background: white; }
+        .chat-input { flex:1; border: 1px solid #ddd; border-radius: 30px; padding: 8px 12px; font-size: 13px; outline: none; }
+        .chat-send { background: #2E7D32; border: none; color: white; width: 38px; border-radius: 50%; margin-left: 6px; cursor: pointer; }
+    </style>
+
+    <div class="chat-container">
+        <div class="chat-btn" id="chatBtn"><i class="fas fa-comment-dots"></i><div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div></div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header"><span><i class="fas fa-store"></i> El Resolvito · Asistente</span><button id="closeChatBtn" style="background:none; border:none; color:white;"><i class="fas fa-times"></i></button></div>
+            <div class="chat-msgs" id="chatMsgs">
+                <div class="msg bot"><div class="msg-bubble"><strong>🤖 ¡Hola! Soy el asistente de El Resolvito</strong><br>Puedo ayudarte a encontrar productos, precios, ofertas, alojamientos y servicios.<br>👉 Ejemplo: <span class="font-semibold">"tienen jabón?"</span> o <span class="font-semibold">"precio del café"</span><div class="quick-row"><div class="quick-chip" onclick="sendQuickMsg('tienen jabón?')">🧼 ¿tienen jabón?</div><div class="quick-chip" onclick="sendQuickMsg('precio del café')">☕ precio del café</div><div class="quick-chip" onclick="sendQuickMsg('cervezas')">🍺 cervezas</div></div></div></div>
+            </div>
+            <div class="chat-input-area"><input type="text" id="chatInput" class="chat-input" placeholder="Escribe tu pregunta... ej: ¿tienen jabón?"><button id="chatSendBtn" class="chat-send"><i class="fas fa-paper-plane"></i></button></div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- CATÁLOGO Y CARRITO (desde CSV) ----------
+        let products = [];
+        let cart = [];
+        let currentCategory = 'todos';
+        let currentModalProduct = null;
+        let modalQuantity = 1;
+        const CSV_URL = 'Productos_ElResolvito - Productos_ElResolvito.csv';
+
+        async function loadProductsFromCSV() {
+            const grid = document.getElementById('productsGrid'), loading = document.getElementById('loadingProducts'), errorDiv = document.getElementById('loadError');
+            try {
+                const resp = await fetch(CSV_URL);
+                const csv = await resp.text();
+                products = parseCSV(csv);
+                localStorage.setItem('elResolvitoProducts', JSON.stringify(products));
+                loading.classList.add('hidden');
+                grid.classList.remove('hidden');
+                renderProducts();
+            } catch(e) {
+                console.warn(e);
+                const saved = localStorage.getItem('elResolvitoProducts');
+                if(saved) { products = JSON.parse(saved); loading.classList.add('hidden'); grid.classList.remove('hidden'); renderProducts(); showToast('Modo offline','Últimos productos guardados'); }
+                else { loading.classList.add('hidden'); errorDiv.classList.remove('hidden'); loadBackupProducts(); }
+            }
+        }
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h=>h.trim());
+            const result = [];
+            for(let i=1;i<lines.length;i++) {
+                let vals = lines[i].split(',');
+                let obj = {};
+                headers.forEach((h,idx) => { let v = vals[idx]?.trim()||''; if(v.startsWith('"')&&v.endsWith('"')) v=v.slice(1,-1); if(h==='id'||h==='precio'||h==='stock') v=parseInt(v)||0; obj[h]=v; });
+                if(obj.nombre) result.push(obj);
+            }
+            return result.filter(p=>p.activo!=='no');
+        }
+        function loadBackupProducts() {
+            products = [{id:1,nombre:"Atún en lata",categoria:"Alimentos y conservas",precio:540,imagen:"https://i.postimg.cc/76xHK6zt/atun_precio_500.png",descripcion:"Lata 200g",stock:10},
+                        {id:2,nombre:"Jabón Marwa",categoria:"Higiene personal",precio:150,imagen:"https://i.postimg.cc/3RK8tRpR/jabon_marwa_precio_150.png",descripcion:"Pastilla jabón",stock:10},
+                        {id:3,nombre:"Café Dualis 250g",categoria:"Alimentos y conservas",precio:1450,imagen:"https://i.postimg.cc/WbZBX2hN/cafe_dualis_250_g_precio_1450.png",descripcion:"Café molido",stock:10}];
+            document.getElementById('productsGrid').classList.remove('hidden');
+            renderProducts();
+        }
+        function renderProducts(filter=currentCategory, search='') {
+            let filtered = products.filter(p=> (filter==='todos'||p.categoria===filter) && (p.nombre.toLowerCase().includes(search.toLowerCase())||p.descripcion.toLowerCase().includes(search.toLowerCase())));
+            document.getElementById('productCount').innerText = filtered.length+' productos';
+            const grid = document.getElementById('productsGrid');
+            if(!filtered.length){ grid.innerHTML=''; document.getElementById('noResults').classList.remove('hidden'); return; }
+            document.getElementById('noResults').classList.add('hidden');
+            grid.innerHTML = filtered.map(p=>`<div class="product-card bg-white rounded-xl shadow p-2 cursor-pointer" onclick="openProductModal(${p.id})"><div class="h-36 bg-gray-100 rounded-lg overflow-hidden"><img src="${p.imagen}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150'"></div><div class="p-2"><span class="text-xs text-cuban-green font-semibold">${p.categoria}</span><h3 class="font-bold text-sm">${p.nombre}</h3><div class="flex justify-between items-center mt-1"><span class="text-cuban-green font-bold">$${p.precio}</span><button onclick="event.stopPropagation(); addToCart(${p.id},1)" class="bg-cuban-green text-white rounded-full w-7 h-7 text-sm">+</button></div></div></div>`).join('');
+        }
+        function filterCategory(cat){ currentCategory=cat; renderProducts(); document.querySelectorAll('.category-pill').forEach(btn=>{ if(btn.innerText.trim().toLowerCase()===cat.toLowerCase()||(cat==='todos'&&btn.innerText==='Todos')) btn.classList.add('bg-cuban-green','text-white'); else btn.classList.remove('bg-cuban-green','text-white'); }); }
+        function searchProducts(){ renderProducts(currentCategory, document.getElementById('searchInput').value); }
+        function openProductModal(id){ let p=products.find(x=>x.id==id); if(!p) return; currentModalProduct=p; modalQuantity=1; document.getElementById('modalImage').src=p.imagen; document.getElementById('modalTitle').innerText=p.nombre; document.getElementById('modalDescription').innerText=p.descripcion; document.getElementById('modalPrice').innerText=`$${p.precio}`; document.getElementById('modalCategory').innerText=p.categoria; document.getElementById('modalQuantity').innerText='1'; document.getElementById('productModal').classList.remove('hidden'); }
+        function adjustModalQuantity(delta){ let newQ=modalQuantity+delta; if(newQ>=1 && newQ<=(currentModalProduct?.stock||10)){ modalQuantity=newQ; document.getElementById('modalQuantity').innerText=modalQuantity; } }
+        function addToCartFromModal(){ if(currentModalProduct) addToCart(currentModalProduct.id, modalQuantity); closeModal('productModal'); }
+        function addToCart(id, qty){ let prod=products.find(p=>p.id==id); if(!prod) return; let exist=cart.find(i=>i.id==id); if(exist) exist.quantity+=qty; else cart.push({id:prod.id,name:prod.nombre,price:prod.precio,image:prod.imagen,quantity:qty}); saveCart(); updateCartUI(); showToast('Producto añadido',`${prod.nombre} x${qty}`); }
+        function addMayorToCart(name,price,qty){ cart.push({id:'mayor'+Date.now(),name,price,image:'https://i.postimg.cc/WbZBX2hN/cafe_dualis_250_g_precio_1450.png',quantity:qty}); saveCart(); updateCartUI(); showToast('Añadido','Producto mayorista agregado'); }
+        function saveCart(){ localStorage.setItem('elResolvitoCart',JSON.stringify(cart)); }
+        function updateCartUI(){ let count=cart.reduce((s,i)=>s+i.quantity,0); document.querySelectorAll('#cartCount, #cartCountMobile').forEach(el=>{ if(el){el.innerText=count; el.classList.toggle('hidden',count===0);} }); let subtotal=cart.reduce((s,i)=>s+(i.price*i.quantity),0); let shipping=subtotal>5000?0: (subtotal>2000?300:400); let total=subtotal+shipping; document.getElementById('cartSubtotal').innerText=`$${subtotal}`; document.getElementById('cartShipping').innerText=`$${shipping}`; document.getElementById('cartTotal').innerText=`$${total}`; let container=document.getElementById('cartItems'); if(!cart.length) container.innerHTML='<div class="text-center py-8 text-gray-400"><i class="fas fa-shopping-cart text-3xl"></i><p>Vacío</p></div>'; else container.innerHTML=cart.map(i=>`<div class="flex gap-3 bg-gray-50 p-2 rounded"><img src="${i.image}" class="w-14 h-14 object-cover rounded" onerror="this.src='https://via.placeholder.com/60'"><div class="flex-1"><strong class="text-sm">${i.name}</strong><div class="text-cuban-green font-bold">$${i.price}</div><div class="flex items-center gap-2 mt-1"><button onclick="updateCartQty('${i.id}',-1)" class="w-6 h-6 bg-white rounded shadow">-</button><span>${i.quantity}</span><button onclick="updateCartQty('${i.id}',1)" class="w-6 h-6 bg-white rounded shadow">+</button><button onclick="removeFromCart('${i.id}')" class="text-red-500 ml-auto"><i class="fas fa-trash"></i></button></div></div></div>`).join(''); }
+        function updateCartQty(id,delta){ let item=cart.find(i=>i.id==id); if(item){ item.quantity+=delta; if(item.quantity<=0) cart=cart.filter(i=>i.id!=id); saveCart(); updateCartUI(); } }
+        function removeFromCart(id){ cart=cart.filter(i=>i.id!=id); saveCart(); updateCartUI(); }
+        function toggleCart(){ let sb=document.getElementById('cartSidebar'), ov=document.getElementById('cartOverlay'); sb.classList.toggle('cart-open'); ov.classList.toggle('hidden'); if(sb.classList.contains('cart-open')) sb.style.transform='translateY(0)'; else sb.style.transform='translateY(100%)'; }
+        function openCheckout(){ if(!cart.length){ showToast('Carrito vacío','Agrega productos'); return; } toggleCart(); let subtotal=cart.reduce((s,i)=>s+i.price*i.quantity,0); let shipping=subtotal>5000?0:(subtotal>2000?300:400); document.getElementById('checkoutSummary').innerHTML=cart.map(i=>`<div>${i.name} x${i.quantity} = $${i.price*i.quantity}</div>`).join('')+`<div class="border-t mt-1 pt-1 font-bold">Total + envío: $${subtotal+shipping}</div>`; document.getElementById('checkoutModal').classList.remove('hidden'); }
+        document.getElementById('checkoutForm')?.addEventListener('submit',function(e){ e.preventDefault(); sendOrder(); });
+        document.getElementById('paymentMethod')?.addEventListener('change',function(e){ document.getElementById('cashAmountContainer').classList.toggle('hidden',e.target.value!=='efectivo'); });
+        function sendOrder(){ let name=document.getElementById('customerName').value, phone=document.getElementById('customerPhone').value, address=document.getElementById('customerAddress').value, refs=document.getElementById('customerReferences').value, payment=document.getElementById('paymentMethod').value, cash=document.getElementById('cashAmount').value; let subtotal=cart.reduce((s,i)=>s+i.price*i.quantity,0); let shipping=subtotal>5000?0:(subtotal>2000?300:400); let total=subtotal+shipping; let msg=`*Nuevo pedido El Resolvito*%0A Cliente: ${name}%0ATel: ${phone}%0ADir: ${address}%0APago: ${payment}%0A`; cart.forEach(i=>{ msg+=`${i.name} x${i.quantity} = $${i.price*i.quantity}%0A`; }); msg+=`Total + envío: $${total}`; window.open(`https://wa.me/5356382909?text=${encodeURIComponent(msg)}`,'_blank'); cart=[]; saveCart(); updateCartUI(); closeModal('checkoutModal'); showToast('Pedido enviado','Redirigiendo a WhatsApp'); }
+        function closeModal(id){ document.getElementById(id).classList.add('hidden'); document.body.style.overflow=''; }
+        function showToast(title,msg){ let t=document.getElementById('toast'); document.getElementById('toastTitle').innerText=title; document.getElementById('toastMessage').innerText=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),2500); }
+        function toggleMenu(){ document.getElementById('mobileMenu').classList.toggle('hidden'); }
+        function openReservationModal(prop){ window.open(`https://wa.me/5356382909?text=Hola%2C%20quiero%20reservar%20${encodeURIComponent(prop)}`,'_blank'); }
+        function openServiceDetail(s){ let texts={barbero:'Barbero a domicilio: Corte $300, Barba $150.', tapiceria:'Tapicería y restauración, presupuesto gratis.', electricidad:'Electricidad 24h, reparaciones e instalaciones.', plomeria:'Plomería: destapes, fugas, instalaciones.'}; alert(texts[s]||'Contáctanos por WhatsApp.'); }
+        function openArticle(id){ alert('Próximamente más contenido. ¡Síguenos en Instagram!'); }
+
+        // cargar datos
+        document.addEventListener('DOMContentLoaded',()=>{ loadProductsFromCSV(); const savedCart=localStorage.getItem('elResolvitoCart'); if(savedCart){ cart=JSON.parse(savedCart); updateCartUI(); } });
+
+        // ---------- CHATBOT INTELIGENTE ----------
+        const chatBtn=document.getElementById('chatBtn'), chatWin=document.getElementById('chatWindow'), closeChat=document.getElementById('closeChatBtn'), chatInput=document.getElementById('chatInput'), chatSend=document.getElementById('chatSendBtn'), chatMsgs=document.getElementById('chatMsgs');
+        let isBotTyping=false;
+        function addMsg(text,isUser=false,quick=null){ let div=document.createElement('div'); div.className=`msg ${isUser?'user':'bot'}`; div.innerHTML=`<div class="msg-bubble">${text.replace(/\n/g,'<br>')}${quick?`<div class="quick-row">${quick.map(q=>`<div class="quick-chip" onclick="sendQuickMsg('${q.replace(/'/g,"\\'")}')">${q}</div>`).join('')}</div>`:''}</div>`; chatMsgs.appendChild(div); chatMsgs.scrollTop=chatMsgs.scrollHeight; }
+        function showTyping(){ if(isBotTyping) return; let typingDiv=document.createElement('div'); typingDiv.className='msg bot'; typingDiv.id='typingDiv'; typingDiv.innerHTML='<div class="msg-bubble"><div class="typing"><span>.</span><span>.</span><span>.</span></div></div>'; chatMsgs.appendChild(typingDiv); chatMsgs.scrollTop=chatMsgs.scrollHeight; isBotTyping=true; }
+        function hideTyping(){ let el=document.getElementById('typingDiv'); if(el) el.remove(); isBotTyping=false; }
+        async function botResponse(userMsg){ let msg=userMsg.toLowerCase().trim();
+            // base de datos local de productos (misma que products)
+            let findProduct=(kw)=>{ return products.find(p=>p.nombre.toLowerCase().includes(kw) || p.descripcion.toLowerCase().includes(kw)); };
+            if(msg.includes('jabón')||msg.includes('jabon')){ let jab=products.filter(p=>p.nombre.toLowerCase().includes('jabón')||p.nombre.toLowerCase().includes('jabon')); if(jab.length){ let txt='🧼 *Sí tenemos*:\n'; jab.forEach(j=>txt+=`• ${j.nombre} - $${j.precio} pesos\n`); return {text:txt, quick:['Ver otros productos','Precios']}; } }
+            if(msg.includes('café')||msg.includes('cafe')){ let cafe=products.filter(p=>p.nombre.toLowerCase().includes('café')||p.nombre.toLowerCase().includes('cafe')); if(cafe.length){ let txt='☕ *Café disponible*:\n'; cafe.forEach(c=>txt+=`• ${c.nombre} - $${c.precio}\n`); return {text:txt, quick:['Dualis','Dufiltro']}; } }
+            if(msg.includes('cerveza')||msg.includes('cerve')){ let cer=products.filter(p=>p.nombre.toLowerCase().includes('cerveza')); if(cer.length){ let txt='🍺 *Cervezas*:\n'; cer.forEach(c=>txt+=`• ${c.nombre} - $${c.precio}\n`); return {text:txt, quick:['Cristal','Holland','Ofertas']}; } }
+            if(msg.includes('precio')){ for(let p of products){ if(msg.includes(p.nombre.toLowerCase().slice(0,5))) return {text:`💰 ${p.nombre}: $${p.precio} pesos.\n${p.descripcion}`, quick:['Añadir al carrito','Otro producto']}; } return {text:'¿De qué producto quieres el precio? Dime el nombre (ej: "precio del atún")', quick:['Atún','Café','Jabón']}; }
+            if(msg.includes('alimento')||msg.includes('comida')){ let al=products.filter(p=>p.categoria==='Alimentos y conservas').slice(0,4); let txt='🍅 Algunos alimentos:\n'; al.forEach(a=>txt+=`• ${a.nombre} - $${a.precio}\n`); return {text:txt, quick:['Ver más','Snacks']}; }
+            if(msg.includes('oferta')||msg.includes('promo')) return {text:'🔥 Ofertas activas: Combo Desayuno (ahorro $850), Alojamiento 3x2, Mayorista 10% desc.', quick:['Combo Desayuno','Alojamiento']};
+            if(msg.includes('envío')||msg.includes('domicilio')) return {text:'🚚 Envío en La Habana Vieja $200. Envío GRATIS +$5000. Pago contra entrega.', quick:['Zonas','Precios']};
+            if(msg.includes('alojamiento')) return {text:'🏠 Tenemos apartamentos desde $1800/noche. ¿Cuántas personas?', quick:['2 personas','4 personas','Ver fotos']};
+            if(msg.includes('servicio')) return {text:'🔧 Servicios: Barbero, electricidad, plomería, tapicería. ¿Cuál necesitas?', quick:['Barbero','Electricidad','Plomería']};
+            if(msg.includes('hola')||msg.includes('buenas')) return {text:'¡Hola! ¿Qué buscas? Puedo ayudarte con productos, precios u ofertas.', quick:['Ver productos','Precio del café','Ofertas']};
+            // por defecto buscar cualquier producto
+            for(let p of products){ if(msg.includes(p.nombre.toLowerCase().slice(0,6))) return {text:`🔍 *${p.nombre}* - $${p.precio} pesos.\n${p.descripcion}`, quick:['Añadir','Ver más']}; }
+            return {text:'No entendí bien 😅 Puedes preguntar: "tienen jabón?", "precio del café" o "qué cervezas hay".', quick:['tienen jabón?','precio del café','cervezas','ofertas']};
+        }
+        async function sendUserMessage(){ let text=chatInput.value.trim(); if(!text) return; addMsg(text,true); chatInput.value=''; showTyping(); let resp=await botResponse(text); hideTyping(); addMsg(resp.text,false,resp.quick); }
+        function sendQuickMsg(q){ chatInput.value=q; sendUserMessage(); }
+        chatBtn.onclick=()=>{ chatWin.classList.toggle('open'); if(chatWin.classList.contains('open')) chatInput.focus(); };
+        closeChat.onclick=()=>chatWin.classList.remove('open');
+        chatSend.onclick=sendUserMessage;
+        chatInput.addEventListener('keypress',(e)=>{ if(e.key==='Enter') sendUserMessage(); });
+        window.sendQuickMsg=sendQuickMsg;
+        window.openProductModal=openProductModal;
+        window.addToCart=addToCart;
+        window.updateCartQty=updateCartQty;
+        window.removeFromCart=removeFromCart;
+        window.toggleCart=toggleCart;
+        window.openCheckout=openCheckout;
+        window.filterCategory=filterCategory;
+        window.addMayorToCart=addMayorToCart;
+        window.openReservationModal=openReservationModal;
+        window.openServiceDetail=openServiceDetail;
+        window.openArticle=openArticle;
+        window.closeModal=closeModal;
+        window.adjustModalQuantity=adjustModalQuantity;
+        window.addToCartFromModal=addToCartFromModal;
+        window.searchProducts=searchProducts;
+    </script>
+</body>
+</html>
