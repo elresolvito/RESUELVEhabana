@@ -224,7 +224,7 @@
         </button>
     </div>
 
-    <!-- MODALES (simplificados por brevedad - mismos que antes) -->
+    <!-- MODALES -->
     <div id="product-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
         <div class="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] sm:max-h-[85vh] flex flex-col">
             <div class="p-4 flex justify-between items-center border-b border-slate-100">
@@ -303,6 +303,9 @@
         const PRODUCTOS_POR_PAGINA = 12;
         const MAX_POR_PRODUCTO = 10;
         
+        // 🔴 GOOGLE SHEETS URL (TU URL)
+        const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbygNxrPbYNLi0gZTMZ9vbXFCwBoU0jNg6r4d61IZxRtXNW_DqTxXVdwZAB8IWsOPQYlVQ/exec";
+        
         let catalog = [];
         let cart = [];
         let activeCategory = 'todas';
@@ -366,6 +369,21 @@
             setTimeout(() => { toast.classList.remove('scale-100', 'opacity-100'); toast.classList.add('scale-95', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
         }
 
+        // ========== ENVÍO A GOOGLE SHEETS ==========
+        async function enviarAGoolgeSheets(pedidoData) {
+            try {
+                const response = await fetch(GOOGLE_SHEETS_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(pedidoData)
+                });
+                console.log("✅ Pedido enviado a Google Sheets");
+            } catch (error) {
+                console.error("❌ Error enviando a Google Sheets:", error);
+            }
+        }
+
         // ========== PAGINACIÓN ==========
         function applyFiltersAndRender() {
             if (isLoading || catalog.length === 0) return;
@@ -395,7 +413,6 @@
             }
             document.getElementById('no-results').classList.add('hidden');
             
-            // Calcular páginas
             const totalPaginas = Math.ceil(filtered.length / PRODUCTOS_POR_PAGINA);
             if (paginaActual > totalPaginas) paginaActual = totalPaginas || 1;
             
@@ -546,19 +563,60 @@
         
         function checkoutToWhatsApp() {
             if (cart.length === 0) return;
+            
             const name = document.getElementById('buyer-name').value.trim();
             const phone = document.getElementById('buyer-phone').value.trim();
             const address = document.getElementById('buyer-address').value.trim();
-            if (!name || !phone || !address) { showFeedbackToast("⚠️ Completa tus datos"); return; }
             
-            const subtotal = cart.reduce((acc, curr) => acc + (curr.product.price * curr.qty), 0);
-            const total = subtotal + DELIVERY_COST;
-            let msg = `🛍️ *NUEVO PEDIDO*\n\n👤 *Cliente:* ${name}\n📞 *Teléfono:* ${phone}\n📍 *Dirección:* ${address}\n\n🛒 *Detalle:*\n`;
-            cart.forEach(item => { msg += `- ${item.product.name} x ${item.qty} ($${(item.product.price * item.qty).toLocaleString()} CUP)\n`; });
-            msg += `\n💵 *Subtotal:* $${subtotal.toLocaleString()} CUP\n🛵 *Envío:* $${DELIVERY_COST} CUP\n💰 *TOTAL:* $${total.toLocaleString()} CUP`;
+            if (!name || !phone || !address) { 
+                showFeedbackToast("⚠️ Completa tus datos para coordinar la entrega."); 
+                return; 
+            }
+            
+            const subtotalCUP = cart.reduce((acc, curr) => acc + (curr.product.price * curr.qty), 0);
+            const totalCUP = subtotalCUP + DELIVERY_COST;
+            
+            let productListForWhatsApp = "";
+            let productListForSheets = "";
+            
+            cart.forEach(item => {
+                productListForWhatsApp += `- ${item.product.name} x ${item.qty} → $${(item.product.price * item.qty).toLocaleString()} CUP\n`;
+                productListForSheets += `${item.product.name} x${item.qty} ($${item.product.price} c/u), `;
+            });
+            
+            // Mensaje para WhatsApp
+            let msg = `🛍️ *NUEVO PEDIDO - RESUELVEhabana*\n\n`;
+            msg += `👤 *Cliente:* ${name}\n`;
+            msg += `📞 *Teléfono:* ${phone}\n`;
+            msg += `📍 *Dirección:* ${address}\n\n`;
+            msg += `🛒 *Detalle del pedido:*\n${productListForWhatsApp}\n`;
+            msg += `💵 *Subtotal:* $${subtotalCUP.toLocaleString()} CUP\n`;
+            msg += `🛵 *Envío (eBike):* $${DELIVERY_COST} CUP\n`;
+            msg += `💰 *TOTAL:* $${totalCUP.toLocaleString()} CUP\n\n`;
+            msg += `👉 _Por favor, confírmame disponibilidad para coordinar entrega._`;
+            
+            // ========== ENVIAR A GOOGLE SHEETS (SILENCIOSO) ==========
+            const pedidoData = {
+                name: name,
+                phone: phone,
+                address: address,
+                products: productListForSheets.slice(0, -2),
+                subtotalCUP: subtotalCUP,
+                totalCUP: totalCUP,
+                timestamp: new Date().toISOString()
+            };
+            
+            enviarAGoolgeSheets(pedidoData);
+            
+            // ========== ABRIR WHATSAPP ==========
             const primarySellerPhone = cart[0].product.seller_phone;
             window.open(`https://wa.me/${primarySellerPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-            cart = []; saveCart(); closeCart(); showFeedbackToast("🚀 ¡Pedido enviado! Revisa WhatsApp.");
+            
+            // ========== VACIAR CARRITO ==========
+            cart = [];
+            saveCart();
+            closeCart();
+            showFeedbackToast("🚀 ¡Pedido enviado! Revisa WhatsApp y guardamos tu pedido.");
         }
 
         // ========== MODALES Y OTROS ==========
