@@ -2,678 +2,654 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RESUELVEhabana - Tu compra fácil, rápida y económica</title>
-    
-    <!-- Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RESUELVEhabana · Compra y Vende en La Habana</title>
+    <meta name="description" content="Directorio de productos y servicios en La Habana. Compra fácil, vende gratis. Delivery gestionado.">
+    <meta name="theme-color" content="#EA580C">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Google Analytics (REEMPLAZAR G-TU_ID cuando tengas dominio propio) -->
-    <!--
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TU_ID"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-TU_ID');
-    </script>
-    -->
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['"DM Sans"', 'sans-serif'],
-                        friendly: ['Sora', 'sans-serif'],
-                    },
+                    fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
                     colors: {
-                        caribe: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#059669', 600: '#047857' },
-                        sol: { 400: '#fdba74', 500: '#f97316' },
-                        coral: { 500: '#db2777', 600: '#be185d' }
+                        'resuelve-orange': '#EA580C',
+                        'resuelve-dark': '#9A3412',
+                        'resuelve-accent': '#FBBF24',
+                        'resuelve-light': '#FFF7ED',
                     }
                 }
             }
         }
     </script>
+    
     <style>
-        .page-transition { transition: all 0.3s ease-in-out; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes gentle-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        .pulse-btn { animation: gentle-pulse 2s infinite ease-in-out; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .animate-spin-slow { animation: spin 1s linear infinite; }
+        * { -webkit-tap-highlight-color: transparent; }
+        body { background: #FEF9F1; font-family: 'Inter', sans-serif; }
         
-        /* Lazy loading blur effect */
-        .lazy-img {
-            filter: blur(10px);
-            transition: filter 0.3s ease-out;
+        /* Estilo de tarjetas tipo Revolico */
+        .seller-card {
+            transition: all 0.2s ease;
+            border: 1px solid #FFEDD5;
         }
-        .lazy-img.loaded {
-            filter: blur(0);
+        .seller-card:active { transform: scale(0.98); }
+        
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            transition: all 0.2s;
+        }
+        .whatsapp-btn:hover {
+            transform: scale(1.02);
+            filter: brightness(1.05);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .toast-notify { animation: slideIn 0.3s ease; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Efecto shine en botones */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(30deg);
+            animation: shine 4s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+        
+        /* Animaciones fade-in */
+        .fade-in-up, .fade-in-left, .fade-in-right { opacity: 0; transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in-up { transform: translateY(30px); }
+        .fade-in-left { transform: translateX(-30px); }
+        .fade-in-right { transform: translateX(30px); }
+        .is-visible { opacity: 1; transform: none; }
+        
+        /* Modal overlay */
+        .modal-overlay { opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        .modal-content { transform: translateY(-20px); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .modal-overlay.show .modal-content { transform: translateY(0); opacity: 1; }
+        
+        /* Menú móvil */
+        #mobile-menu { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
+        #mobile-menu.open { transform: translateX(0); }
+        #mobile-backdrop { opacity: 0; visibility: hidden; transition: opacity 0.3s; }
+        #mobile-backdrop.open { opacity: 1; visibility: visible; }
+        
+        /* Category pills */
+        .category-pill {
+            transition: all 0.2s ease;
+        }
+        .category-pill:active { transform: scale(0.95); }
+        
+        /* Spinner */
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--resuelve-orange); border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Botón flotante WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 640px) {
+            .whatsapp-float { bottom: 90px; }
         }
     </style>
 </head>
-<body class="bg-[#FDFBF7] text-slate-800 font-sans min-h-screen flex flex-col selection:bg-caribe-100 selection:text-caribe-600">
+<body class="text-gray-800 pb-20 antialiased">
 
-    <!-- AVISO DE CONEXIÓN Y DATOS -->
-    <div id="data-saver-banner" class="bg-caribe-600 text-white text-xs px-4 py-2 flex justify-between items-center z-50 shadow-sm">
-        <div class="flex items-center gap-1.5">
-            <i data-lucide="zap" class="w-4 h-4 text-sol-400 fill-sol-400"></i>
-            <span>¡Pensado para Cuba! <strong>Ahorra megas</strong> activando el modo ahorro.</span>
-        </div>
-        <button onclick="toggleDataSaver()" id="data-saver-toggle" class="bg-white/20 hover:bg-white/30 text-white font-semibold py-1 px-3 rounded-full transition-all text-[11px] flex items-center gap-1">
-            <span id="data-saver-status">Ahorro: OFF</span>
-        </button>
-    </div>
+    <!-- ========== BOTÓN ADMIN (flotante) ========= -->
+    <a href="#" id="adminWhatsappBtn" class="fixed bottom-6 right-6 z-40 bg-resuelve-orange text-white p-4 rounded-full shadow-lg hover:scale-105 transition-all duration-200 shadow-xl active:scale-95 btn-shine">
+        <i class="fas fa-headset text-xl"></i>
+    </a>
 
-    <!-- CABECERA -->
-    <header class="sticky top-0 bg-white/95 backdrop-blur-md shadow-sm z-40 px-4 py-3 border-b border-slate-100 transition-all">
-        <div class="max-w-6xl mx-auto flex items-center justify-between">
-            <a href="#" class="flex items-center gap-1.5 group">
-                <span class="bg-gradient-to-tr from-caribe-500 to-sol-500 text-white p-2 rounded-2xl shadow-md group-hover:scale-105 transition-transform">
-                    <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-                </span>
-                <div>
-                    <span class="font-friendly text-2xl font-bold leading-none tracking-tight block">
-                        <span class="text-caribe-500">RESUELVE</span><span class="text-coral-500">habana</span>
-                    </span>
-                    <span class="text-[10px] text-slate-400 tracking-wider font-semibold block -mt-1 uppercase">¡Y te lo llevamos en eBike!</span>
-                </div>
-            </a>
+    <!-- ========== HEADER ========= -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-orange-100">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <button onclick="refreshCatalog()" title="Actualizar Catálogo" class="p-2 text-slate-400 hover:text-caribe-500 rounded-xl hover:bg-slate-50 transition-colors relative">
-                    <i data-lucide="refresh-cw" id="refresh-icon" class="w-5 h-5"></i>
+                <div class="w-10 h-10 bg-resuelve-orange rounded-xl flex items-center justify-center text-white text-xl shadow-sm">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-resuelve-orange tracking-tight">RESUELVE<span class="text-gray-800">habana</span></h1>
+                    <p class="text-xs text-gray-500">Directorio de vendedores</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button id="mobile-menu-button" class="md:hidden p-2 hover:bg-gray-100 rounded-full">
+                    <i class="fas fa-bars text-xl text-resuelve-orange"></i>
                 </button>
-                <button onclick="openCart()" class="p-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-2xl transition-all relative">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-coral-500 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white scale-0 transition-transform">0</span>
+                <button onclick="toggleHowItWorks()" class="p-2 hover:bg-gray-100 rounded-full transition-all">
+                    <i class="fas fa-plus-circle text-xl text-resuelve-orange"></i>
                 </button>
+            </div>
+        </div>
+        <div class="border-t bg-white px-4 py-2 shadow-sm">
+            <div class="relative max-w-2xl mx-auto">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar productos, servicios o categorías..." class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-200 focus:border-resuelve-orange focus:ring-1 focus:ring-resuelve-orange outline-none transition-all bg-gray-50">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             </div>
         </div>
     </header>
 
-    <!-- CUERPO PRINCIPAL -->
-    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 space-y-8">
-        
-        <!-- HERO BANNER -->
-        <section class="bg-gradient-to-br from-[#E6F4F1] to-[#FFF5E6] rounded-3xl p-6 md:p-8 relative overflow-hidden shadow-sm border border-white/50">
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-sol-400/20 rounded-full blur-2xl"></div>
-            <div class="absolute -left-10 -top-10 w-40 h-40 bg-caribe-500/10 rounded-full blur-2xl"></div>
-            <div class="relative z-10 max-w-2xl">
-                <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="bg-caribe-500/10 text-caribe-600 font-semibold text-xs px-3 py-1 rounded-full flex items-center gap-1">
-                        <i data-lucide="check" class="w-3.5 h-3.5"></i> Anuncios 100% Gratis
-                    </span>
-                    <span class="bg-sol-500/10 text-sol-600 font-semibold text-xs px-3 py-1 rounded-full flex items-center gap-1">
-                        <i data-lucide="bike" class="w-3.5 h-3.5"></i> Mensajería en eBike
-                    </span>
-                </div>
-                <h1 class="font-friendly text-3xl md:text-4xl text-slate-800 font-bold mb-3 leading-tight">
-                    ¿Cansado de perder tus productos en el scroll de WhatsApp y gastar tus datos? 💸
-                </h1>
-                <p class="text-slate-600 text-sm md:text-base mb-6 leading-relaxed">
-                    Sube tus productos gratis una sola vez. Los compradores los verán organizados, buscarán al instante con o sin faltas de ortografía, y nosotros nos encargamos del <strong class="text-caribe-600">delivery rápido en eBike</strong>. ¡Ahorra megas y vende en grande!
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <a href="#catalogo" class="pulse-btn bg-caribe-500 hover:bg-caribe-600 text-white font-friendly font-semibold py-3 px-6 rounded-2xl shadow-lg shadow-caribe-500/20 transition-all flex items-center gap-2">
-                        Ver catálogo <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </a>
-                    <button onclick="openVendedorInfo()" class="bg-white hover:bg-slate-50 text-slate-700 font-semibold py-3 px-5 rounded-2xl shadow-sm border border-slate-100 transition-all flex items-center gap-1.5 text-sm">
-                        <i data-lucide="plus-circle" class="w-4 h-4 text-coral-500"></i> ¿Quieres vender gratis?
-                    </button>
-                </div>
+    <!-- MENÚ MÓVIL -->
+    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-resuelve-orange z-50 shadow-xl">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-8">
+                <span class="text-white text-xl font-bold">RESUELVEhabana</span>
+                <button id="close-mobile-menu" class="text-white text-3xl">&times;</button>
             </div>
-        </section>
+            <nav class="flex flex-col space-y-4 text-white font-semibold">
+                <a href="#mercado" class="hover:text-gray-200 mobile-nav-link">Comprar</a>
+                <button onclick="scrollToSellerSection(); closeMobileMenu()" class="text-left hover:text-gray-200">Vender</button>
+                <a href="#servicio-delivery" class="hover:text-gray-200 mobile-nav-link">Delivery</a>
+                <a href="#como-comprar" class="hover:text-gray-200 mobile-nav-link">Ayuda</a>
+            </nav>
+        </div>
+    </div>
+    <div id="mobile-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
 
-        <!-- SECCIÓN DE BÚSQUEDA Y CATEGORÍAS -->
-        <section id="catalogo" class="space-y-4">
-            <div class="relative max-w-lg mx-auto">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <i data-lucide="search" class="w-5 h-5"></i>
-                </div>
-                <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Busca 'arros', 'aceite', 'kalamar'..." class="w-full bg-white pl-11 pr-10 py-3.5 rounded-2xl border border-slate-200 focus:border-caribe-500 focus:ring-2 focus:ring-caribe-500/10 outline-none text-sm shadow-sm transition-all text-slate-700 placeholder:text-slate-400">
-                <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
-                    <i data-lucide="x-circle" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div id="search-tip" class="text-center text-[11px] text-slate-400 italic">
-                💡 Nuestro buscador inteligente entiende las faltas de ortografía cubanas comunes.
-            </div>
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 -mx-4 px-4">
-                <button onclick="selectCategory('todas')" class="category-btn active px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-caribe-500 text-white shadow-md shadow-caribe-500/15 transition-all flex items-center gap-1" data-cat="todas">🏖️ Todas</button>
-                <button onclick="selectCategory('comida')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 hover:bg-slate-50 border border-slate-100 transition-all flex items-center gap-1" data-cat="comida">🥩 Alimentos</button>
-                <button onclick="selectCategory('hogar')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 hover:bg-slate-50 border border-slate-100 transition-all flex items-center gap-1" data-cat="hogar">🧼 Aseo y Hogar</button>
-                <button onclick="selectCategory('tecnologia')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 hover:bg-slate-50 border border-slate-100 transition-all flex items-center gap-1" data-cat="tecnologia">🔌 Electrónica</button>
-                <button onclick="selectCategory('otros')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 hover:bg-slate-50 border border-slate-100 transition-all flex items-center gap-1" data-cat="otros">📦 Otros</button>
-            </div>
-        </section>
+    <!-- TICKER PROMOCIONAL -->
+    <div class="bg-resuelve-orange text-white py-2 overflow-hidden whitespace-nowrap">
+        <div class="inline-block animate-pulse font-medium text-sm px-4">
+            📢 ¿VENDES? ¡Anuncia GRATIS! &nbsp;&nbsp;|&nbsp;&nbsp; 🛒 Contacta directo al vendedor &nbsp;&nbsp;|&nbsp;&nbsp; ⭐ +50 productos disponibles &nbsp;&nbsp;|&nbsp;&nbsp; 🚚 Servicio de mensajería disponible
+        </div>
+    </div>
 
-        <!-- INDICADOR DE CARGA -->
-        <div id="loading-indicator" class="text-center py-12">
-            <div class="inline-flex items-center gap-2 text-caribe-500">
-                <i data-lucide="loader-circle" class="w-5 h-5 animate-spin-slow"></i>
-                <span>Cargando productos...</span>
+    <!-- SECCIÓN HERO -->
+    <section class="bg-gradient-to-r from-resuelve-orange to-resuelve-dark text-white py-12 relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <span class="inline-block bg-resuelve-accent text-gray-900 px-4 py-1 rounded-full text-sm font-bold mb-4">🔥 Directorio #1 en La Habana</span>
+            <h2 class="text-3xl md:text-4xl font-bold mb-3">Compra y vende <br>fácil y rápido</h2>
+            <p class="text-lg md:text-xl mb-6 text-white/90">Contacta directo al vendedor · Sin intermediarios</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#mercado" class="bg-white text-resuelve-orange px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition hover:scale-105">Ver catálogo</a>
+                <button onclick="scrollToSellerSection()" class="bg-resuelve-accent text-gray-900 px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition hover:scale-105"><i class="fas fa-plus-circle mr-2"></i>Vender gratis</button>
             </div>
         </div>
+    </section>
 
-        <!-- GRILLA DE PRODUCTOS -->
-        <section>
-            <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-                <h2 class="font-friendly text-xl text-slate-800 font-bold flex items-center gap-1.5">
-                    🛍️ Ofertas Disponibles <span id="items-count" class="text-xs font-sans font-semibold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">0</span>
-                </h2>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-slate-400 flex items-center gap-1">
-                        <i data-lucide="database" class="w-3.5 h-3.5 text-caribe-500"></i> Actualizado
-                    </span>
-                    <!-- Controles de paginación -->
-                    <div id="pagination-controls" class="flex items-center gap-1 text-xs"></div>
+    <!-- SECCIÓN DESTACADA PARA VENDEDORES -->
+    <section id="para-vendedores" class="py-16 bg-resuelve-dark text-white">
+        <div class="container mx-auto px-4 text-center">
+            <i class="fas fa-bullhorn text-5xl text-resuelve-accent mb-4"></i>
+            <h2 class="text-3xl font-bold mb-4">¿Tienes algo que vender?</h2>
+            <p class="text-white/80 max-w-2xl mx-auto mb-8">Publica tu producto GRATIS y llega a cientos de personas en La Habana</p>
+            <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
+                <div class="bg-white/10 rounded-xl p-5">
+                    <i class="fas fa-eye text-3xl text-resuelve-accent mb-3"></i>
+                    <h3 class="font-bold">Visibilidad 24/7</h3>
+                    <p class="text-sm text-white/70">Tu producto siempre visible</p>
+                </div>
+                <div class="bg-white/10 rounded-xl p-5">
+                    <i class="fas fa-shield-alt text-3xl text-resuelve-accent mb-3"></i>
+                    <h3 class="font-bold">Privacidad</h3>
+                    <p class="text-sm text-white/70">Solo contactos reales</p>
+                </div>
+                <div class="bg-white/10 rounded-xl p-5">
+                    <i class="fas fa-truck text-3xl text-resuelve-accent mb-3"></i>
+                    <h3 class="font-bold">Delivery Opcional</h3>
+                    <p class="text-sm text-white/70">Nosotros gestionamos</p>
                 </div>
             </div>
-            <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4"></div>
-            <div id="no-results" class="hidden text-center py-12 px-4 space-y-3">
-                <div class="text-5xl">🏝️</div>
-                <h3 class="font-friendly text-lg font-bold text-slate-700">No encontramos lo que buscas</h3>
-                <p class="text-sm text-slate-400 max-w-xs mx-auto">Prueba buscando con palabras más genéricas o revisa otra categoría.</p>
-                <button onclick="resetFilters()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs py-2 px-4 rounded-xl transition-all">Ver todos los productos</button>
+            <button onclick="contactAdminForSelling()" class="bg-resuelve-accent text-gray-900 px-8 py-3 rounded-full font-bold hover:scale-105 transition inline-flex items-center gap-2">
+                <i class="fab fa-whatsapp"></i> Contactar para Publicar
+            </button>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE SERVICIO DE DELIVERY (independiente) -->
+    <section id="servicio-delivery" class="py-16 bg-white border-t border-gray-100">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-3xl mx-auto">
+                <div class="w-20 h-20 bg-resuelve-orange/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-motorcycle text-4xl text-resuelve-orange"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">📦 ¿Necesitas un mensajero?</h2>
+                <p class="text-gray-600 mb-6">Si eres vendedor y no puedes entregar tu producto, o si eres comprador y el vendedor no hace delivery, nosotros te ayudamos.</p>
+                <div class="grid md:grid-cols-2 gap-6 mb-8 text-left max-w-2xl mx-auto">
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <i class="fas fa-store text-resuelve-orange text-xl mb-2"></i>
+                        <h3 class="font-bold">Para vendedores</h3>
+                        <p class="text-sm text-gray-600">Coordinamos la recogida y entrega de tu producto. Tú solo vendes.</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <i class="fas fa-user text-resuelve-orange text-xl mb-2"></i>
+                        <h3 class="font-bold">Para compradores</h3>
+                        <p class="text-sm text-gray-600">¿El vendedor no hace delivery? Nosotros te lo llevamos a casa.</p>
+                    </div>
+                </div>
+                <button onclick="contactAdminForDelivery()" class="bg-resuelve-orange text-white px-8 py-3 rounded-full font-bold hover:bg-resuelve-dark transition inline-flex items-center gap-2 shadow-md">
+                    <i class="fab fa-whatsapp"></i> Solicitar mensajero
+                </button>
+                <p class="text-xs text-gray-400 mt-4">*El costo del delivery se acuerda antes de enviar. Comisión del 10% para RESUELVEhabana.</p>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+
+    <!-- MODAL CÓMO FUNCIONA (para vendedores) -->
+    <div id="howItWorksModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4" onclick="closeModal('howItWorksModal')">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-resuelve-orange"><i class="fas fa-store"></i> ¿Vendes algo?</h3>
+                <button onclick="closeModal('howItWorksModal')" class="text-gray-400"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div class="flex gap-3"><div class="w-8 h-8 bg-resuelve-orange rounded-full flex items-center justify-center text-white font-bold">1</div><div><strong>Contáctame por WhatsApp</strong><p class="text-sm text-gray-600">Envíame fotos, precio y descripción</p></div></div>
+                <div class="flex gap-3"><div class="w-8 h-8 bg-resuelve-orange rounded-full flex items-center justify-center text-white font-bold">2</div><div><strong>Yo publico tu producto</strong><p class="text-sm text-gray-600">En 24 horas aparece en el catálogo</p></div></div>
+                <div class="flex gap-3"><div class="w-8 h-8 bg-resuelve-orange rounded-full flex items-center justify-center text-white font-bold">3</div><div><strong>Clientes te contactan directo</strong><p class="text-sm text-gray-600">Recibirás los mensajes en tu WhatsApp</p></div></div>
+            </div>
+            <button onclick="contactAdminForSelling()" class="w-full mt-5 bg-green-500 text-white py-3 rounded-xl font-bold">📱 Contactar para publicar</button>
+        </div>
+    </div>
+
+    <!-- SECCIÓN MERCADO (DIRECTORIO) -->
+    <section id="mercado" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Directorio de Productos</h2>
+                <p class="text-gray-500 mt-2">Selecciona una categoría y contacta directo al vendedor</p>
+            </div>
+
+            <!-- CATEGORÍAS (estilo pills) -->
+            <div class="sticky top-[70px] z-30 bg-gray-50 py-3 border-b mb-6">
+                <div class="container mx-auto px-4">
+                    <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1" id="categoryContainer"></div>
+                </div>
+            </div>
+
+            <!-- Banner de delivery -->
+            <div class="bg-white border-2 border-dashed border-green-200 p-4 rounded-xl text-center mb-8">
+                <h3 class="font-bold text-resuelve-orange">🚚 Delivery gestionado por RESUELVEhabana</h3>
+                <p class="text-sm text-gray-600">El vendedor coordina el producto contigo. Nosotros gestionamos el envío.</p>
+            </div>
+
+            <!-- Buscador y actualizar -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                <input type="text" id="searchInputMercado" placeholder="🔍 Buscar producto o vendedor..." class="flex-1 px-4 py-2 border rounded-full focus:ring-2 focus:ring-resuelve-orange outline-none">
+                <button onclick="forceReload()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full font-semibold transition flex items-center justify-center gap-2">
+                    <i class="fas fa-sync-alt"></i> Actualizar catálogo
+                </button>
+            </div>
+
+            <!-- Grid de productos -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+            <div id="noResults" class="hidden text-center py-12">
+                <i class="fas fa-search text-5xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500">No hay productos en esta categoría</p>
+                <button onclick="clearSearchMercado()" class="mt-3 text-resuelve-orange font-medium">Ver todos</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE AYUDA (FAQ) -->
+    <section id="como-comprar" class="py-16 bg-white">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">❓ Preguntas Frecuentes</h2>
+                <p class="text-gray-500 mt-2">Todo lo que necesitas saber</p>
+            </div>
+            <div class="space-y-4">
+                <div class="border rounded-lg">
+                    <button onclick="toggleFAQ(1)" class="w-full text-left p-4 font-bold flex justify-between">🛒 ¿Cómo compro un producto? <span id="faq-icon-1">+</span></button>
+                    <div id="faq-1" class="hidden px-4 pb-4 text-gray-600">1. Busca el producto. 2. Haz clic en "Contactar vendedor". 3. Acuerda precio y entrega. 4. RESUELVEhabana gestiona el delivery.</div>
+                </div>
+                <div class="border rounded-lg">
+                    <button onclick="toggleFAQ(2)" class="w-full text-left p-4 font-bold flex justify-between">🚚 ¿Cómo funciona el delivery? <span id="faq-icon-2">+</span></button>
+                    <div id="faq-2" class="hidden px-4 pb-4 text-gray-600">Nosotros coordinamos la recogida con el vendedor y la entrega contigo. Tú pagas el envío al mensajero.</div>
+                </div>
+                <div class="border rounded-lg">
+                    <button onclick="toggleFAQ(3)" class="w-full text-left p-4 font-bold flex justify-between">📢 ¿Quiero vender, qué hago? <span id="faq-icon-3">+</span></button>
+                    <div id="faq-3" class="hidden px-4 pb-4 text-gray-600">Contáctanos por WhatsApp, envía las fotos y datos de tu producto. Lo publicamos gratis.</div>
+                </div>
+                <div class="border rounded-lg">
+                    <button onclick="toggleFAQ(4)" class="w-full text-left p-4 font-bold flex justify-between">💰 ¿Cuánto cuesta publicar? <span id="faq-icon-4">+</span></button>
+                    <div id="faq-4" class="hidden px-4 pb-4 text-gray-600">Publicar es COMPLETAMENTE GRATIS. Solo ganamos si usas nuestro servicio de mensajería.</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-100 mt-auto py-8 px-4 text-center">
-        <div class="max-w-6xl mx-auto space-y-4">
-            <h3 class="font-friendly text-xl font-bold text-slate-700 leading-none">
-                <span class="text-caribe-500">RESUELVE</span><span class="text-coral-500">habana</span>
-            </h3>
-            <p class="text-xs text-slate-400 max-w-sm mx-auto">Facilitando el comercio en La Habana sin gastos innecesarios de internet. ¡Apoya a los emprendedores locales!</p>
-            <div class="flex justify-center items-center gap-4">
-                <a href="#" class="p-2.5 bg-slate-50 hover:bg-blue-50 text-slate-500 hover:text-blue-600 rounded-full transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
-                <a href="#" class="p-2.5 bg-slate-50 hover:bg-pink-50 text-slate-500 hover:text-pink-600 rounded-full transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
-                <a href="https://wa.me/5356382909" target="_blank" class="p-2.5 bg-green-50 text-green-600 rounded-full hover:bg-green-100 transition-colors flex items-center gap-1.5 text-xs font-semibold px-4"><i data-lucide="phone" class="w-4 h-4"></i> Soporte Admin</a>
+    <footer class="bg-resuelve-dark text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">© 2025 RESUELVEhabana · Directorio independiente de compra y venta en La Habana</p>
+            <p class="text-xs text-white/50 mt-2">Contacta directo al vendedor · Publicación gratis · Delivery gestionado</p>
+            <div class="flex justify-center gap-4 mt-4">
+                <button onclick="scrollToSellerSection()" class="text-white/70 hover:text-white text-sm">Vender</button>
+                <a href="#mercado" class="text-white/70 hover:text-white text-sm">Comprar</a>
+                <a href="#servicio-delivery" class="text-white/70 hover:text-white text-sm">Delivery</a>
+                <a href="#como-comprar" class="text-white/70 hover:text-white text-sm">Ayuda</a>
             </div>
-            <p class="text-[10px] text-slate-400">© 2025 RESUELVEhabana. Admin: +53 56382909 | Entrega rápida con mensajería eBike.</p>
         </div>
     </footer>
 
-    <!-- BOTÓN FLOTANTE DE CARRITO -->
-    <button onclick="openCart()" id="floating-cart" class="fixed bottom-6 right-6 bg-gradient-to-tr from-coral-500 to-rose-600 text-white p-4 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all z-40 flex items-center gap-2">
-        <div class="relative">
-            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
-            <span id="floating-badge" class="absolute -top-3.5 -right-3 bg-white text-coral-600 text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-coral-500">0</span>
-        </div>
-        <span id="floating-cart-total" class="font-friendly font-semibold text-sm pr-1">$0.00 CUP</span>
-    </button>
-
-    <!-- ASISTENTE "RESOLVÍN" -->
-    <div id="chatbot-container" class="fixed bottom-6 left-6 z-40 flex flex-col items-start">
-        <div id="chatbot-bubble" class="hidden bg-white text-xs text-slate-700 py-2.5 px-4 rounded-2xl shadow-lg border border-slate-100 max-w-[200px] mb-2 font-semibold relative after:content-[''] after:absolute after:bottom-[-6px] after:left-5 after:w-3 after:h-3 after:bg-white after:border-b after:border-r after:border-slate-100 after:rotate-45">
-            ¡Hola! 👋 ¿Buscando algo de comer o asear hoy? Te ayudo a resolver.
-        </div>
-        <button onclick="toggleChatbot()" class="bg-gradient-to-tr from-caribe-500 to-teal-400 text-white p-3.5 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center">
-            <i data-lucide="message-circle" class="w-6 h-6"></i>
-        </button>
-    </div>
-
-    <!-- MODALES -->
-    <div id="product-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
-        <div class="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] sm:max-h-[85vh] flex flex-col">
-            <div class="p-4 flex justify-between items-center border-b border-slate-100">
-                <span class="font-friendly text-base font-bold text-slate-700 flex items-center gap-1">🔍 Detalle del Producto</span>
-                <button onclick="closeModal()" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div class="p-5 space-y-4 overflow-y-auto no-scrollbar flex-grow" id="modal-content-area"></div>
-        </div>
-    </div>
-
-    <div id="cart-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
-        <div class="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div class="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                <div class="flex items-center gap-2"><i data-lucide="shopping-cart" class="text-caribe-500 w-5 h-5"></i><h3 class="font-friendly font-bold text-slate-800 text-lg">Tu Pedido</h3></div>
-                <button onclick="closeCart()" class="p-1.5 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-700 rounded-full border border-slate-200 shadow-sm transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div class="p-5 overflow-y-auto flex-grow space-y-4 max-h-[50vh] no-scrollbar">
-                <div id="cart-items-container" class="space-y-3"></div>
-                <div id="cart-empty-state" class="hidden text-center py-8 space-y-2">
-                    <p class="text-4xl">🛒</p>
-                    <p class="font-friendly font-bold text-slate-700">Tu carrito está vacío</p>
+    <!-- MODAL PRODUCTO -->
+    <div id="productModal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4" onclick="closeModal('productModal')">
+        <div class="bg-white rounded-2xl max-w-md w-full" onclick="event.stopPropagation()">
+            <img id="modalImage" src="" class="w-full h-64 object-cover rounded-t-2xl">
+            <div class="p-5">
+                <span id="modalCategory" class="text-resuelve-orange text-sm bg-orange-50 px-2 py-0.5 rounded-full"></span>
+                <h3 id="modalTitle" class="text-xl font-bold mt-2"></h3>
+                <p id="modalDescription" class="text-gray-500 text-sm my-3"></p>
+                <div class="border-t pt-3">
+                    <div class="flex justify-between"><span>💰 Precio:</span><span id="modalPrice" class="text-2xl font-bold text-resuelve-orange"></span></div>
+                    <div class="flex justify-between mt-2"><span>📍 Ubicación:</span><span id="modalLocation" class="text-sm"></span></div>
                 </div>
-            </div>
-            <div class="p-5 border-t border-slate-100 bg-slate-50/50 space-y-4" id="cart-footer-form">
-                <div class="space-y-1.5">
-                    <div class="flex justify-between text-xs text-slate-500"><span>Productos:</span><span id="cart-subtotal">0.00 CUP</span></div>
-                    <div class="flex justify-between text-xs text-slate-500 items-center"><span>🛵 Mensajería Fija (eBike):</span><span class="font-semibold text-caribe-600" id="cart-delivery-cost">+$150.00 CUP</span></div>
-                    <div class="flex justify-between text-base font-bold text-slate-800 pt-1.5 border-t border-slate-200"><span>Total del Pedido:</span><span id="cart-total" class="text-coral-500">0.00 CUP</span></div>
-                </div>
-                <div class="space-y-2">
-                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Tus datos para coordinar</h4>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="buyer-name" placeholder="Tu Nombre" class="col-span-1 bg-white text-xs p-2.5 rounded-xl border border-slate-200 outline-none focus:border-caribe-500">
-                        <input type="tel" id="buyer-phone" placeholder="Celular" class="col-span-1 bg-white text-xs p-2.5 rounded-xl border border-slate-200 outline-none focus:border-caribe-500">
-                    </div>
-                    <input type="text" id="buyer-address" placeholder="Dirección completa" class="w-full bg-white text-xs p-2.5 rounded-xl border border-slate-200 outline-none focus:border-caribe-500">
-                </div>
-                <button onclick="checkoutToWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-friendly font-semibold py-3 px-4 rounded-2xl shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 transition-all"><i data-lucide="send" class="w-5 h-5"></i> Enviar Pedido por WhatsApp</button>
+                <button id="contactSellerBtn" class="w-full whatsapp-btn text-white py-3 rounded-xl font-bold mt-4 flex items-center justify-center gap-2"><i class="fab fa-whatsapp text-xl"></i> Contactar vendedor</button>
             </div>
         </div>
     </div>
 
-    <div id="vendedor-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 relative space-y-4">
-            <button onclick="closeVendedorInfo()" class="absolute top-4 right-4 p-1.5 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <div class="text-4xl text-center">📈</div>
-            <h3 class="font-friendly text-xl font-bold text-slate-800 text-center">¡Promociona tus productos Gratis!</h3>
-            <p class="text-sm text-slate-600 text-center leading-relaxed">¿Tienes productos que vender? Publícalos aquí sin coste.</p>
-            <div class="bg-slate-50 p-4 rounded-2xl text-xs space-y-2 text-slate-600 border border-slate-100">
-                <p>🔹 <strong>¿Cuánto cuesta?</strong> Es 100% Gratis para ti.</p>
-                <p>🔹 <strong>¿Cómo empiezo?</strong> Envíanos tu lista por WhatsApp.</p>
-            </div>
-            <a href="https://wa.me/5356382909?text=Hola!%20Me%20gustaria%20promocionar%20mis%20productos%20gratis%20en%20RESUELVEhabana" target="_blank" class="w-full bg-caribe-500 hover:bg-caribe-600 text-white font-friendly font-semibold py-3 rounded-2xl block text-center shadow-md transition-all">Contactar al Administrador</a>
-        </div>
+    <!-- TOAST NOTIFICACIÓN -->
+    <div id="toast" class="fixed top-24 right-4 bg-white shadow-xl rounded-lg p-3 z-50 hidden border-l-4 border-resuelve-orange toast-notify">
+        <div class="flex gap-2"><i class="fas fa-check-circle text-resuelve-orange"></i><div><strong id="toastTitle"></strong><p id="toastMessage" class="text-xs"></p></div></div>
     </div>
 
-    <div id="chatbot-modal" class="hidden fixed bottom-20 left-6 z-50 bg-white w-80 rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden max-h-96 transition-all">
-        <div class="bg-gradient-to-tr from-caribe-500 to-caribe-600 text-white p-3 flex justify-between items-center">
-            <div class="flex items-center gap-1.5"><div class="bg-white/20 p-1.5 rounded-full"><i data-lucide="smile" class="w-4 h-4"></i></div><div><h4 class="font-friendly text-sm font-bold leading-none">Resolvín</h4><span class="text-[9px] text-teal-100 font-semibold uppercase">Tu guía</span></div></div>
-            <button onclick="toggleChatbot()" class="text-white/80 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
-        </div>
-        <div id="chatbot-messages" class="p-3 overflow-y-auto flex-grow space-y-2 text-xs no-scrollbar min-h-[200px]">
-            <div class="bg-slate-50 text-slate-700 p-2.5 rounded-2xl rounded-tl-none max-w-[85%] border border-slate-100">¡Hola! Aquí Resolvín. ¿En qué te ayudo? 🌴</div>
-        </div>
-        <div class="p-2 border-t border-slate-100 bg-slate-50 flex flex-wrap gap-1">
-            <button onclick="sendBotAnswer('costo_delivery')" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 px-2 py-1 rounded-lg text-[10px] font-semibold">🛵 Delivery</button>
-            <button onclick="sendBotAnswer('ahorro_megas')" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 px-2 py-1 rounded-lg text-[10px] font-semibold">📶 Ahorro megas</button>
-            <button onclick="sendBotAnswer('como_pagar')" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 px-2 py-1 rounded-lg text-[10px] font-semibold">💵 Pago</button>
-            <button onclick="sendBotAnswer('vender_aqui')" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 px-2 py-1 rounded-lg text-[10px] font-semibold">📈 Vender</button>
-        </div>
-    </div>
+    <!-- BOTÓN FLOTANTE WHATSAPP -->
+    <a href="#" id="whatsappFloatBtn" class="whatsapp-float">
+        <i class="fab fa-whatsapp text-2xl text-white"></i>
+    </a>
 
     <script>
-        // ========== CONFIGURACIÓN ==========
-        const DELIVERY_COST = 150;
-        const PRODUCTOS_POR_PAGINA = 12;
-        const MAX_POR_PRODUCTO = 10;
+        // ================= CONFIGURACIÓN =================
+        // 🔴 CAMBIA ESTE NÚMERO POR TU WHATSAPP (el que recibirá notificaciones)
+        const ADMIN_WHATSAPP = "5356382909";
         
-        // 🔴 GOOGLE SHEETS URL (TU URL)
-        const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbygNxrPbYNLi0gZTMZ9vbXFCwBoU0jNg6r4d61IZxRtXNW_DqTxXVdwZAB8IWsOPQYlVQ/exec";
-        
-        let catalog = [];
-        let cart = [];
-        let activeCategory = 'todas';
-        let searchQuery = '';
-        let dataSaver = false;
-        let isLoading = false;
-        let paginaActual = 1;
-        let filteredProductsCache = [];
+        // ✅ GOOGLE SHEETS - URL de tu Google Apps Script (YA CONFIGURADA)
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyBEjPVbmWj8BMeuPG1DBQfGFZaGweFkJ4l9HaAX7OJZmZfbBlPZObi5Qx7Su_nKrj_Ow/exec";
 
-        // ========== CARGA DE PRODUCTOS DESDE JSON ==========
-        async function loadProducts() {
-            const loadingIndicator = document.getElementById('loading-indicator');
-            const grid = document.getElementById('products-grid');
-            
-            isLoading = true;
-            loadingIndicator.classList.remove('hidden');
-            grid.classList.add('hidden');
-            
-            try {
-                const timestamp = Date.now();
-                const response = await fetch(`productos.json?v=${timestamp}`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                catalog = await response.json();
-                localStorage.setItem('resuelve_catalog_backup', JSON.stringify(catalog));
-                console.log(`✅ Cargados ${catalog.length} productos`);
-            } catch (error) {
-                console.error('❌ Error:', error);
-                const backup = localStorage.getItem('resuelve_catalog_backup');
-                if (backup) { catalog = JSON.parse(backup); showFeedbackToast("⚠️ Usando catálogo guardado localmente"); }
-                else { catalog = []; showFeedbackToast("❌ Error cargando productos. Recarga la página."); }
-            } finally {
-                isLoading = false;
-                loadingIndicator.classList.add('hidden');
-                grid.classList.remove('hidden');
-                applyFiltersAndRender();
-            }
-        }
+        // ================= BASE DE DATOS DE VENDEDORES =================
+        let sellers = [
+            {id:1, name:"María González", productName:"Café Dualis 250g", category:"Alimentos", price:1450, image:"https://i.postimg.cc/WbZBX2hN/cafe_dualis_250_g_precio_1450.png", description:"Café molido de alta calidad", sellerWhatsapp:"5351234567", location:"Centro Habana"},
+            {id:2, name:"Carlos Pérez", productName:"Camiseta deportiva", category:"Ropa", price:1200, image:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png", description:"Talla M, color azul", sellerWhatsapp:"5352345678", location:"Vedado"},
+            {id:3, name:"Laura Rodríguez", productName:"Cámara de bicicleta 26", category:"Bicicletas", price:350, image:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png", description:"Nueva, válvula Schrader", sellerWhatsapp:"5353456789", location:"La Habana Vieja"},
+            {id:4, name:"Pedro Martínez", productName:"Cartera de cuero", category:"Accesorios", price:800, image:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png", description:"Cuero sintético", sellerWhatsapp:"5354567890", location:"Plaza"},
+            {id:5, name:"Ana Fernández", productName:"Frijoles negros", category:"Alimentos", price:450, image:"https://i.postimg.cc/wvkcjZNf/frijol_negro.png", description:"500g, granos seleccionados", sellerWhatsapp:"5355678901", location:"Centro Habana"},
+            {id:6, name:"Jorge Luis", productName:"Zapatillas deportivas", category:"Ropa", price:2500, image:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png", description:"Talla 40, nuevas", sellerWhatsapp:"5356789012", location:"Vedado"},
+            {id:7, name:"Teresa Ramírez", productName:"Faro LED bicicleta", category:"Bicicletas", price:500, image:"https://i.postimg.cc/DZ2vxZsT/Gemini_Generated_Image_824rio824rio824r.png", description:"Recargable USB, 3 modos", sellerWhatsapp:"5357890123", location:"La Habana Vieja"}
+        ];
 
-        // ========== FUNCIONES DE UTILIDAD ==========
-        function cleanText(text) {
-            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[bc]/g, "v").replace(/[cq]/g, "k").replace(/z/g, "s").replace(/h/g, "").trim();
-        }
-        
-        function levenshteinDistance(a, b) {
-            const matrix = [];
-            for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-            for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-            for (let i = 1; i <= b.length; i++) for (let j = 1; j <= a.length; j++) {
-                if (b.charAt(i - 1) === a.charAt(j - 1)) matrix[i][j] = matrix[i - 1][j - 1];
-                else matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
-            }
-            return matrix[b.length][a.length];
-        }
-        
-        function showFeedbackToast(msg) {
-            const toast = document.createElement('div');
-            toast.className = "fixed top-16 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs py-3 px-5 rounded-2xl shadow-xl z-50 max-w-[90vw] text-center font-semibold transition-all scale-95 opacity-0";
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => { toast.classList.remove('scale-95', 'opacity-0'); toast.classList.add('scale-100', 'opacity-100'); }, 10);
-            setTimeout(() => { toast.classList.remove('scale-100', 'opacity-100'); toast.classList.add('scale-95', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
-        }
+        let currentCategory = 'todos';
+        let currentProduct = null;
 
-        // ========== ENVÍO A GOOGLE SHEETS ==========
-        async function enviarAGoolgeSheets(pedidoData) {
-            try {
-                const response = await fetch(GOOGLE_SHEETS_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(pedidoData)
-                });
-                console.log("✅ Pedido enviado a Google Sheets");
-            } catch (error) {
-                console.error("❌ Error enviando a Google Sheets:", error);
-            }
-        }
-
-        // ========== PAGINACIÓN ==========
-        function applyFiltersAndRender() {
-            if (isLoading || catalog.length === 0) return;
-            
-            let filtered = catalog.filter(p => activeCategory === 'todas' || p.category === activeCategory);
-            
-            if (searchQuery.trim() !== '') {
-                filtered = filtered.filter(p => {
-                    const cleanName = cleanText(p.name);
-                    const cleanDesc = cleanText(p.desc);
-                    const cleanQuery = cleanText(searchQuery);
-                    if (cleanName.includes(cleanQuery) || cleanDesc.includes(cleanQuery)) return true;
-                    const queryWords = cleanQuery.split(' ');
-                    const nameWords = cleanName.split(' ');
-                    return queryWords.some(qw => nameWords.some(nw => levenshteinDistance(qw, nw) <= (qw.length > 5 ? 2 : 1)));
-                });
-            }
-            
-            filteredProductsCache = filtered;
-            document.getElementById('items-count').innerText = `${filtered.length} art.`;
-            
-            if (filtered.length === 0) {
-                document.getElementById('no-results').classList.remove('hidden');
-                document.getElementById('products-grid').innerHTML = '';
-                document.getElementById('pagination-controls').innerHTML = '';
+        // ================= REGISTRAR CONTACTO EN GOOGLE SHEETS =================
+        async function registrarContacto(producto, vendedor, telefonoVendedor) {
+            if(!GOOGLE_SCRIPT_URL) {
+                console.log("No hay URL de Google Sheets configurada");
                 return;
             }
-            document.getElementById('no-results').classList.add('hidden');
             
-            const totalPaginas = Math.ceil(filtered.length / PRODUCTOS_POR_PAGINA);
-            if (paginaActual > totalPaginas) paginaActual = totalPaginas || 1;
-            
-            const inicio = (paginaActual - 1) * PRODUCTOS_POR_PAGINA;
-            const fin = inicio + PRODUCTOS_POR_PAGINA;
-            const productosPagina = filtered.slice(inicio, fin);
-            
-            renderizarProductos(productosPagina);
-            renderizarPaginacion(totalPaginas);
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        producto: producto,
+                        vendedor: vendedor,
+                        telefonoVendedor: telefonoVendedor,
+                        cliente: "Cliente web"
+                    })
+                });
+                console.log("✅ Contacto registrado en Google Sheets");
+            } catch(e) {
+                console.log("❌ Error al registrar en Google Sheets:", e);
+            }
         }
-        
-        function renderizarPaginacion(totalPaginas) {
-            const container = document.getElementById('pagination-controls');
-            if (totalPaginas <= 1) { container.innerHTML = ''; return; }
-            
-            let html = `<button onclick="cambiarPagina(${paginaActual - 1})" class="px-2 py-1 rounded-lg ${paginaActual === 1 ? 'bg-slate-100 text-slate-300 cursor-not-allowed' : 'bg-white border border-slate-200 hover:bg-caribe-50'}" ${paginaActual === 1 ? 'disabled' : ''}>◀</button>`;
-            html += `<span class="px-3 py-1 text-slate-600 font-medium">${paginaActual} / ${totalPaginas}</span>`;
-            html += `<button onclick="cambiarPagina(${paginaActual + 1})" class="px-2 py-1 rounded-lg ${paginaActual === totalPaginas ? 'bg-slate-100 text-slate-300 cursor-not-allowed' : 'bg-white border border-slate-200 hover:bg-caribe-50'}" ${paginaActual === totalPaginas ? 'disabled' : ''}>▶</button>`;
-            container.innerHTML = html;
-        }
-        
-        function cambiarPagina(nuevaPagina) {
-            const totalPaginas = Math.ceil(filteredProductsCache.length / PRODUCTOS_POR_PAGINA);
-            if (nuevaPagina < 1 || nuevaPagina > totalPaginas) return;
-            paginaActual = nuevaPagina;
-            applyFiltersAndRender();
-            window.scrollTo({ top: document.getElementById('catalogo').offsetTop - 100, behavior: 'smooth' });
-        }
-        
-        // ========== RENDERIZADO CON LAZY LOADING Y STOCK ==========
-        function renderizarProductos(productos) {
-            const grid = document.getElementById('products-grid');
-            
-            grid.innerHTML = productos.map(p => {
-                const isImageActive = !dataSaver && p.img;
-                const stockClass = p.stock === 0 ? 'opacity-60' : '';
-                const stockBadge = p.stock === 0 ? '<span class="absolute top-2 left-2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">AGOTADO</span>' : 
-                                  (p.stock < 5 ? '<span class="absolute top-2 left-2 bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">¡ÚLTIMAS UNIDADES!</span>' : '');
-                const addButtonDisabled = p.stock === 0 ? 'disabled' : '';
-                const addButtonClass = p.stock === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-caribe-500 hover:bg-caribe-600';
-                
-                const mediaHTML = isImageActive 
-                    ? `<img class="w-full h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300 lazy-img" data-src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-32 md:h-40 bg-gradient-to-tr from-caribe-50 to-sol-50 flex items-center justify-center text-4xl\'>${p.fallback_icon || '📦'}</div>'">`
-                    : `<div class="w-full h-32 md:h-40 bg-gradient-to-tr from-caribe-50 to-sol-50 flex items-center justify-center text-4xl select-none">${p.fallback_icon || '📦'}</div>`;
 
-                return `
-                    <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-md transition-all duration-300 flex flex-col group cursor-pointer ${stockClass}" onclick="openModal(${p.id})">
-                        <div class="relative overflow-hidden bg-slate-50">
-                            ${mediaHTML}
-                            ${stockBadge}
+        // ================= CONTACTAR VENDEDOR =================
+        function contactSeller(sellerWhatsapp, productName, sellerName) {
+            // Mensaje para el VENDEDOR
+            const messageToSeller = `🛒 *NUEVO CLIENTE - RESUELVEhabana*
+
+*Producto:* ${productName}
+
+━━━━━━━━━━━━━━━━━━━━━━
+*IMPORTANTE:* El delivery es gestionado por RESUELVEhabana.
+El cliente será contactado por el administrador para coordinar la entrega.
+
+Gracias por vender con nosotros.`;
+            
+            // Abrir WhatsApp del VENDEDOR
+            window.open(`https://wa.me/${sellerWhatsapp}?text=${encodeURIComponent(messageToSeller)}`, '_blank');
+            
+            // NOTIFICAR al ADMIN (tú)
+            const msgToAdmin = `📦 *NUEVO PEDIDO PARA GESTIONAR*
+
+*Producto:* ${productName}
+*Vendedor:* ${sellerName}
+*Teléfono Vendedor:* ${sellerWhatsapp}
+
+📌 Acción: Coordinar delivery con vendedor y cliente.`;
+            
+            window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(msgToAdmin)}`, '_blank');
+            
+            // REGISTRAR en Google Sheets
+            registrarContacto(productName, sellerName, sellerWhatsapp);
+            
+            // Guardar en localStorage (respaldo local)
+            let registros = JSON.parse(localStorage.getItem('resuelve_pedidos') || '[]');
+            registros.push({ producto: productName, vendedor: sellerName, fecha: new Date().toISOString() });
+            localStorage.setItem('resuelve_pedidos', JSON.stringify(registros));
+            
+            showToast('📞 Contactando vendedor', 'Serás redirigido a WhatsApp');
+        }
+
+        // ================= FUNCIONES DE ADMIN =================
+        function contactAdminForSelling() {
+            const message = "Hola, quiero publicar un producto en RESUELVEhabana. ¿Cómo te envío la información?";
+            window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`, '_blank');
+            showToast('📢 Contactando administrador', 'Te responderé para publicar tu producto');
+        }
+
+        function contactAdminForDelivery() {
+            const message = "🚚 Hola, necesito un mensajero para un delivery. ¿Me puedes ayudar?";
+            window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`, '_blank');
+            showToast('📦 Servicio de mensajería', 'Te contactaré para coordinar el delivery');
+        }
+
+        function contactAdmin() {
+            window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent("Hola, tengo una consulta sobre RESUELVEhabana.")}`, '_blank');
+        }
+
+        // ================= RENDERIZADO DE CATEGORÍAS =================
+        function renderCategories() {
+            const container = document.getElementById('categoryContainer');
+            const categories = ['todos', ...new Set(sellers.map(s => s.category))];
+            container.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat}')" class="category-pill px-5 py-1.5 ${cat === currentCategory ? 'bg-resuelve-orange text-white' : 'bg-gray-100 text-gray-700'} rounded-full whitespace-nowrap text-sm font-medium shadow-sm">
+                    ${cat === 'todos' ? 'Todos' : cat}
+                </button>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            renderProducts();
+            document.querySelectorAll('.category-pill').forEach(btn => {
+                btn.classList.remove('bg-resuelve-orange', 'text-white');
+                if(btn.innerText === (cat === 'todos' ? 'Todos' : cat)) {
+                    btn.classList.add('bg-resuelve-orange', 'text-white');
+                }
+            });
+        }
+
+        // ================= RENDERIZADO DE PRODUCTOS =================
+        function renderProducts() {
+            const searchTerm = document.getElementById('searchInputMercado').value.toLowerCase();
+            let filtered = sellers.filter(s => {
+                const matchCat = currentCategory === 'todos' || s.category === currentCategory;
+                const matchSearch = s.productName.toLowerCase().includes(searchTerm) || s.name.toLowerCase().includes(searchTerm);
+                return matchCat && matchSearch;
+            });
+            
+            const grid = document.getElementById('productsGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+            
+            noResults.classList.add('hidden');
+            
+            grid.innerHTML = filtered.map(s => `
+                <div class="seller-card bg-white rounded-xl shadow-sm hover:shadow-md overflow-hidden cursor-pointer transition-all" onclick="openProductModal(${s.id})">
+                    <div class="h-40 bg-gray-50 flex items-center justify-center p-2">
+                        <img src="${s.image}" class="max-h-full max-w-full object-contain" loading="lazy" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Producto'">
+                    </div>
+                    <div class="p-4">
+                        <span class="text-xs text-resuelve-orange font-semibold bg-orange-50 px-2 py-0.5 rounded-full">${s.category}</span>
+                        <h3 class="font-bold text-md mt-2">${s.productName}</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-resuelve-orange font-bold text-xl">$${s.price}</span>
+                            <span class="text-xs text-gray-400"><i class="fas fa-map-marker-alt"></i> ${s.location}</span>
                         </div>
-                        <div class="p-3.5 flex flex-col flex-grow justify-between space-y-2.5">
-                            <div><h3 class="text-xs md:text-sm font-semibold text-slate-800 line-clamp-2 leading-tight group-hover:text-caribe-600 transition-colors">${p.name}</h3></div>
-                            <div class="flex items-center justify-between pt-1">
-                                <div><span class="text-[9px] text-slate-400 block uppercase font-bold tracking-wider">Precio</span><span class="text-sm md:text-base font-bold text-coral-500 font-friendly">$${p.price.toLocaleString()} CUP</span></div>
-                                <button onclick="event.stopPropagation(); addToCartDirect(${p.id});" class="${addButtonClass} text-white p-2 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-sm" title="${p.stock === 0 ? 'Agotado' : 'Añadir'}" ${addButtonDisabled}>
-                                    <i data-lucide="plus" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                            ${p.stock > 0 && p.stock < 10 ? `<div class="text-[9px] text-orange-500 mt-1">⚠️ Solo ${p.stock} disponibles</div>` : ''}
+                        <div class="mt-3 flex justify-between items-center">
+                            <span class="text-xs text-gray-500"><i class="fas fa-user"></i> ${s.name}</span>
+                            <button onclick="event.stopPropagation(); contactSeller('${s.sellerWhatsapp}', '${s.productName.replace(/'/g, "\\'")}', '${s.name}')" class="whatsapp-btn text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1">
+                                <i class="fab fa-whatsapp"></i> Contactar
+                            </button>
                         </div>
                     </div>
-                `;
-            }).join('');
-            
-            // Inicializar lazy loading
-            const lazyImages = document.querySelectorAll('.lazy-img');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.add('loaded');
-                        observer.unobserve(img);
-                    }
-                });
-            });
-            lazyImages.forEach(img => observer.observe(img));
-            
-            lucide.createIcons();
+                </div>
+            `).join('');
         }
 
-        // ========== CARRITO CON LÍMITE DE CANTIDAD ==========
-        function saveCart() { localStorage.setItem('resuelve_cart', JSON.stringify(cart)); updateCartBadge(); }
-        function loadCart() { const saved = localStorage.getItem('resuelve_cart'); if (saved) { try { cart = JSON.parse(saved); } catch(e) { cart = []; } } updateCartBadge(); }
-        
-        function updateCartBadge() {
-            const count = cart.reduce((acc, curr) => acc + curr.qty, 0);
-            const subtotal = cart.reduce((acc, curr) => acc + (curr.product.price * curr.qty), 0);
-            document.getElementById('cart-badge').innerText = count;
-            document.getElementById('cart-badge').classList.toggle('scale-0', count === 0);
-            document.getElementById('floating-badge').innerText = count;
-            document.getElementById('floating-cart').classList.toggle('hidden', count === 0);
-            document.getElementById('floating-cart-total').innerHTML = `$${(subtotal + DELIVERY_COST).toLocaleString()} CUP`;
-        }
-        
-        function addToCartDirect(id) {
-            const product = catalog.find(p => p.id === id);
-            if (!product) return;
-            if (product.stock === 0) { showFeedbackToast(`❌ ${product.name} está agotado`); return; }
+        function openProductModal(id) {
+            const s = sellers.find(s => s.id === id);
+            if(!s) return;
+            currentProduct = s;
+            document.getElementById('modalImage').src = s.image;
+            document.getElementById('modalTitle').innerText = s.productName;
+            document.getElementById('modalDescription').innerText = s.description;
+            document.getElementById('modalPrice').innerText = `$${s.price}`;
+            document.getElementById('modalCategory').innerText = s.category;
+            document.getElementById('modalLocation').innerText = s.location;
             
-            const existing = cart.find(i => i.product.id === id);
-            const currentQty = existing ? existing.qty : 0;
-            
-            if (currentQty >= MAX_POR_PRODUCTO) {
-                showFeedbackToast(`⚠️ Máximo ${MAX_POR_PRODUCTO} unidades de ${product.name} por pedido`);
-                return;
-            }
-            
-            if (existing) existing.qty++;
-            else cart.push({ product, qty: 1 });
-            
-            saveCart();
-            showFeedbackToast(`🛒 ${product.name} agregado al carrito!`);
-        }
-        
-        function changeCartQty(id, change) {
-            const item = cart.find(i => i.product.id === id);
-            if (!item) return;
-            const newQty = item.qty + change;
-            if (newQty < 1) { cart = cart.filter(i => i.product.id !== id); saveCart(); renderCartItems(); return; }
-            if (newQty > MAX_POR_PRODUCTO) { showFeedbackToast(`⚠️ Máximo ${MAX_POR_PRODUCTO} unidades`); return; }
-            if (newQty > item.product.stock) { showFeedbackToast(`⚠️ Solo ${item.product.stock} unidades disponibles`); return; }
-            item.qty = newQty;
-            saveCart();
-            renderCartItems();
-        }
-        
-        function openCart() { document.getElementById('cart-modal').classList.remove('hidden'); renderCartItems(); }
-        function closeCart() { document.getElementById('cart-modal').classList.add('hidden'); }
-        
-        function renderCartItems() {
-            const container = document.getElementById('cart-items-container');
-            const emptyState = document.getElementById('cart-empty-state');
-            const footerForm = document.getElementById('cart-footer-form');
-            container.innerHTML = '';
-            if (cart.length === 0) { emptyState.classList.remove('hidden'); footerForm.classList.add('hidden'); return; }
-            emptyState.classList.add('hidden'); footerForm.classList.remove('hidden');
-            
-            cart.forEach(item => {
-                const itemTotal = item.product.price * item.qty;
-                container.innerHTML += `<div class="flex items-center justify-between border-b border-slate-100 pb-3 gap-3"><div class="flex-grow"><h4 class="text-xs font-semibold text-slate-800 line-clamp-1">${item.product.name}</h4><span class="text-[10px] text-slate-400 block">${item.product.seller_name}</span><span class="text-xs font-bold text-coral-500 font-friendly block mt-0.5">$${item.product.price.toLocaleString()} x ${item.qty} = $${itemTotal.toLocaleString()} CUP</span></div><div class="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200 shrink-0"><button onclick="changeCartQty(${item.product.id}, -1)" class="w-6 h-6 flex items-center justify-center bg-white rounded-lg text-xs font-bold text-slate-600">-</button><span class="w-7 text-center font-bold text-xs text-slate-700">${item.qty}</span><button onclick="changeCartQty(${item.product.id}, 1)" class="w-6 h-6 flex items-center justify-center bg-white rounded-lg text-xs font-bold text-slate-600">+</button></div></div>`;
-            });
-            const subtotal = cart.reduce((acc, curr) => acc + (curr.product.price * curr.qty), 0);
-            document.getElementById('cart-subtotal').innerText = `$${subtotal.toLocaleString()} CUP`;
-            document.getElementById('cart-total').innerText = `$${(subtotal + DELIVERY_COST).toLocaleString()} CUP`;
-        }
-        
-        function checkoutToWhatsApp() {
-            if (cart.length === 0) return;
-            
-            const name = document.getElementById('buyer-name').value.trim();
-            const phone = document.getElementById('buyer-phone').value.trim();
-            const address = document.getElementById('buyer-address').value.trim();
-            
-            if (!name || !phone || !address) { 
-                showFeedbackToast("⚠️ Completa tus datos para coordinar la entrega."); 
-                return; 
-            }
-            
-            const subtotalCUP = cart.reduce((acc, curr) => acc + (curr.product.price * curr.qty), 0);
-            const totalCUP = subtotalCUP + DELIVERY_COST;
-            
-            let productListForWhatsApp = "";
-            let productListForSheets = "";
-            
-            cart.forEach(item => {
-                productListForWhatsApp += `- ${item.product.name} x ${item.qty} → $${(item.product.price * item.qty).toLocaleString()} CUP\n`;
-                productListForSheets += `${item.product.name} x${item.qty} ($${item.product.price} c/u), `;
-            });
-            
-            // Mensaje para WhatsApp
-            let msg = `🛍️ *NUEVO PEDIDO - RESUELVEhabana*\n\n`;
-            msg += `👤 *Cliente:* ${name}\n`;
-            msg += `📞 *Teléfono:* ${phone}\n`;
-            msg += `📍 *Dirección:* ${address}\n\n`;
-            msg += `🛒 *Detalle del pedido:*\n${productListForWhatsApp}\n`;
-            msg += `💵 *Subtotal:* $${subtotalCUP.toLocaleString()} CUP\n`;
-            msg += `🛵 *Envío (eBike):* $${DELIVERY_COST} CUP\n`;
-            msg += `💰 *TOTAL:* $${totalCUP.toLocaleString()} CUP\n\n`;
-            msg += `👉 _Por favor, confírmame disponibilidad para coordinar entrega._`;
-            
-            // ========== ENVIAR A GOOGLE SHEETS (SILENCIOSO) ==========
-            const pedidoData = {
-                name: name,
-                phone: phone,
-                address: address,
-                products: productListForSheets.slice(0, -2),
-                subtotalCUP: subtotalCUP,
-                totalCUP: totalCUP,
-                timestamp: new Date().toISOString()
+            const btn = document.getElementById('contactSellerBtn');
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.onclick = () => {
+                contactSeller(s.sellerWhatsapp, s.productName, s.name);
+                closeModal('productModal');
             };
-            
-            enviarAGoolgeSheets(pedidoData);
-            
-            // ========== ABRIR WHATSAPP ==========
-            const primarySellerPhone = cart[0].product.seller_phone;
-            window.open(`https://wa.me/${primarySellerPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-            
-            // ========== VACIAR CARRITO ==========
-            cart = [];
-            saveCart();
-            closeCart();
-            showFeedbackToast("🚀 ¡Pedido enviado! Revisa WhatsApp y guardamos tu pedido.");
+            document.getElementById('productModal').classList.remove('hidden');
         }
 
-        // ========== MODALES Y OTROS ==========
-        function openModal(id) {
-            const product = catalog.find(p => p.id === id);
-            if (!product) return;
-            const isImageActive = !dataSaver && product.img;
-            const mediaHTML = isImageActive ? `<img src="${product.img}" class="w-full h-56 object-cover rounded-2xl shadow-inner" loading="lazy">` : `<div class="w-full h-40 bg-gradient-to-tr from-caribe-50 to-sol-50 flex items-center justify-center text-6xl select-none rounded-2xl">${product.fallback_icon || '📦'}</div>`;
-            const stockMsg = product.stock === 0 ? '<p class="text-red-500 text-sm font-bold">❌ Producto agotado</p>' : (product.stock < 5 ? `<p class="text-orange-500 text-sm font-bold">⚠️ Solo ${product.stock} unidades disponibles</p>` : '');
-            const btnDisabled = product.stock === 0 ? 'disabled' : '';
-            
-            document.getElementById('modal-content-area').innerHTML = `<div class="space-y-4">${mediaHTML}<div><span class="text-[10px] font-bold text-caribe-600 uppercase bg-caribe-50 inline-block px-2.5 py-0.5 rounded-full">${product.category}</span><h2 class="font-friendly text-lg font-bold text-slate-800 mt-2">${product.name}</h2></div><div class="flex justify-between p-3 bg-slate-50 rounded-2xl"><div><span class="text-[10px] text-slate-400 uppercase">Precio</span><span class="text-xl font-bold text-coral-500">$${product.price.toLocaleString()} CUP</span></div><div class="text-right"><span class="text-[10px] text-slate-400 uppercase">Vendedor</span><span class="text-xs font-semibold text-slate-700 block">${product.seller_name}</span></div></div>${stockMsg}<div><h4 class="text-xs font-bold text-slate-700 uppercase">Descripción</h4><p class="text-xs text-slate-500 mt-1">${product.desc}</p></div><button onclick="addToCartDirect(${product.id}); closeModal();" ${btnDisabled} class="w-full ${product.stock === 0 ? 'bg-gray-300' : 'bg-coral-500 hover:bg-coral-600'} text-white font-friendly font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all"><i data-lucide="shopping-cart" class="w-4 h-4"></i> ${product.stock === 0 ? 'Agotado' : 'Añadir al Carrito'}</button></div>`;
-            document.getElementById('product-modal').classList.remove('hidden');
-            lucide.createIcons();
+        // ================= FUNCIONES UTILITARIAS =================
+        function searchProductsMercado() { renderProducts(); }
+        function clearSearchMercado() { 
+            document.getElementById('searchInputMercado').value = ''; 
+            renderProducts(); 
         }
-        function closeModal() { document.getElementById('product-modal').classList.add('hidden'); }
-        function openVendedorInfo() { document.getElementById('vendedor-modal').classList.remove('hidden'); }
-        function closeVendedorInfo() { document.getElementById('vendedor-modal').classList.add('hidden'); }
-        function selectCategory(cat) { activeCategory = cat; paginaActual = 1; document.querySelectorAll('.category-btn').forEach(btn => { if (btn.dataset.cat === cat) { btn.className = "category-btn active px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-caribe-500 text-white shadow-md transition-all flex items-center gap-1"; } else { btn.className = "category-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 hover:bg-slate-50 border border-slate-100 transition-all flex items-center gap-1"; } }); applyFiltersAndRender(); }
-        function handleSearch(val) { searchQuery = val; paginaActual = 1; document.getElementById('clear-search-btn').classList.toggle('hidden', val.trim() === ''); applyFiltersAndRender(); }
-        function clearSearch() { document.getElementById('search-input').value = ''; searchQuery = ''; paginaActual = 1; document.getElementById('clear-search-btn').classList.add('hidden'); applyFiltersAndRender(); }
-        function resetFilters() { clearSearch(); selectCategory('todas'); }
-        function toggleDataSaver() { dataSaver = !dataSaver; localStorage.setItem('resuelve_datasaver', dataSaver); const toggleBtn = document.getElementById('data-saver-toggle'); const statusText = document.getElementById('data-saver-status'); const banner = document.getElementById('data-saver-banner'); if (dataSaver) { toggleBtn.className = "bg-sol-500 hover:bg-sol-600 text-white font-bold py-1 px-3 rounded-full transition-all text-[11px] flex items-center gap-1 shadow-inner"; statusText.innerText = "Ahorro: ACTIVO"; banner.classList.add('bg-slate-800'); banner.classList.remove('bg-caribe-600'); showFeedbackToast("📶 Modo Ahorro Activado"); } else { toggleBtn.className = "bg-white/20 hover:bg-white/30 text-white font-semibold py-1 px-3 rounded-full transition-all text-[11px] flex items-center gap-1"; statusText.innerText = "Ahorro: OFF"; banner.classList.remove('bg-slate-800'); banner.classList.add('bg-caribe-600'); showFeedbackToast("🖼️ Modo Ahorro Desactivado"); } applyFiltersAndRender(); }
-        function refreshCatalog() { const icon = document.getElementById('refresh-icon'); icon.classList.add('animate-spin-slow'); loadProducts().finally(() => { icon.classList.remove('animate-spin-slow'); showFeedbackToast("🔄 Catálogo actualizado"); }); }
         
-        // ========== CHATBOT ==========
-        function toggleChatbot() { const modal = document.getElementById('chatbot-modal'); modal.classList.toggle('hidden'); document.getElementById('chatbot-bubble').classList.add('hidden'); }
-        function sendBotAnswer(option) {
-            const messages = document.getElementById('chatbot-messages');
-            let userQ = '', botA = '';
-            switch(option) {
-                case 'costo_delivery': userQ = "¿Cuánto cuesta el delivery?"; botA = `🛵 El envío cuesta $${DELIVERY_COST} CUP a La Habana.`; break;
-                case 'ahorro_megas': userQ = "¿Cómo ahorro megas?"; botA = "📶 Activa el Modo Ahorro arriba. No cargamos fotos pesadas."; break;
-                case 'como_pagar': userQ = "¿Cómo se paga?"; botA = "💵 Pagas al mensajero en efectivo o por Transfermóvil al vendedor."; break;
-                case 'vender_aqui': userQ = "Quiero vender"; botA = "📈 ¡Es gratis! Escríbenos al +53 56382909 para subir tus productos."; break;
-            }
-            messages.innerHTML += `<div class="bg-caribe-500 text-white p-2 rounded-2xl rounded-tr-none max-w-[85%] ml-auto text-right font-semibold">${userQ}</div><div class="bg-slate-50 text-slate-700 p-2.5 rounded-2xl rounded-tl-none max-w-[85%] border border-slate-100">${botA}</div>`;
-            messages.scrollTop = messages.scrollHeight;
+        function toggleHowItWorks() { 
+            document.getElementById('howItWorksModal').classList.remove('hidden'); 
+        }
+        
+        function closeModal(id) { 
+            document.getElementById(id).classList.add('hidden'); 
+        }
+        
+        function showToast(title, msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMessage').innerText = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3000);
+        }
+        
+        function forceReload() {
+            showToast('🔄 Actualizando', 'Recargando catálogo...');
+            setTimeout(() => location.reload(), 500);
+        }
+        
+        function scrollToSellerSection() {
+            const section = document.getElementById('para-vendedores');
+            if(section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function toggleFAQ(id) {
+            const content = document.getElementById(`faq-${id}`);
+            const icon = document.getElementById(`faq-icon-${id}`);
+            content.classList.toggle('hidden');
+            icon.innerText = content.classList.contains('hidden') ? '+' : '−';
+        }
+        
+        function closeMobileMenu() {
+            document.getElementById('mobile-menu').classList.remove('open');
+            document.getElementById('mobile-backdrop').classList.remove('open');
         }
 
-        // ========== SERVICE WORKER ==========
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then(reg => console.log('✅ Service Worker registrado')).catch(err => console.log('❌ SW error:', err));
-        }
-
-        // ========== INICIALIZACIÓN ==========
+        // ================= INICIALIZACIÓN =================
         document.addEventListener('DOMContentLoaded', () => {
-            dataSaver = localStorage.getItem('resuelve_datasaver') === 'true';
-            const toggleBtn = document.getElementById('data-saver-toggle');
-            const statusText = document.getElementById('data-saver-status');
-            const banner = document.getElementById('data-saver-banner');
-            if (dataSaver) { toggleBtn.className = "bg-sol-500 hover:bg-sol-600 text-white font-bold py-1 px-3 rounded-full transition-all text-[11px] flex items-center gap-1 shadow-inner"; statusText.innerText = "Ahorro: ACTIVO"; banner.classList.add('bg-slate-800'); banner.classList.remove('bg-caribe-600'); }
-            loadCart();
-            loadProducts();
-            lucide.createIcons();
-            setTimeout(() => { const bubble = document.getElementById('chatbot-bubble'); bubble.classList.remove('hidden'); bubble.classList.add('animate-bounce'); setTimeout(() => bubble.classList.remove('animate-bounce'), 4000); }, 3000);
+            renderCategories();
+            renderProducts();
+            document.getElementById('searchInputMercado').addEventListener('input', searchProductsMercado);
+            document.getElementById('adminWhatsappBtn').addEventListener('click', (e) => { e.preventDefault(); contactAdmin(); });
+            document.getElementById('whatsappFloatBtn').addEventListener('click', (e) => { e.preventDefault(); contactAdmin(); });
+            
+            // Menú móvil
+            document.getElementById('mobile-menu-button').onclick = () => {
+                document.getElementById('mobile-menu').classList.add('open');
+                document.getElementById('mobile-backdrop').classList.add('open');
+            };
+            document.getElementById('close-mobile-menu').onclick = closeMobileMenu;
+            document.getElementById('mobile-backdrop').onclick = closeMobileMenu;
+            document.querySelectorAll('.mobile-nav-link').forEach(link => link.onclick = closeMobileMenu);
         });
+
+        // Exponer funciones globales
+        window.filterCategory = filterCategory;
+        window.openProductModal = openProductModal;
+        window.contactSeller = contactSeller;
+        window.contactAdminForSelling = contactAdminForSelling;
+        window.contactAdminForDelivery = contactAdminForDelivery;
+        window.toggleHowItWorks = toggleHowItWorks;
+        window.closeModal = closeModal;
+        window.clearSearchMercado = clearSearchMercado;
+        window.toggleFAQ = toggleFAQ;
+        window.scrollToSellerSection = scrollToSellerSection;
+        window.forceReload = forceReload;
+        window.contactAdmin = contactAdmin;
     </script>
 </body>
 </html>
