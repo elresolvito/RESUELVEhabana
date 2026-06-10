@@ -1,14 +1,24 @@
 {
-  "name": "resuelvehabana",
+  "name": "resuelvehabana-api",
   "version": "1.0.0",
-  "description": "Catálogo rotativo para Cuba",
+  "type": "module",
+  "description": "API para RESUELVEhabana - Catálogo rotativo de Cuba",
   "main": "api/products.js",
   "scripts": {
-    "dev": "vercel dev",
     "start": "node api/products.js"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.5.0",
     "pg": "^8.11.0"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0 <23.0.0"
+  },
+  "keywords": [
+    "cuba",
+    "clasificados",
+    "revolico",
+    "resuelvehabana"
+  ],
+  "author": "RESUELVEhabana",
+  "license": "MIT"
 }
