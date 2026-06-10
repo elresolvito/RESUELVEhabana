@@ -120,12 +120,12 @@
 
 <script>
     // ==========================================================
-    // CONFIGURACIÓN - ¡ACTUALIZADO CON TU NUEVA URL!
+    // CONFIGURACIÓN - URL ACTUALIZADA
     // ==========================================================
     const ADMIN_PASSWORD = "ResuelveHabana2026";
     
-    // ----> ESTA ES TU NUEVA URL DE GOOGLE APPS SCRIPT <----
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwczQUkcbiHb3NIvJbmasu9hgYLpJDX9fmAt5COAQq450GU0H0m_Wr0BhHKTjDMyiJX/exec";
+    // ----> URL DE TU GOOGLE APPS SCRIPT (ACTUALIZADA) <----
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyaircXce50nw6e7pmo3hlF3MhcWoaKHfKtmKFQMpxKuD3TnDlxqZDp4RpXR5Uv7gkQ_w/exec";
     
     let products = [];
     let isLoggedIn = false;
@@ -182,10 +182,8 @@
         }
     }
 
-    // --- FUNCIÓN DE LECTURA (CARGAR) - PENDIENTE, PERO NO CRÍTICA PARA PUBLICAR ---
+    // --- FUNCIÓN DE LECTURA (CARGAR) - PENDIENTE, PERO NO CRÍTICA ---
     async function loadProductsFromSheet() {
-        // Por ahora devolvemos array vacío. La lectura no es necesaria para publicar.
-        // Los productos se ven en la pestaña "Gestionar productos" después de publicar.
         console.log("📖 Función de lectura (pendiente de implementar)");
         return [];
     }
@@ -238,10 +236,10 @@
     }
     
     function checkDuplicates(newProducts, existingProducts) {
-        // Por ahora sin detección de duplicados real (products está vacío)
         return { unique: newProducts, duplicates: [] };
     }
     
+    // --- FUNCIÓN PUBLISH BATCH CON encodeURIComponent ---
     async function publishBatch(productsList, sellerInfo) {
         const now = Date.now();
         const newProducts = productsList.map((p, index) => ({
@@ -250,9 +248,9 @@
             price: p.price,
             category: p.category,
             contact: p.contact,
-            image: p.image,
+            // CODIFICAR LA URL PARA QUE NO SE ROMPA AL ENVIARLA
+            image: encodeURIComponent(p.image),
             seller: sellerInfo.name || p.seller || 'Anónimo',
-            seller_phone: sellerInfo.phone || p.contact,
             last_updated: now - (index * 1000),
             sold: false
         }));
@@ -371,7 +369,7 @@
             if (unique.length > 0) {
                 html += `<div class="success">✅ Productos a publicar (${unique.length}):</div>`;
                 unique.forEach((p, i) => {
-                    html += `<div class="batch-item"><strong>${i+1}.</strong> ${escapeHtml(p.title)}<br>💰 ${escapeHtml(p.price)} | 📂 ${p.category} | 📞 ${p.contact}<br>📷 ${p.image ? escapeHtml(p.image.substring(0, 50)) + '...' : 'Sin imagen'}</div>`;
+                    html += `<div class="batch-item"><strong>${i+1}.</strong> ${escapeHtml(p.title)}<br>💰 ${escapeHtml(p.price)} | 📂 ${p.category} | 📞 ${p.contact}<br>📷 ${p.image ? escapeHtml(p.image.substring(0, 70)) + '...' : 'Sin imagen'}</div>`;
                 });
             }
             previewDiv.innerHTML = html;
