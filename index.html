@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>RESUELVEhabana - Clasificados de Cuba</title>
     <style>
-        /* ... (mismo estilo que antes) ... */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -13,21 +12,287 @@
             padding: 12px;
             padding-bottom: 80px;
         }
-        /* ... resto del CSS igual al que ya teníamos ... */
+        .header {
+            background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 24px;
+            margin-bottom: 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header h1 { font-size: 1.8rem; letter-spacing: 1px; }
+        .header p { font-size: 0.85rem; opacity: 0.9; margin-top: 6px; }
+        .toolbar {
+            background: white;
+            border-radius: 24px;
+            padding: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .search-box {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 40px;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            outline: none;
+            background: #fafafa;
+        }
+        .search-box:focus {
+            border-color: #1a472a;
+            background: white;
+        }
+        .price-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .price-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            background: #fafafa;
+        }
+        .data-saver {
+            background: #ffc107;
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+            width: 100%;
+        }
+        .data-saver.active {
+            background: #4caf50;
+            color: white;
+        }
+        .categories {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: thin;
+        }
+        .category-btn {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .category-btn.active {
+            background: #1a472a;
+            color: white;
+            border-color: #1a472a;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 600px) {
+            .products-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 900px) {
+            .products-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        .product-card:active { transform: scale(0.97); }
+        .product-card.sold { opacity: 0.6; background: #f5f5f5; }
+        .favorite-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 2;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            backdrop-filter: blur(2px);
+        }
+        .favorite-icon.active { color: #ff4757; }
+        .product-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+        .product-info { padding: 12px; }
+        .product-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 38px;
+        }
+        .product-price {
+            color: #1a472a;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .product-contact {
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 8px 0;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+        .whatsapp-btn:active { opacity: 0.8; }
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff9800;
+            color: white;
+            font-size: 0.6rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 2;
+        }
+        .sold-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 12px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border-radius: 30px;
+            pointer-events: none;
+            z-index: 3;
+            white-space: nowrap;
+        }
+        .stats {
+            font-size: 0.75rem;
+            text-align: center;
+            margin: 16px 0;
+            color: #666;
+        }
+        .empty-message, .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+            grid-column: 1 / -1;
+        }
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+        .footer-note {
+            background: #e8f5e9;
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-<!-- ... mismo HTML que antes, pero el JavaScript cambia ... -->
+
+<div class="header">
+    <h1>🇨🇺 RESUELVEhabana</h1>
+    <p>Clasificados de Cuba • Compra y vende fácil</p>
+</div>
+
+<div class="toolbar">
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Buscar productos...">
+    <div class="price-filters">
+        <input type="number" id="minPrice" class="price-input" placeholder="Precio mínimo (CUP)">
+        <input type="number" id="maxPrice" class="price-input" placeholder="Precio máximo (CUP)">
+    </div>
+    <button class="data-saver" id="dataSaverBtn">💾 Modo ahorro de datos: OFF</button>
+</div>
+
+<div class="categories" id="categoryContainer">
+    <button class="category-btn active" data-category="all">📱 Todos</button>
+    <button class="category-btn" data-category="ropa">👕 Ropa</button>
+    <button class="category-btn" data-category="electronica">📱 Electrónica</button>
+    <button class="category-btn" data-category="hogar">🏠 Hogar</button>
+    <button class="category-btn" data-category="trabajo">💼 Trabajo</button>
+    <button class="category-btn" data-category="servicios">🔧 Servicios</button>
+    <button class="category-btn" data-category="vehiculos">🚗 Vehículos</button>
+    <button class="category-btn" data-category="inmuebles">🏢 Inmuebles</button>
+    <button class="category-btn" data-category="belleza">💄 Belleza</button>
+    <button class="category-btn" data-category="deportes">⚽ Deportes</button>
+    <button class="category-btn" data-category="mascotas">🐾 Mascotas</button>
+</div>
+
+<div id="productsGrid" class="products-grid">
+    <div class="loading">📡 Cargando clasificados...</div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="footer-note">
+    📌 <strong>¿Quieres vender?</strong><br>
+    Envía los datos de tu producto por WhatsApp al <strong>+53 12345678</strong> y nosotros lo publicamos.<br>
+    ❤️ Toca el corazón para guardar favoritos
+</div>
 
 <script>
     // ==========================================================
-    // CONFIGURACIÓN DE GOOGLE SHEETS
-    // (Reemplazar con tus valores reales)
+    // CONFIGURACIÓN PARA GOOGLE SHEETS (ACTUALIZADO)
     // ==========================================================
-    // Publica tu Sheet como CSV y usa esta URL:
-    // https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/export?format=csv&gid=0
-    const SPREADSHEET_ID = "TU_SPREADSHEET_ID";  // Cambiar por el ID real
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=0`;
+    // URL PÚBLICA DE TU HOJA EN FORMATO CSV
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkCVkJX7er9zPE6zk8h1vKTntIdoa_aBcHvl-Oe10f7mLTQ3kyOLZcU9jdKYmDHPmnAE5BGIfnnLix/pub?gid=0&single=true&output=csv';
     
     let products = [];
     let favorites = [];
@@ -37,20 +302,17 @@
     let maxPriceFilter = "";
     let dataSaverMode = false;
     
-    // Cargar favoritos
+    // --- Funciones de Favoritos (localStorage) ---
     function loadFavorites() {
         const saved = localStorage.getItem('resuelvehabana_favorites');
         if (saved) favorites = JSON.parse(saved);
     }
-    
     function saveFavorites() {
         localStorage.setItem('resuelvehabana_favorites', JSON.stringify(favorites));
     }
-    
     function isFavorite(productId) {
         return favorites.includes(productId);
     }
-    
     function toggleFavorite(productId) {
         const index = favorites.indexOf(productId);
         if (index === -1) favorites.push(productId);
@@ -60,21 +322,24 @@
         return favorites.indexOf(productId) !== -1;
     }
     
-    // Cargar productos desde Google Sheets CSV
+    // --- Cargar productos desde Google Sheets (CSV) ---
     async function loadProductsFromSheet() {
         try {
             const response = await fetch(CSV_URL);
             const csvText = await response.text();
             
-            // Parsear CSV simple
+            // Parsear CSV manualmente (soportando comillas)
             const lines = csvText.split('\n');
+            if (lines.length < 2) return [];
+            
+            // Asumimos que la primera línea son los encabezados
             const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
             
             const productsList = [];
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
-                // Parsear CSV respetando comillas
+                // Parseo simple que respeta comillas
                 const values = [];
                 let currentValue = '';
                 let inQuotes = false;
@@ -90,7 +355,7 @@
                 }
                 values.push(currentValue.trim());
                 
-                if (values.length >= 8) {
+                if (values.length >= 9) { // Esperamos 9 columnas
                     productsList.push({
                         id: values[0].replace(/"/g, ''),
                         title: values[1].replace(/"/g, ''),
@@ -100,11 +365,11 @@
                         image: values[5].replace(/"/g, ''),
                         seller: values[6].replace(/"/g, ''),
                         last_updated: parseInt(values[7]) || Date.now(),
-                        sold: values[8] === 'TRUE'
+                        sold: values[8].toUpperCase() === 'TRUE'
                     });
                 }
             }
-            
+            console.log(`✅ ${productsList.length} productos cargados desde Google Sheets`);
             return productsList;
         } catch (error) {
             console.error('Error cargando desde Google Sheets:', error);
@@ -120,6 +385,7 @@
         renderProducts();
     }
     
+    // --- Filtros y renderizado ---
     function getPriceValue(priceStr) {
         const match = priceStr?.toString().match(/\d+/);
         return match ? parseInt(match[0]) : null;
@@ -127,7 +393,7 @@
     
     function filterProducts() {
         return products.filter(p => {
-            if (p.sold) return false;
+            if (p.sold) return false; // No mostrar vendidos
             if (currentCategory !== 'all' && p.category !== currentCategory) return false;
             if (searchTerm && !p.title.toLowerCase().includes(searchTerm.toLowerCase())) return false;
             const val = getPriceValue(p.price);
@@ -153,7 +419,6 @@
         
         grid.innerHTML = filtered.map(product => {
             const isNew = (Date.now() - product.last_updated) < 86400000;
-            const isSold = product.sold;
             const isFav = isFavorite(product.id);
             const contactClean = product.contact.replace(/[^0-9]/g, '');
             
@@ -162,9 +427,8 @@
                 : `<img class="product-img" src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=Sin+foto'">`;
             
             return `
-                <div class="product-card ${isSold ? 'sold' : ''}" data-id="${product.id}">
-                    ${isNew && !isSold ? '<span class="new-badge">✨ NUEVO</span>' : ''}
-                    ${isSold ? '<div class="sold-badge">VENDIDO</div>' : ''}
+                <div class="product-card" data-id="${product.id}">
+                    ${isNew ? '<span class="new-badge">✨ NUEVO</span>' : ''}
                     <div class="favorite-icon ${isFav ? 'active' : ''}" data-fav="${product.id}">${isFav ? '❤️' : '🤍'}</div>
                     ${imageHtml}
                     <div class="product-info">
@@ -179,11 +443,11 @@
             `;
         }).join('');
         
-        // Event listeners...
         attachEventListeners();
     }
     
     function attachEventListeners() {
+        // Favoritos
         document.querySelectorAll('.favorite-icon').forEach(icon => {
             icon.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -196,6 +460,7 @@
             });
         });
         
+        // Botones WhatsApp
         document.querySelectorAll('.whatsapp-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -204,12 +469,15 @@
             });
         });
         
+        // Abrir modal (simplificado por ahora)
         document.querySelectorAll('.product-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.favorite-icon') || e.target.closest('.whatsapp-btn')) return;
                 const id = card.dataset.id;
                 const product = products.find(p => p.id === id);
-                if (product) openModal(product);
+                if (product) {
+                    alert(`🔍 ${product.title}\n💰 ${product.price}\n📞 ${product.contact}\n📂 ${product.category}\n👤 Vendedor: ${product.seller || 'No especificado'}\n\n💬 Contacta por WhatsApp al ${product.contact}`);
+                }
             });
         });
     }
@@ -217,11 +485,6 @@
     function escapeHtml(str) {
         if (!str) return "";
         return str.replace(/[&<>]/g, (m) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
-    }
-    
-    // Modal functions (simplificadas)
-    function openModal(product) {
-        alert(`🔍 ${product.title}\n💰 ${product.price}\n📞 ${product.contact}\n📂 ${product.category}\n👤 Vendedor: ${product.seller || 'No especificado'}\n\n💬 Contacta por WhatsApp al ${product.contact}`);
     }
     
     function setupFilters() {
