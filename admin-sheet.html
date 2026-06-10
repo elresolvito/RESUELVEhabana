@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Admin RESUELVEhabana - Carga por WhatsApp</title>
+    <title>Admin RESUELVEhabana - Carga Masiva</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -19,9 +19,9 @@
             padding: 20px;
             border-radius: 20px;
         }
-        h1 { color: #ff9800; margin-bottom: 20px; font-size: 1.5rem; }
-        h2 { color: #ff9800; margin: 20px 0 10px; font-size: 1.2rem; }
-        h3 { color: #ff9800; margin: 15px 0 10px; font-size: 1rem; }
+        h1, h2 { color: #ff9800; }
+        h1 { margin-bottom: 20px; font-size: 1.5rem; }
+        h2 { margin: 20px 0 10px; font-size: 1.2rem; }
         input, select, textarea {
             width: 100%;
             padding: 12px;
@@ -119,21 +119,19 @@
 <div id="app"></div>
 
 <script>
+    // ==========================================================
+    // CONFIGURACIÓN PARA GOOGLE SHEETS (ACTUALIZADO)
+    // ==========================================================
     const ADMIN_PASSWORD = "ResuelveHabana2026";
-    
-    // ==========================================================
-    // CONFIGURACIÓN DE GOOGLE SHEETS
-    // (Estos valores los obtendremos después de crear el Sheet)
-    // ==========================================================
-    // TODO: Reemplazar con tus valores reales después de crear el Sheet
-    const SPREADSHEET_ID = "TU_SPREADSHEET_ID";  // Ej: "1ABC123_xyz..."
-    const SHEET_NAME = "Productos";
-    // La URL de la API de Google Sheets (pública)
-    // Necesitaremos publicar el Sheet como CSV o JSON
+    // ID DE LA HOJA DE CÁLCULO (NO la URL pública)
+    const SHEET_ID = "1S6XiBptaQopai2W2Wr-HIedIgAdH46WI7wgQ8aClPCM";
+    // Rango de datos (asumiendo que las columnas están en orden)
+    const SHEET_RANGE = "Hoja 1!A:I"; // Cambia "Hoja 1" si tu hoja se llama diferente
     
     let products = [];
     let isLoggedIn = false;
 
+    // --- Autenticación ---
     function checkAuth() {
         if (localStorage.getItem('admin_auth') === 'true') {
             isLoggedIn = true;
@@ -165,51 +163,46 @@
         });
     }
 
-    // ==========================================================
-    // FUNCIONES PARA GOOGLE SHEETS (API)
-    // ==========================================================
+    // --- Funciones para leer/escribir en Google Sheets usando Google Apps Script ---
+    // NOTA: Para escribir en una hoja desde un sitio web estático (sin backend),
+    // necesitas desplegar un Google Apps Script como Web App.
+    // Por ahora, las siguientes funciones son simulaciones.
+    // Te proporcionaré el código del Apps Script por separado.
     
-    // Por ahora, estas funciones simulan la carga
-    // Cuando tengamos el Sheet real, las reemplazaremos con fetch a Google Sheets API
-    
+    // Esta función llamará a tu Web App de Google Apps Script para obtener los datos
     async function loadProductsFromSheet() {
-        // TODO: Conectar con Google Sheets real
-        // Por ahora retornamos datos de ejemplo
-        return [
-            { id: "1", title: "Zapatos Nike", price: "3500 CUP", category: "ropa", contact: "5351234567", image: "https://placehold.co/400", seller: "Carlos", last_updated: Date.now(), sold: false },
-            { id: "2", title: "Laptop Lenovo", price: "45000 CUP", category: "electronica", contact: "5359988776", image: "https://placehold.co/400", seller: "María", last_updated: Date.now() - 86400000, sold: false }
-        ];
+        // TODO: Reemplazar con la URL de tu Web App desplegada (más abajo te explico cómo)
+        // const webAppUrl = "https://script.google.com/macros/s/.../exec?action=get";
+        // const response = await fetch(webAppUrl);
+        // return await response.json();
+        
+        console.warn("Función de lectura pendiente de conectar con Google Apps Script.");
+        return [];
     }
     
+    // Esta función llamará a tu Web App para guardar productos
     async function saveProductsToSheet(productsList) {
-        // TODO: Conectar con Google Sheets real
-        console.log("Guardando productos:", productsList);
-        return { success: true, count: productsList.length };
-    }
-    
-    async function deleteProductFromSheet(productId) {
-        // TODO: Eliminar del Sheet
-        console.log("Eliminando producto:", productId);
-        return true;
-    }
-    
-    async function updateProductSoldStatus(productId, sold) {
-        // TODO: Actualizar estado vendido
-        console.log("Actualizando producto:", productId, sold);
+        // TODO: Reemplazar con la URL de tu Web App
+        // const webAppUrl = "https://script.google.com/macros/s/.../exec?action=add";
+        // const response = await fetch(webAppUrl, {
+        //     method: 'POST',
+        //     mode: 'no-cors',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({ products: productsList })
+        // });
+        // return response.ok;
+        
+        console.log("Productos a guardar:", productsList);
+        console.warn("Función de escritura pendiente de conectar con Google Apps Script.");
         return true;
     }
 
-    // ==========================================================
-    // PARSER DE PRODUCTOS DESDE WHATSAPP
-    // ==========================================================
-    
+    // --- Parser de productos desde texto de WhatsApp ---
     function parseProductsFromWhatsApp(text) {
-        // Soporta múltiples formatos
         const lines = text.split('\n').filter(l => l.trim());
         const products = [];
-        
-        // Formato 1: clave: valor
         let current = {};
+        
         for (let line of lines) {
             line = line.trim();
             if (line.toLowerCase().startsWith('título:') || line.toLowerCase().startsWith('titulo:')) {
@@ -233,7 +226,6 @@
             products.push(current);
         }
         
-        // Si no se encontró en formato clave:valor, probar formato | separado
         if (products.length === 0) {
             for (let line of lines) {
                 const parts = line.split('|').map(p => p.trim());
@@ -249,26 +241,20 @@
                 }
             }
         }
-        
         return products;
     }
     
     function checkDuplicates(newProducts, existingProducts) {
         const duplicates = [];
         const unique = [];
-        
         for (let newP of newProducts) {
             const exists = existingProducts.some(existingP => 
                 existingP.title.toLowerCase() === newP.title.toLowerCase() &&
                 existingP.contact === newP.contact
             );
-            if (exists) {
-                duplicates.push(newP);
-            } else {
-                unique.push(newP);
-            }
+            if (exists) duplicates.push(newP);
+            else unique.push(newP);
         }
-        
         return { unique, duplicates };
     }
     
@@ -285,19 +271,16 @@
             image: p.image,
             seller: sellerInfo.name || p.seller || 'Anónimo',
             seller_phone: sellerInfo.phone || p.contact,
-            last_updated: now - (index * 1000), // para que mantengan el orden
+            last_updated: now - (index * 1000),
             sold: false,
             batch_id: batchId
         }));
         
-        const result = await saveProductsToSheet(newProducts);
-        return { success: result.success, count: newProducts.length, products: newProducts };
+        const success = await saveProductsToSheet(newProducts);
+        return { success, count: newProducts.length, products: newProducts };
     }
     
-    // ==========================================================
-    // RENDERIZADO DEL PANEL
-    // ==========================================================
-    
+    // --- Renderizado del Panel ---
     async function loadProducts() {
         products = await loadProductsFromSheet();
         renderProductList();
@@ -307,7 +290,6 @@
         const listDiv = document.getElementById('productList');
         if (!listDiv) return;
         
-        // Agrupar por vendedor
         const grouped = {};
         for (let p of products) {
             const seller = p.seller || 'Anónimo';
@@ -342,7 +324,8 @@
     
     async function deleteProduct(id) {
         if (!confirm('¿Eliminar este producto?')) return;
-        await deleteProductFromSheet(id);
+        // TODO: Implementar eliminación en el Google Sheet
+        alert("Función de eliminar pendiente de conectar.");
         await loadProducts();
     }
     
@@ -357,27 +340,21 @@
                     <div class="tab" data-tab="manage">📋 Gestionar productos</div>
                 </div>
                 
-                <!-- Pestaña: Carga masiva desde WhatsApp -->
                 <div id="tab-batch" class="tab-content active">
                     <h2>📱 Productos enviados por WhatsApp</h2>
-                    
                     <div style="background:#0a1a2a; padding:12px; border-radius:12px; margin-bottom:16px;">
-                        <label style="display:block; margin-bottom:8px;">📝 Nombre del vendedor (quien envió los productos):</label>
-                        <input type="text" id="sellerName" placeholder="Ej: Carlos Pérez (opcional)">
+                        <label style="display:block; margin-bottom:8px;">📝 Nombre del vendedor:</label>
+                        <input type="text" id="sellerName" placeholder="Ej: Carlos Pérez">
                         <label style="display:block; margin-bottom:8px; margin-top:12px;">📞 Teléfono del vendedor:</label>
                         <input type="text" id="sellerPhone" placeholder="Ej: 5351234567">
                     </div>
-                    
                     <textarea id="batchText" rows="8" placeholder="Pega aquí los productos que llegaron por WhatsApp..."></textarea>
-                    
                     <button id="previewBatchBtn">🔍 Previsualizar y verificar duplicados</button>
                     <div id="batchPreview" class="batch-preview" style="display:none;"></div>
-                    
                     <button id="publishBatchBtn" style="background:#2ecc71;">🚀 Publicar todos los productos</button>
                     <div id="batchResult"></div>
                 </div>
                 
-                <!-- Pestaña: Gestionar productos existentes -->
                 <div id="tab-manage" class="tab-content">
                     <h2>📋 Productos actuales</h2>
                     <div id="productList">Cargando...</div>
@@ -410,31 +387,18 @@
                 return;
             }
             
-            // Verificar duplicados con productos existentes
             const { unique, duplicates } = checkDuplicates(productsList, products);
-            
             let html = `<div class="stats-batch">📦 Se encontraron ${productsList.length} productos (${unique.length} nuevos, ${duplicates.length} duplicados)</div>`;
-            
             if (duplicates.length > 0) {
-                html += `<div class="warning">⚠️ Productos duplicados (no se publicarán):</div>`;
-                duplicates.forEach(p => {
-                    html += `<div class="batch-item">❌ ${escapeHtml(p.title)} - ${escapeHtml(p.price)}</div>`;
-                });
+                html += `<div class="warning">⚠️ Productos duplicados:</div>`;
+                duplicates.forEach(p => { html += `<div class="batch-item">❌ ${escapeHtml(p.title)} - ${escapeHtml(p.price)}</div>`; });
             }
-            
             if (unique.length > 0) {
                 html += `<div class="success">✅ Productos a publicar (${unique.length}):</div>`;
                 unique.forEach((p, i) => {
-                    html += `
-                        <div class="batch-item">
-                            <strong>${i+1}.</strong> ${escapeHtml(p.title)}<br>
-                            💰 ${escapeHtml(p.price)} | 📂 ${p.category} | 📞 ${p.contact}<br>
-                            📷 ${p.image ? escapeHtml(p.image.substring(0, 50)) + '...' : 'Sin imagen'}
-                        </div>
-                    `;
+                    html += `<div class="batch-item"><strong>${i+1}.</strong> ${escapeHtml(p.title)}<br>💰 ${escapeHtml(p.price)} | 📂 ${p.category} | 📞 ${p.contact}<br>📷 ${p.image ? escapeHtml(p.image.substring(0, 50)) + '...' : 'Sin imagen'}</div>`;
                 });
             }
-            
             previewDiv.innerHTML = html;
             previewDiv.style.display = 'block';
             window.pendingProducts = unique;
@@ -444,15 +408,12 @@
         document.getElementById('publishBatchBtn').addEventListener('click', async () => {
             const text = document.getElementById('batchText').value;
             let productsList = parseProductsFromWhatsApp(text);
-            
             if (productsList.length === 0) {
                 document.getElementById('batchResult').innerHTML = '<div class="error">No hay productos para publicar</div>';
                 return;
             }
             
-            // Filtrar duplicados
             const { unique } = checkDuplicates(productsList, products);
-            
             if (unique.length === 0) {
                 document.getElementById('batchResult').innerHTML = '<div class="warning">Todos los productos ya existen (duplicados)</div>';
                 return;
@@ -460,15 +421,13 @@
             
             const sellerName = document.getElementById('sellerName').value;
             const sellerPhone = document.getElementById('sellerPhone').value;
-            
             if (!confirm(`¿Publicar ${unique.length} productos de ${sellerName || 'vendedor'}?`)) return;
             
             document.getElementById('batchResult').innerHTML = '<div class="success">⏳ Publicando...</div>';
-            
             const result = await publishBatch(unique, { name: sellerName, phone: sellerPhone });
             
             if (result.success) {
-                document.getElementById('batchResult').innerHTML = `<div class="success">✅ ¡${result.count} productos publicados exitosamente de ${sellerName || 'vendedor'}!</div>`;
+                document.getElementById('batchResult').innerHTML = `<div class="success">✅ ¡${result.count} productos publicados exitosamente!</div>`;
                 document.getElementById('batchText').value = '';
                 document.getElementById('batchPreview').style.display = 'none';
                 document.getElementById('sellerName').value = '';
@@ -494,7 +453,6 @@
     }
     
     window.deleteProduct = deleteProduct;
-    
     checkAuth();
 </script>
 </body>
