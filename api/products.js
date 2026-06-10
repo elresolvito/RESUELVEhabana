@@ -1,15 +1,17 @@
-import { createPool } from '@vercel/postgres';
+import pg from 'pg';
+const { Pool } = pg;
 
-// Crear conexión a la base de datos
-const pool = createPool({
+// Configurar conexión a PostgreSQL
+const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
+  ssl: { rejectUnauthorized: false }
 });
 
-// Función para inicializar la tabla si no existe
+// Función para inicializar la tabla
 async function initTable() {
   const client = await pool.connect();
   try {
-    await client.sql`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS products (
         id VARCHAR(50) PRIMARY KEY,
         title VARCHAR(100) NOT NULL,
@@ -18,37 +20,41 @@ async function initTable() {
         contact VARCHAR(50) NOT NULL,
         image TEXT NOT NULL,
         last_updated BIGINT NOT NULL,
-        views INTEGER DEFAULT 0
+        sold BOOLEAN DEFAULT FALSE
       )
-    `;
-    
-    // Crear índice para ordenar más rápido
-    await client.sql`
-      CREATE INDEX IF NOT EXISTS idx_last_updated ON products(last_updated DESC)
-    `;
+    `);
+    console.log('✅ Tabla products lista');
+  } catch (err) {
+    console.error('Error al crear tabla:', err);
   } finally {
     client.release();
   }
 }
 
-export default async function handler(req, res) {
-  // Configurar CORS para que funcione desde cualquier lugar
+// Inicializar la tabla al arrancar
+initTable();
+
+// Servidor HTTP básico
+const http = require('http');
+
+const server = http.createServer(async (req, res) => {
+  // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.writeHead(200);
+    res.end();
+    return;
   }
   
-  await initTable();
-  const client = await pool.connect();
-  
-  try {
-    // GET: Obtener productos (con orden rotativo)
-    if (req.method === 'GET') {
-      const { category } = req.query;
-      
+  // GET: Obtener productos
+  if (req.method === 'GET') {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const category = url.searchParams.get('category');
+    
+    try {
       let query = 'SELECT * FROM products ORDER BY last_updated DESC';
       let params = [];
       
@@ -57,82 +63,68 @@ export default async function handler(req, res) {
         params = [category];
       }
       
-      const result = await client.sql.query(query, params);
-      
-      // Agregar posición rotativa (si misma fecha, orden aleatorio)
-      let products = result.rows;
-      const now = Date.now();
-      
-      // Los productos con misma última actualización se mezclan aleatoriamente
-      const groupedByDate = {};
-      products.forEach(p => {
-        const dateKey = Math.floor(p.last_updated / 86400000); // agrupar por día
-        if (!groupedByDate[dateKey]) groupedByDate[dateKey] = [];
-        groupedByDate[dateKey].push(p);
-      });
-      
-      // Mezclar los que tienen misma fecha
-      let sortedProducts = [];
-      Object.keys(groupedByDate).sort((a,b) => b - a).forEach(dateKey => {
-        const group = groupedByDate[dateKey];
-        // Mezclar aleatoriamente dentro del mismo día
-        for (let i = group.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [group[i], group[j]] = [group[j], group[i]];
-        }
-        sortedProducts.push(...group);
-      });
-      
-      return res.status(200).json(sortedProducts);
+      const result = await pool.query(query, params);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(result.rows));
+    } catch (err) {
+      console.error('Error GET:', err);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Error al obtener productos' }));
     }
-    
-    // POST: Agregar o renovar producto
-    if (req.method === 'POST') {
-      const { id, title, price, category, contact, image } = req.body;
-      
-      if (!title || !price || !contact || !image) {
-        return res.status(400).json({ error: 'Faltan campos requeridos' });
-      }
-      
-      const newId = id || 'p' + Date.now() + Math.random().toString(36).substr(2, 6);
-      const now = Date.now();
-      
-      // Verificar si ya existe
-      const exists = await client.sql.query('SELECT id FROM products WHERE id = $1', [newId]);
-      
-      if (exists.rows.length > 0) {
-        // Actualizar (renovar)
-        await client.sql.query(
-          'UPDATE products SET last_updated = $1, title = $2, price = $3, category = $4, contact = $5, image = $6 WHERE id = $7',
-          [now, title, price, category, contact, image, newId]
-        );
-        return res.status(200).json({ success: true, action: 'renewed', id: newId });
-      } else {
-        // Insertar nuevo
-        await client.sql.query(
-          'INSERT INTO products (id, title, price, category, contact, image, last_updated, views) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-          [newId, title, price, category, contact, image, now, 0]
-        );
-        return res.status(201).json({ success: true, action: 'created', id: newId });
-      }
-    }
-    
-    // DELETE: Eliminar productos viejos (más de 15 días)
-    if (req.method === 'DELETE') {
-      const fifteenDaysAgo = Date.now() - (15 * 86400000);
-      const result = await client.sql.query(
-        'DELETE FROM products WHERE last_updated < $1 RETURNING id',
-        [fifteenDaysAgo]
-      );
-      return res.status(200).json({ deleted: result.rowCount });
-    }
-    
-    return res.status(405).json({ error: 'Método no permitido' });
-    
-  } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
-  } finally {
-    client.release();
+    return;
   }
-}
+  
+  // POST: Crear o actualizar producto
+  if (req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const { id, title, price, category, contact, image, sold } = JSON.parse(body);
+        
+        if (!title || !price || !contact || !image) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Faltan campos requeridos' }));
+          return;
+        }
+        
+        const now = Date.now();
+        const newId = id || 'p' + now + Math.random().toString(36).substr(2, 6);
+        
+        // Verificar si existe
+        const exists = await pool.query('SELECT id FROM products WHERE id = $1', [newId]);
+        
+        if (exists.rows.length > 0) {
+          // Actualizar
+          await pool.query(
+            'UPDATE products SET title=$1, price=$2, category=$3, contact=$4, image=$5, last_updated=$6, sold=$7 WHERE id=$8',
+            [title, price, category, contact, image, now, sold || false, newId]
+          );
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, action: 'updated', id: newId }));
+        } else {
+          // Insertar nuevo
+          await pool.query(
+            'INSERT INTO products (id, title, price, category, contact, image, last_updated, sold) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [newId, title, price, category, contact, image, now, false]
+          );
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, action: 'created', id: newId }));
+        }
+      } catch (err) {
+        console.error('Error POST:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Error al guardar producto' }));
+      }
+    });
+    return;
+  }
+  
+  res.writeHead(405);
+  res.end();
+});
+
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+});
