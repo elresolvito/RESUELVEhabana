@@ -2,104 +2,165 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>RESUELVEhabana - Clasificados de Cuba</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #f0f2f5;
             padding: 12px;
             padding-bottom: 80px;
         }
+
+        /* Header */
         .header {
             background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
             color: white;
             padding: 20px;
-            border-radius: 16px;
+            border-radius: 20px;
             margin-bottom: 16px;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .header h1 { font-size: 1.8rem; }
+
+        .header h1 { font-size: 1.8rem; letter-spacing: 1px; }
         .header p { font-size: 0.85rem; opacity: 0.9; margin-top: 6px; }
+
+        /* Toolbar */
         .toolbar {
             background: white;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 12px;
             margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
+
         .search-box {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 30px;
-            font-size: 0.9rem;
+            padding: 14px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 40px;
+            font-size: 1rem;
             margin-bottom: 12px;
+            outline: none;
+            background: #fafafa;
         }
+
+        .search-box:focus {
+            border-color: #1a472a;
+            background: white;
+        }
+
         .price-filters {
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
             flex-wrap: wrap;
         }
+
         .price-input {
             flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            background: #fafafa;
         }
+
         .data-saver {
             background: #ffc107;
-            padding: 10px;
-            border-radius: 30px;
+            padding: 12px;
+            border-radius: 40px;
             text-align: center;
             font-weight: bold;
+            font-size: 0.9rem;
             cursor: pointer;
+            transition: 0.3s;
             border: none;
             width: 100%;
         }
-        .data-saver.active { background: #4caf50; color: white; }
+
+        .data-saver.active {
+            background: #4caf50;
+            color: white;
+        }
+
+        /* Categorías */
         .categories {
             display: flex;
             gap: 8px;
             margin-bottom: 16px;
             overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: thin;
         }
+
         .category-btn {
             background: white;
-            border: 1px solid #ddd;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.8rem;
+            border: 1px solid #e0e0e0;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
             cursor: pointer;
             white-space: nowrap;
+            transition: all 0.2s;
         }
-        .category-btn.active { background: #1a472a; color: white; }
+
+        .category-btn.active {
+            background: #1a472a;
+            color: white;
+            border-color: #1a472a;
+        }
+
+        /* Tarjeta de producto */
         .product-card {
             background: white;
-            border-radius: 16px;
-            margin-bottom: 16px;
+            border-radius: 20px;
+            margin-bottom: 14px;
             overflow: hidden;
             display: flex;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
             position: relative;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
-        .product-card.sold { opacity: 0.6; background: #f5f5f5; }
-        .sold-badge {
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .product-card.sold {
+            opacity: 0.6;
+            background: #f5f5f5;
+        }
+
+        .favorite-icon {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 8px 20px;
-            font-weight: bold;
-            border-radius: 40px;
-            pointer-events: none;
-            z-index: 3;
+            top: 8px;
+            right: 8px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 2;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+
+        .favorite-icon.active {
+            color: #ff4757;
+        }
+
         .product-img {
             width: 110px;
             height: 110px;
@@ -107,40 +168,268 @@
             background: #e0e0e0;
             flex-shrink: 0;
         }
-        .product-info { padding: 12px; flex: 1; }
-        .product-title { font-weight: bold; font-size: 1rem; margin-bottom: 4px; }
-        .product-price { color: #1a472a; font-weight: bold; font-size: 1.2rem; margin: 6px 0; }
-        .product-contact { font-size: 0.75rem; color: #666; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-        .contact-icon {
-            background: #25D366;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            text-decoration: none;
+
+        .product-info {
+            padding: 12px;
+            flex: 1;
         }
-        .product-date { font-size: 0.7rem; color: #999; margin-top: 6px; }
-        .admin-badge {
+
+        .product-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            padding-right: 35px;
+        }
+
+        .product-price {
+            color: #1a472a;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 6px 0;
+        }
+
+        .product-contact {
+            font-size: 0.75rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .product-date {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 6px;
+        }
+
+        .new-badge {
             display: inline-block;
             background: #ff9800;
-            color: #333;
+            color: white;
             font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 10px;
+            padding: 2px 8px;
+            border-radius: 20px;
             margin-left: 6px;
+            vertical-align: middle;
         }
-        .empty-message { text-align: center; padding: 40px; color: #888; }
-        .loading { text-align: center; padding: 40px; color: #1a472a; }
-        .stats { font-size: 0.7rem; text-align: center; margin-top: 16px; color: #666; }
-        .error-message { background: #ffebee; color: #c62828; padding: 12px; border-radius: 12px; margin: 12px; text-align: center; }
-        @media (max-width: 480px) { .product-img { width: 90px; height: 90px; } }
+
+        /* ============================================ */
+        /* MODAL - Vista detallada del producto */
+        /* ============================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-content {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            position: relative;
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-close, .modal-share, .modal-fav {
+            background: #f0f0f0;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .modal-close:active, .modal-share:active, .modal-fav:active {
+            background: #e0e0e0;
+        }
+
+        .modal-fav.active {
+            color: #ff4757;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            background: #f5f5f5;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .modal-price {
+            font-size: 1.8rem;
+            color: #1a472a;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .modal-contact {
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .modal-contact-info {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .modal-whatsapp {
+            background: #25D366;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .related-section {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+
+        .related-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .related-grid {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .related-card {
+            flex: 0 0 140px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .related-img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .related-info {
+            padding: 8px;
+        }
+
+        .related-title-small {
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .related-price {
+            font-size: 0.7rem;
+            color: #1a472a;
+            font-weight: bold;
+        }
+
+        .modal-date {
+            color: #999;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 16px;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #1a472a;
+        }
+
+        .stats {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 16px;
+            color: #666;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .product-img {
+                width: 100px;
+                height: 100px;
+            }
+            .modal-title {
+                font-size: 1.3rem;
+            }
+            .modal-price {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>🇨🇺 RESUELVEhabana</h1>
-    <p>Clasificados de Cuba • Anuncios revisados por administrador</p>
+    <p>Clasificados de Cuba • Toca cualquier producto para verlo en detalle</p>
 </div>
 
 <div class="toolbar">
@@ -172,10 +461,41 @@
 
 <div class="stats" id="stats"></div>
 
-<div style="background: #e8f5e9; border-radius: 12px; padding: 12px; margin-top: 16px; font-size: 0.7rem; text-align: center;">
+<!-- Modal para vista detallada del producto -->
+<div id="productModal" class="modal">
+    <div class="modal-content" id="modalContent">
+        <div class="modal-header">
+            <button class="modal-close" id="closeModalBtn">←</button>
+            <span style="font-size: 0.8rem; color: #888;">Detalle</span>
+            <div style="display: flex; gap: 8px;">
+                <button class="modal-fav" id="modalFavBtn">❤️</button>
+                <button class="modal-share" id="modalShareBtn">📤</button>
+            </div>
+        </div>
+        <img id="modalImage" class="modal-image" src="" alt="">
+        <div class="modal-body">
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-price" id="modalPrice"></div>
+            <div class="modal-contact">
+                <span class="modal-contact-info" id="modalContact"></span>
+                <a href="#" id="modalWhatsappLink" class="modal-whatsapp" target="_blank">💬 WhatsApp</a>
+            </div>
+            <div id="modalCategory" style="font-size: 0.85rem; color: #666; margin-top: 8px;"></div>
+            
+            <!-- Productos relacionados -->
+            <div class="related-section" id="relatedSection">
+                <div class="related-title">🔄 Productos relacionados</div>
+                <div class="related-grid" id="relatedGrid"></div>
+            </div>
+        </div>
+        <div class="modal-date" id="modalDate"></div>
+    </div>
+</div>
+
+<div style="background: #e8f5e9; border-radius: 16px; padding: 14px; margin-top: 16px; font-size: 0.7rem; text-align: center;">
     📌 <strong>¿Quieres vender?</strong><br>
-    Envía los datos de tu producto por WhatsApp al <strong>+53 56382909</strong> y nosotros lo publicamos.<br>
-    📝 Incluye: Título, Precio, Categoría, Teléfono de contacto y una foto.
+    Envía los datos de tu producto por WhatsApp al <strong>+53 12345678</strong> y nosotros lo publicamos.<br>
+    ❤️ Puedes guardar productos como favoritos tocando el corazón.
 </div>
 
 <script>
@@ -187,6 +507,179 @@
     let maxPriceFilter = "";
     let dataSaverMode = false;
     let products = [];
+    let favorites = [];
+
+    // Cargar favoritos desde localStorage
+    function loadFavorites() {
+        const saved = localStorage.getItem('resuelvehabana_favorites');
+        if (saved) {
+            favorites = JSON.parse(saved);
+        }
+    }
+
+    // Guardar favoritos en localStorage
+    function saveFavorites() {
+        localStorage.setItem('resuelvehabana_favorites', JSON.stringify(favorites));
+    }
+
+    // Alternar favorito
+    function toggleFavorite(productId) {
+        const index = favorites.indexOf(productId);
+        if (index === -1) {
+            favorites.push(productId);
+        } else {
+            favorites.splice(index, 1);
+        }
+        saveFavorites();
+        renderProducts(); // Actualizar la vista
+        return favorites.indexOf(productId) !== -1;
+    }
+
+    function isFavorite(productId) {
+        return favorites.includes(productId);
+    }
+
+    // Swipe down para cerrar modal
+    let touchStartY = 0;
+    let touchEndY = 0;
+
+    function setupSwipeToClose() {
+        const modalContent = document.getElementById('modalContent');
+        const modal = document.getElementById('productModal');
+        
+        modalContent.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        modalContent.addEventListener('touchmove', (e) => {
+            touchEndY = e.touches[0].clientY;
+            const diff = touchEndY - touchStartY;
+            if (diff > 50 && modalContent.scrollTop === 0) {
+                modal.style.transform = `translateY(${diff}px)`;
+                modal.style.transition = 'none';
+            }
+        });
+        
+        modalContent.addEventListener('touchend', (e) => {
+            const diff = touchEndY - touchStartY;
+            if (diff > 100) {
+                closeModal();
+            }
+            modal.style.transform = '';
+            modal.style.transition = '';
+        });
+    }
+
+    // Compartir producto
+    function shareProduct(product) {
+        const shareText = `🇨🇺 ${product.title} - ${product.price}\n📞 ${product.contact}\n\nVer en RESUELVEhabana: ${window.location.href}`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: product.title,
+                text: shareText,
+                url: window.location.href
+            }).catch(() => {
+                copyToClipboard(shareText);
+            });
+        } else {
+            copyToClipboard(shareText);
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+        alert('✅ Enlace copiado al portapapeles. ¡Compártelo donde quieras!');
+    }
+
+    // Modal functions
+    let currentModalProduct = null;
+
+    function renderRelatedProducts(category, currentProductId) {
+        const related = products.filter(p => p.category === category && p.id !== currentProductId && !p.sold).slice(0, 6);
+        const grid = document.getElementById('relatedGrid');
+        
+        if (related.length === 0) {
+            grid.innerHTML = '<div style="color:#999; font-size:0.8rem; padding:8px;">No hay productos relacionados</div>';
+            return;
+        }
+        
+        let html = '';
+        related.forEach(p => {
+            html += `
+                <div class="related-card" data-id="${p.id}">
+                    <img class="related-img" src="${p.image}" alt="${p.title}" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'">
+                    <div class="related-info">
+                        <div class="related-title-small">${escapeHtml(p.title.substring(0, 30))}${p.title.length > 30 ? '...' : ''}</div>
+                        <div class="related-price">${escapeHtml(p.price)}</div>
+                    </div>
+                </div>
+            `;
+        });
+        grid.innerHTML = html;
+        
+        document.querySelectorAll('.related-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-id');
+                const product = products.find(p => p.id === id);
+                if (product) {
+                    openModal(product);
+                }
+            });
+        });
+    }
+
+    function openModal(product) {
+        currentModalProduct = product;
+        const modal = document.getElementById('productModal');
+        
+        document.getElementById('modalImage').src = product.image;
+        document.getElementById('modalTitle').innerText = product.title;
+        document.getElementById('modalPrice').innerText = '💰 ' + product.price;
+        document.getElementById('modalContact').innerHTML = '📞 ' + product.contact;
+        
+        const whatsappLink = document.getElementById('modalWhatsappLink');
+        const cleanNumber = product.contact.replace(/[^0-9]/g, '');
+        whatsappLink.href = `https://wa.me/${cleanNumber}`;
+        
+        const categoryNames = {
+            'ropa': '👕 Ropa', 'electronica': '📱 Electrónica', 'hogar': '🏠 Hogar',
+            'trabajo': '💼 Trabajo', 'servicios': '🔧 Servicios', 'vehiculos': '🚗 Vehículos',
+            'inmuebles': '🏢 Inmuebles', 'belleza': '💄 Belleza', 'deportes': '⚽ Deportes',
+            'mascotas': '🐾 Mascotas'
+        };
+        const categoryName = categoryNames[product.category] || product.category;
+        document.getElementById('modalCategory').innerHTML = `📂 ${categoryName}`;
+        
+        const dateStr = new Date(product.last_updated).toLocaleDateString("es-CU", {
+            year: 'numeric', month: 'long', day: 'numeric'
+        });
+        document.getElementById('modalDate').innerHTML = `📅 Publicado: ${dateStr}`;
+        
+        // Actualizar botón de favorito en modal
+        const modalFavBtn = document.getElementById('modalFavBtn');
+        if (isFavorite(product.id)) {
+            modalFavBtn.classList.add('active');
+            modalFavBtn.innerHTML = '❤️';
+        } else {
+            modalFavBtn.classList.remove('active');
+            modalFavBtn.innerHTML = '🤍';
+        }
+        
+        // Mostrar productos relacionados
+        renderRelatedProducts(product.category, product.id);
+        
+        modal.style.display = 'block';
+        modal.style.transform = '';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('productModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        currentModalProduct = null;
+    }
 
     function getPriceValue(priceStr) {
         if (!priceStr) return null;
@@ -227,7 +720,8 @@
         const filtered = filterProducts();
         const container = document.getElementById('productList');
         const activeCount = products.filter(p => !p.sold).length;
-        document.getElementById('stats').innerHTML = `📊 ${activeCount} anuncios activos | Rotación automática`;
+        const favCount = favorites.length;
+        document.getElementById('stats').innerHTML = `📊 ${activeCount} anuncios activos | ❤️ ${favCount} favoritos | Toca para ver detalles`;
         
         if (filtered.length === 0) {
             container.innerHTML = '<div class="empty-message">📭 No hay anuncios en esta categoría.</div>';
@@ -235,25 +729,28 @@
         }
         
         let html = "";
-        filtered.forEach((product, index) => {
+        filtered.forEach((product) => {
             const isNew = (Date.now() - product.last_updated) < 86400000;
             const dateStr = new Date(product.last_updated).toLocaleDateString("es-CU");
             const isSold = product.sold;
+            const isFav = isFavorite(product.id);
             
             let imageHtml = dataSaverMode 
-                ? `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#ddd;font-size:10px;">📷 Modo ahorro</div>`
-                : `<img class="product-img" src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://placehold.co/400x400/ccc/white?text=Sin+foto'">`;
+                ? `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;font-size:11px;text-align:center;">📷<br>Modo<br>ahorro</div>`
+                : `<img class="product-img" src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=Sin+foto'">`;
             
             html += `
-                <div class="product-card ${isSold ? 'sold' : ''}">
-                    ${isSold ? '<div class="sold-badge">VENDIDO</div>' : ''}
+                <div class="product-card ${isSold ? 'sold' : ''}" data-id="${product.id}">
+                    <div class="favorite-icon ${isFav ? 'active' : ''}" data-fav="${product.id}">${isFav ? '❤️' : '🤍'}</div>
                     ${imageHtml}
                     <div class="product-info">
-                        <div class="product-title">${escapeHtml(product.title)} ${isNew && !isSold ? '✨' : ''}</div>
+                        <div class="product-title">
+                            ${escapeHtml(product.title)}
+                            ${isNew && !isSold ? '<span class="new-badge">NUEVO</span>' : ''}
+                        </div>
                         <div class="product-price">💰 ${escapeHtml(product.price)}</div>
                         <div class="product-contact">
                             📞 ${escapeHtml(product.contact)}
-                            <a href="https://wa.me/${product.contact.replace(/[^0-9]/g, '')}" target="_blank" class="contact-icon">WhatsApp</a>
                         </div>
                         <div class="product-date">📅 ${dateStr}</div>
                     </div>
@@ -261,6 +758,35 @@
             `;
         });
         container.innerHTML = html;
+        
+        // Event listeners para tarjetas (abrir modal)
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.favorite-icon')) return;
+                const id = card.getAttribute('data-id');
+                const product = products.find(p => p.id === id);
+                if (product) {
+                    openModal(product);
+                }
+            });
+        });
+        
+        // Event listeners para favoritos en tarjetas
+        document.querySelectorAll('.favorite-icon').forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = icon.getAttribute('data-fav');
+                const isNowFav = toggleFavorite(id);
+                icon.innerHTML = isNowFav ? '❤️' : '🤍';
+                icon.classList.toggle('active', isNowFav);
+                const modalFavBtn = document.getElementById('modalFavBtn');
+                if (currentModalProduct && currentModalProduct.id === id) {
+                    modalFavBtn.innerHTML = isNowFav ? '❤️' : '🤍';
+                    modalFavBtn.classList.toggle('active', isNowFav);
+                }
+                document.getElementById('stats').innerHTML = `📊 ${products.filter(p => !p.sold).length} anuncios activos | ❤️ ${favorites.length} favoritos | Toca para ver detalles`;
+            });
+        });
     }
 
     function escapeHtml(str) {
@@ -291,18 +817,60 @@
         const btn = document.getElementById('dataSaverBtn');
         btn.addEventListener('click', () => {
             dataSaverMode = !dataSaverMode;
-            btn.textContent = dataSaverMode ? "💾 Modo ahorro: ON" : "💾 Modo ahorro: OFF";
+            btn.textContent = dataSaverMode ? "💾 Modo ahorro: ON (imágenes ocultas)" : "💾 Modo ahorro: OFF";
             btn.classList.toggle('active', dataSaverMode);
             renderProducts();
         });
     }
 
+    function setupModal() {
+        const closeBtn = document.getElementById('closeModalBtn');
+        closeBtn.addEventListener('click', closeModal);
+        
+        const shareBtn = document.getElementById('modalShareBtn');
+        shareBtn.addEventListener('click', () => {
+            if (currentModalProduct) {
+                shareProduct(currentModalProduct);
+            }
+        });
+        
+        const favBtn = document.getElementById('modalFavBtn');
+        favBtn.addEventListener('click', () => {
+            if (currentModalProduct) {
+                const isNowFav = toggleFavorite(currentModalProduct.id);
+                favBtn.innerHTML = isNowFav ? '❤️' : '🤍';
+                favBtn.classList.toggle('active', isNowFav);
+                renderProducts();
+                document.getElementById('stats').innerHTML = `📊 ${products.filter(p => !p.sold).length} anuncios activos | ❤️ ${favorites.length} favoritos | Toca para ver detalles`;
+            }
+        });
+        
+        const modal = document.getElementById('productModal');
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        window.addEventListener('popstate', (e) => {
+            if (modal.style.display === 'block') {
+                closeModal();
+                e.preventDefault();
+            }
+        });
+        
+        setupSwipeToClose();
+    }
+
     function init() {
+        loadFavorites();
         setupFilters();
         setupDataSaver();
+        setupModal();
         loadProducts();
         setInterval(() => { if (document.visibilityState === 'visible') loadProducts(); }, 60000);
     }
+    
     init();
 </script>
 </body>
