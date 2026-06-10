@@ -1,0 +1,14 @@
+{
+  "name": "resuelvehabana",
+  "version": "1.0.0",
+  "description": "Catálogo rotativo para Cuba",
+  "main": "api/products.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node api/products.js"
+  },
+  "dependencies": {
+    "@vercel/postgres": "^0.5.0",
+    "pg": "^8.11.0"
+  }
+}
