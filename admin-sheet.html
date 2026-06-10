@@ -125,7 +125,7 @@
     const ADMIN_PASSWORD = "ResuelveHabana2026";
     
     // ----> URL DE TU GOOGLE APPS SCRIPT (ACTUALIZADA) <----
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwrCFvYEv-iGz9LZxWPOgWGe6Gkf1s2b3NCOi06QSsA0JleNst48E49oPAE9qLbY4ed2g/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw4Cr5kP_CuzDPdkmto2kaQWkb7N-geHxStfz5mHcpO6HvH5E4R55w-mXv96j2el5MQ8Q/exec";
     
     let products = [];
     let isLoggedIn = false;
@@ -162,16 +162,22 @@
         });
     }
 
-    // --- FUNCIÓN DE ESCRITURA (GUARDAR) - CONECTADA A TU WEB APP ---
+    // --- FUNCIÓN DE ESCRITURA (GUARDAR) CON BASE64 ---
     async function saveProductsToSheet(productsList) {
         try {
-            console.log("📤 Enviando productos a Google Sheets:", productsList);
+            // Codificar las URLs en Base64 antes de enviar
+            const productsToSend = productsList.map(p => ({
+                ...p,
+                image: btoa(unescape(encodeURIComponent(p.image)))
+            }));
+            
+            console.log("📤 Enviando productos a Google Sheets (URLs codificadas)");
             
             const response = await fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'add', products: productsList })
+                body: JSON.stringify({ action: 'add', products: productsToSend })
             });
             
             console.log("✅ Solicitud enviada correctamente");
@@ -182,7 +188,7 @@
         }
     }
 
-    // --- FUNCIÓN DE LECTURA (CARGAR) - PENDIENTE, PERO NO CRÍTICA ---
+    // --- FUNCIÓN DE LECTURA (PENDIENTE) ---
     async function loadProductsFromSheet() {
         console.log("📖 Función de lectura (pendiente de implementar)");
         return [];
@@ -239,8 +245,8 @@
         return { unique: newProducts, duplicates: [] };
     }
     
-    // --- FUNCIÓN PUBLISH BATCH CON encodeURIComponent ---
-        async function publishBatch(productsList, sellerInfo) {
+    // --- FUNCIÓN PUBLISH BATCH ---
+    async function publishBatch(productsList, sellerInfo) {
         const now = Date.now();
         const newProducts = productsList.map((p, index) => ({
             id: `prod_${now}_${index}_${Math.random().toString(36).substr(2, 4)}`,
@@ -248,8 +254,7 @@
             price: p.price,
             category: p.category,
             contact: p.contact,
-            // CODIFICAR LA URL EN BASE64 para evitar caracteres problemáticos
-            image: btoa(unescape(encodeURIComponent(p.image))),
+            image: p.image,  // La codificación se hará en saveProductsToSheet
             seller: sellerInfo.name || p.seller || 'Anónimo',
             last_updated: now - (index * 1000),
             sold: false
