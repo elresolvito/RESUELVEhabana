@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin RESUELVEhabana</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: monospace;
+            background: #1a1a2e;
+            padding: 20px;
+            color: #eee;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #16213e;
+            padding: 20px;
+            border-radius: 16px;
+        }
+        h1 { color: #ff9800; margin-bottom: 20px; font-size: 1.5rem; }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #0f3460;
+            color: white;
+        }
+        button {
+            background: #ff9800;
+            color: #1a1a2e;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+        button:hover { background: #ffb74d; }
+        .logout {
+            background: #e74c3c;
+            margin-top: 10px;
+        }
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #16213e;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .error { color: #e74c3c; margin-top: 10px; }
+        .success { color: #2ecc71; margin-top: 10px; }
+        .product-item {
+            background: #0f3460;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .product-item small { color: #aaa; }
+        .delete-btn {
+            background: #e74c3c;
+            padding: 5px 10px;
+            width: auto;
+            font-size: 0.8rem;
+        }
+        hr { margin: 20px 0; border-color: #0f3460; }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+    // ==================================================
+    // CONTRASEÑA DEL ADMIN - CÁMBiala por la que quieras
+    const ADMIN_PASSWORD = "ResuelveHabana2026";
+    // ==================================================
+    
+    const API_URL = 'https://resuelvehabana-api.onrender.com/api/products';
+    let isLoggedIn = false;
+    let products = [];
+
+    function checkAuth() {
+        const saved = localStorage.getItem('admin_auth');
+        if (saved === 'true') {
+            isLoggedIn = true;
+            renderAdminPanel();
+            loadProducts();
+        } else {
+            renderLogin();
+        }
+    }
+
+    function renderLogin() {
+        document.getElementById('app').innerHTML = `
+            <div class="login-box">
+                <h1>🔐 Panel Administrador</h1>
+                <input type="password" id="password" placeholder="Contraseña" autocomplete="off">
+                <button id="loginBtn">Acceder</button>
+                <div id="errorMsg"></div>
+            </div>
+        `;
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const pwd = document.getElementById('password').value;
+            if (pwd === ADMIN_PASSWORD) {
+                localStorage.setItem('admin_auth', 'true');
+                isLoggedIn = true;
+                renderAdminPanel();
+                loadProducts();
+            } else {
+                document.getElementById('errorMsg').innerHTML = '<div class="error">❌ Contraseña incorrecta</div>';
+            }
+        });
+    }
+
+    async function loadProducts() {
+        try {
+            const response = await fetch(API_URL);
+            products = await response.json();
+            renderProductList();
+        } catch (error) {
+            console.error('Error al cargar productos');
+        }
+    }
+
+    async function publishProduct(title, price, category, contact, imageUrl) {
+        if (!title || !price || !contact || !imageUrl) {
+            alert('❌ Completa todos los campos');
+            return false;
+        }
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: title.trim(),
+                    price: price.trim(),
+                    category: category,
+                    contact: contact.trim(),
+                    image: imageUrl.trim(),
+                    sold: false
+                })
+            });
+            if (response.ok) {
+                alert('✅ Producto publicado exitosamente');
+                return true;
+            }
+            return false;
+        } catch (error) {
+            alert('❌ Error de conexión');
+            return false;
+        }
+    }
+
+    async function deleteProduct(id) {
+        if (!confirm('¿Eliminar este producto permanentemente?')) return;
+        try {
+            const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                alert('✅ Producto eliminado');
+                loadProducts();
+            }
+        } catch (error) {
+            alert('❌ Error al eliminar');
+        }
+    }
+
+    async function toggleSold(id, currentSold) {
+        const product = products.find(p => p.id === id);
+        if (!product) return;
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: id,
+                    title: product.title,
+                    price: product.price,
+                    category: product.category,
+                    contact: product.contact,
+                    image: product.image,
+                    sold: !currentSold
+                })
+            });
+            loadProducts();
+        } catch (error) {
+            alert('❌ Error');
+        }
+    }
+
+    function renderProductList() {
+        const listDiv = document.getElementById('productList');
+        if (!listDiv) return;
+        
+        if (products.length === 0) {
+            listDiv.innerHTML = '<p>No hay productos aún.</p>';
+            return;
+        }
+        
+        let html = '';
+        products.forEach(p => {
+            html += `
+                <div class="product-item">
+                    <div>
+                        <strong>${escapeHtml(p.title)}</strong><br>
+                        <small>${escapeHtml(p.price)} | ${escapeHtml(p.contact)}</small><br>
+                        <small>${p.sold ? '🔴 VENDIDO' : '🟢 ACTIVO'}</small>
+                    </div>
+                    <div>
+                        <button class="delete-btn" onclick="toggleSold('${p.id}', ${p.sold})">${p.sold ? 'Activar' : 'Vendido'}</button>
+                        <button class="delete-btn" onclick="deleteProduct('${p.id}')">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+        listDiv.innerHTML = html;
+    }
+
+    function renderAdminPanel() {
+        document.getElementById('app').innerHTML = `
+            <div class="container">
+                <h1>👑 Panel Administrador - RESUELVEhabana</h1>
+                
+                <h3>📝 Publicar nuevo anuncio</h3>
+                <input type="text" id="prodTitle" placeholder="Título">
+                <input type="text" id="prodPrice" placeholder="Precio (ej: 1500 CUP)">
+                <select id="prodCategory">
+                    <option value="ropa">Ropa</option>
+                    <option value="electronica">Electrónica</option>
+                    <option value="hogar">Hogar</option>
+                    <option value="trabajo">Trabajo</option>
+                    <option value="servicios">Servicios</option>
+                    <option value="vehiculos">Vehículos</option>
+                    <option value="inmuebles">Inmuebles</option>
+                    <option value="belleza">Belleza</option>
+                    <option value="deportes">Deportes</option>
+                    <option value="mascotas">Mascotas</option>
+                </select>
+                <input type="text" id="prodContact" placeholder="WhatsApp (ej: 5351234567)">
+                <textarea id="prodImageUrl" rows="2" placeholder="URL de la imagen (sube a imgbb.com)"></textarea>
+                <button id="publishBtn">📌 Publicar anuncio</button>
+                
+                <hr>
+                
+                <h3>📋 Gestionar anuncios existentes</h3>
+                <div id="productList">Cargando...</div>
+                
+                <hr>
+                
+                <button class="logout" id="logoutBtn">🔒 Cerrar sesión</button>
+            </div>
+        `;
+        
+        document.getElementById('publishBtn').addEventListener('click', async () => {
+            const title = document.getElementById('prodTitle').value;
+            const price = document.getElementById('prodPrice').value;
+            const category = document.getElementById('prodCategory').value;
+            const contact = document.getElementById('prodContact').value;
+            const imageUrl = document.getElementById('prodImageUrl').value;
+            
+            const success = await publishProduct(title, price, category, contact, imageUrl);
+            if (success) {
+                document.getElementById('prodTitle').value = '';
+                document.getElementById('prodPrice').value = '';
+                document.getElementById('prodContact').value = '';
+                document.getElementById('prodImageUrl').value = '';
+                loadProducts();
+            }
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('admin_auth');
+            isLoggedIn = false;
+            renderLogin();
+        });
+        
+        loadProducts();
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    checkAuth();
+</script>
+</body>
+</html>
