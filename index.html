@@ -40,10 +40,7 @@
             outline: none;
             background: #fafafa;
         }
-        .search-box:focus {
-            border-color: #1a472a;
-            background: white;
-        }
+        .search-box:focus { border-color: #1a472a; background: white; }
         .price-filters {
             display: flex;
             gap: 8px;
@@ -70,17 +67,13 @@
             border: none;
             width: 100%;
         }
-        .data-saver.active {
-            background: #4caf50;
-            color: white;
-        }
+        .data-saver.active { background: #4caf50; color: white; }
         .categories {
             display: flex;
             gap: 8px;
             margin-bottom: 20px;
             overflow-x: auto;
             padding-bottom: 6px;
-            scrollbar-width: thin;
         }
         .category-btn {
             background: white;
@@ -92,29 +85,21 @@
             white-space: nowrap;
             transition: all 0.2s;
         }
-        .category-btn.active {
-            background: #1a472a;
-            color: white;
-            border-color: #1a472a;
-        }
+        .category-btn.active { background: #1a472a; color: white; border-color: #1a472a; }
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 14px;
             margin-bottom: 20px;
         }
-        @media (min-width: 600px) {
-            .products-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (min-width: 900px) {
-            .products-grid { grid-template-columns: repeat(4, 1fr); }
-        }
+        @media (min-width: 600px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 900px) { .products-grid { grid-template-columns: repeat(4, 1fr); } }
         .product-card {
             background: white;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
             cursor: pointer;
             position: relative;
         }
@@ -135,7 +120,6 @@
             cursor: pointer;
             z-index: 2;
             box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-            backdrop-filter: blur(2px);
         }
         .favorite-icon.active { color: #ff4757; }
         .product-img {
@@ -184,7 +168,6 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            transition: opacity 0.2s;
         }
         .whatsapp-btn:active { opacity: 0.8; }
         .new-badge {
@@ -212,7 +195,6 @@
             border-radius: 30px;
             pointer-events: none;
             z-index: 3;
-            white-space: nowrap;
         }
         .stats {
             font-size: 0.75rem;
@@ -224,15 +206,6 @@
             text-align: center;
             padding: 60px 20px;
             color: #888;
-            grid-column: 1 / -1;
-        }
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 16px;
-            border-radius: 16px;
-            margin: 16px;
-            text-align: center;
             grid-column: 1 / -1;
         }
         .footer-note {
@@ -289,10 +262,10 @@
 
 <script>
     // ==========================================================
-    // CONFIGURACIÓN PARA GOOGLE SHEETS
+    // CONFIGURACIÓN - URL DEL CSV EN GITHUB
     // ==========================================================
-    // URL PÚBLICA DE TU HOJA EN FORMATO CSV (NO CAMBIES ESTO)
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkCVkJX7er9zPE6zk8h1vKTntIdoa_aBcHvl-Oe10f7mLTQ3kyOLZcU9jdKYmDHPmnAE5BGIfnnLix/pub?gid=0&single=true&output=csv';
+    // CAMBIA ESTA URL POR LA DE TU ARCHIVO CSV EN GITHUB
+    const CSV_URL = 'https://raw.githubusercontent.com/elresolvito/RESUELVEhabana/main/productos.csv';
     
     let products = [];
     let favorites = [];
@@ -322,50 +295,63 @@
         return favorites.indexOf(productId) !== -1;
     }
     
-    // --- Cargar productos desde Google Sheets (CSV) ---
-    async function loadProductsFromSheet() {
-        try {
-            const response = await fetch(CSV_URL);
-            const csvText = await response.text();
-            const lines = csvText.split('\n');
-            if (lines.length < 2) return [];
+    // --- Parseo de CSV ---
+    function parseCSV(csvText) {
+        const lines = csvText.split('\n').filter(l => l.trim());
+        if (lines.length < 2) return [];
+        
+        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        const productsList = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
             
-            const productsList = [];
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const values = [];
-                let currentValue = '';
-                let inQuotes = false;
-                for (let char of lines[i]) {
-                    if (char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        values.push(currentValue.trim());
-                        currentValue = '';
-                    } else {
-                        currentValue += char;
-                    }
-                }
-                values.push(currentValue.trim());
-                
-                if (values.length >= 9) {
-                    productsList.push({
-                        id: values[0].replace(/"/g, ''),
-                        title: values[1].replace(/"/g, ''),
-                        price: values[2].replace(/"/g, ''),
-                        category: values[3].replace(/"/g, ''),
-                        contact: values[4].replace(/"/g, ''),
-                        image: values[5].replace(/"/g, ''),
-                        seller: values[6].replace(/"/g, ''),
-                        last_updated: parseInt(values[7]) || Date.now(),
-                        sold: values[8].toUpperCase() === 'TRUE'
-                    });
+            // Parseo manual respetando comillas
+            const values = [];
+            let currentValue = '';
+            let inQuotes = false;
+            for (let char of lines[i]) {
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    values.push(currentValue.trim());
+                    currentValue = '';
+                } else {
+                    currentValue += char;
                 }
             }
-            console.log(`✅ ${productsList.length} productos cargados`);
+            values.push(currentValue.trim());
+            
+            const product = {};
+            headers.forEach((h, idx) => {
+                let val = values[idx] ? values[idx].replace(/^"|"$/g, '') : '';
+                product[h] = val;
+            });
+            
+            // Convertir sold a booleano
+            product.sold = product.sold === 'TRUE';
+            product.last_updated = parseInt(product.last_updated) || Date.now();
+            
+            // CORRECCIÓN IMPORTANTE: Restaurar https:// a las URLs
+            if (product.image && !product.image.startsWith('http')) {
+                product.image = 'https://' + product.image;
+            }
+            
+            productsList.push(product);
+        }
+        return productsList;
+    }
+    
+    async function loadProductsFromCSV() {
+        try {
+            console.log("📡 Cargando productos desde CSV...");
+            const response = await fetch(CSV_URL);
+            const csvText = await response.text();
+            const productsList = parseCSV(csvText);
+            console.log(`✅ Cargados ${productsList.length} productos desde CSV`);
             return productsList;
         } catch (error) {
-            console.error('Error cargando:', error);
+            console.error('Error cargando CSV:', error);
             return [];
         }
     }
@@ -373,7 +359,7 @@
     async function loadProducts() {
         const grid = document.getElementById('productsGrid');
         if (grid) grid.innerHTML = '<div class="loading">📡 Cargando productos...</div>';
-        products = await loadProductsFromSheet();
+        products = await loadProductsFromCSV();
         renderProducts();
     }
     
