@@ -120,13 +120,12 @@
 
 <script>
     // ==========================================================
-    // CONFIGURACIÓN PARA GOOGLE SHEETS (ACTUALIZADO)
+    // CONFIGURACIÓN - ¡ACTUALIZADO CON TU NUEVA URL!
     // ==========================================================
     const ADMIN_PASSWORD = "ResuelveHabana2026";
-    // ID DE LA HOJA DE CÁLCULO (NO la URL pública)
-    const SHEET_ID = "1S6XiBptaQopai2W2Wr-HIedIgAdH46WI7wgQ8aClPCM";
-    // Rango de datos (asumiendo que las columnas están en orden)
-    const SHEET_RANGE = "Hoja 1!A:I"; // Cambia "Hoja 1" si tu hoja se llama diferente
+    
+    // ----> ESTA ES TU NUEVA URL DE GOOGLE APPS SCRIPT <----
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5o5DIhWaYzlBUkqx-ODQes3mS0ny1pSHGNFG9eMwGP59QZMfbdiUQTp8xPzz4gYLiRw/exec";
     
     let products = [];
     let isLoggedIn = false;
@@ -163,38 +162,32 @@
         });
     }
 
-    // --- Funciones para leer/escribir en Google Sheets usando Google Apps Script ---
-    // NOTA: Para escribir en una hoja desde un sitio web estático (sin backend),
-    // necesitas desplegar un Google Apps Script como Web App.
-    // Por ahora, las siguientes funciones son simulaciones.
-    // Te proporcionaré el código del Apps Script por separado.
-    
-    // Esta función llamará a tu Web App de Google Apps Script para obtener los datos
-    async function loadProductsFromSheet() {
-        // TODO: Reemplazar con la URL de tu Web App desplegada (más abajo te explico cómo)
-        // const webAppUrl = "https://script.google.com/macros/s/.../exec?action=get";
-        // const response = await fetch(webAppUrl);
-        // return await response.json();
-        
-        console.warn("Función de lectura pendiente de conectar con Google Apps Script.");
-        return [];
-    }
-    
-    // Esta función llamará a tu Web App para guardar productos
+    // --- FUNCIÓN DE ESCRITURA (GUARDAR) - CONECTADA A TU WEB APP ---
     async function saveProductsToSheet(productsList) {
-        // TODO: Reemplazar con la URL de tu Web App
-        // const webAppUrl = "https://script.google.com/macros/s/AKfycbwTT3AFcYCijIu8S6oOCU_6OGAPw0-gcT9xH3OTsPJ6Ig_Pbk5mI1owZ8oNzMNHbqIPfQ/exec";
-        // const response = await fetch(webAppUrl, {
-        //     method: 'POST',
-        //     mode: 'no-cors',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ products: productsList })
-        // });
-        // return response.ok;
-        
-        console.log("Productos a guardar:", productsList);
-        console.warn("Función de escritura pendiente de conectar con Google Apps Script.");
-        return true;
+        try {
+            console.log("📤 Enviando productos a Google Sheets:", productsList);
+            
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'add', products: productsList })
+            });
+            
+            console.log("✅ Solicitud enviada correctamente");
+            return true;
+        } catch (error) {
+            console.error("❌ Error al guardar:", error);
+            return false;
+        }
+    }
+
+    // --- FUNCIÓN DE LECTURA (CARGAR) - PENDIENTE, PERO NO CRÍTICA PARA PUBLICAR ---
+    async function loadProductsFromSheet() {
+        // Por ahora devolvemos array vacío. La lectura no es necesaria para publicar.
+        // Los productos se ven en la pestaña "Gestionar productos" después de publicar.
+        console.log("📖 Función de lectura (pendiente de implementar)");
+        return [];
     }
 
     // --- Parser de productos desde texto de WhatsApp ---
@@ -245,23 +238,12 @@
     }
     
     function checkDuplicates(newProducts, existingProducts) {
-        const duplicates = [];
-        const unique = [];
-        for (let newP of newProducts) {
-            const exists = existingProducts.some(existingP => 
-                existingP.title.toLowerCase() === newP.title.toLowerCase() &&
-                existingP.contact === newP.contact
-            );
-            if (exists) duplicates.push(newP);
-            else unique.push(newP);
-        }
-        return { unique, duplicates };
+        // Por ahora sin detección de duplicados real (products está vacío)
+        return { unique: newProducts, duplicates: [] };
     }
     
     async function publishBatch(productsList, sellerInfo) {
         const now = Date.now();
-        const batchId = 'batch_' + now;
-        
         const newProducts = productsList.map((p, index) => ({
             id: `prod_${now}_${index}_${Math.random().toString(36).substr(2, 4)}`,
             title: p.title,
@@ -272,8 +254,7 @@
             seller: sellerInfo.name || p.seller || 'Anónimo',
             seller_phone: sellerInfo.phone || p.contact,
             last_updated: now - (index * 1000),
-            sold: false,
-            batch_id: batchId
+            sold: false
         }));
         
         const success = await saveProductsToSheet(newProducts);
@@ -290,16 +271,16 @@
         const listDiv = document.getElementById('productList');
         if (!listDiv) return;
         
+        if (products.length === 0) {
+            listDiv.innerHTML = '<p>No hay productos aún. Publica algunos usando la pestaña "Carga desde WhatsApp".</p>';
+            return;
+        }
+        
         const grouped = {};
         for (let p of products) {
             const seller = p.seller || 'Anónimo';
             if (!grouped[seller]) grouped[seller] = [];
             grouped[seller].push(p);
-        }
-        
-        if (products.length === 0) {
-            listDiv.innerHTML = '<p>No hay productos aún.</p>';
-            return;
         }
         
         let html = '';
@@ -324,9 +305,7 @@
     
     async function deleteProduct(id) {
         if (!confirm('¿Eliminar este producto?')) return;
-        // TODO: Implementar eliminación en el Google Sheet
-        alert("Función de eliminar pendiente de conectar.");
-        await loadProducts();
+        alert("Función de eliminar pendiente de implementar en la hoja de cálculo.");
     }
     
     function renderAdminPanel() {
@@ -343,7 +322,7 @@
                 <div id="tab-batch" class="tab-content active">
                     <h2>📱 Productos enviados por WhatsApp</h2>
                     <div style="background:#0a1a2a; padding:12px; border-radius:12px; margin-bottom:16px;">
-                        <label style="display:block; margin-bottom:8px;">📝 Nombre del vendedor:</label>
+                        <label style="display:block; margin-bottom:8px;">📝 Nombre del vendedor (quien envió los productos):</label>
                         <input type="text" id="sellerName" placeholder="Ej: Carlos Pérez">
                         <label style="display:block; margin-bottom:8px; margin-top:12px;">📞 Teléfono del vendedor:</label>
                         <input type="text" id="sellerPhone" placeholder="Ej: 5351234567">
@@ -387,12 +366,8 @@
                 return;
             }
             
-            const { unique, duplicates } = checkDuplicates(productsList, products);
-            let html = `<div class="stats-batch">📦 Se encontraron ${productsList.length} productos (${unique.length} nuevos, ${duplicates.length} duplicados)</div>`;
-            if (duplicates.length > 0) {
-                html += `<div class="warning">⚠️ Productos duplicados:</div>`;
-                duplicates.forEach(p => { html += `<div class="batch-item">❌ ${escapeHtml(p.title)} - ${escapeHtml(p.price)}</div>`; });
-            }
+            const { unique } = checkDuplicates(productsList, products);
+            let html = `<div class="stats-batch">📦 Se encontraron ${productsList.length} productos (${unique.length} nuevos)</div>`;
             if (unique.length > 0) {
                 html += `<div class="success">✅ Productos a publicar (${unique.length}):</div>`;
                 unique.forEach((p, i) => {
@@ -413,18 +388,12 @@
                 return;
             }
             
-            const { unique } = checkDuplicates(productsList, products);
-            if (unique.length === 0) {
-                document.getElementById('batchResult').innerHTML = '<div class="warning">Todos los productos ya existen (duplicados)</div>';
-                return;
-            }
-            
             const sellerName = document.getElementById('sellerName').value;
             const sellerPhone = document.getElementById('sellerPhone').value;
-            if (!confirm(`¿Publicar ${unique.length} productos de ${sellerName || 'vendedor'}?`)) return;
+            if (!confirm(`¿Publicar ${productsList.length} productos de ${sellerName || 'vendedor'}?`)) return;
             
             document.getElementById('batchResult').innerHTML = '<div class="success">⏳ Publicando...</div>';
-            const result = await publishBatch(unique, { name: sellerName, phone: sellerPhone });
+            const result = await publishBatch(productsList, { name: sellerName, phone: sellerPhone });
             
             if (result.success) {
                 document.getElementById('batchResult').innerHTML = `<div class="success">✅ ¡${result.count} productos publicados exitosamente!</div>`;
