@@ -125,7 +125,7 @@
     const ADMIN_PASSWORD = "ResuelveHabana2026";
     
     // ----> URL DE TU GOOGLE APPS SCRIPT (ACTUALIZADA) <----
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxF_5ALYxcmkjF3lVslXxgs7X97UscJ0Drx5EpxE5lSNteoiD1yqufniunUK9v1dDd8/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwrCFvYEv-iGz9LZxWPOgWGe6Gkf1s2b3NCOi06QSsA0JleNst48E49oPAE9qLbY4ed2g/exec";
     
     let products = [];
     let isLoggedIn = false;
@@ -240,7 +240,7 @@
     }
     
     // --- FUNCIÓN PUBLISH BATCH CON encodeURIComponent ---
-    async function publishBatch(productsList, sellerInfo) {
+        async function publishBatch(productsList, sellerInfo) {
         const now = Date.now();
         const newProducts = productsList.map((p, index) => ({
             id: `prod_${now}_${index}_${Math.random().toString(36).substr(2, 4)}`,
@@ -248,8 +248,8 @@
             price: p.price,
             category: p.category,
             contact: p.contact,
-            // Reemplazar https:// para que no se rompa
-            image: p.image.replace(/https:\/\//g, 'HTTPS_'),
+            // CODIFICAR LA URL EN BASE64 para evitar caracteres problemáticos
+            image: btoa(unescape(encodeURIComponent(p.image))),
             seller: sellerInfo.name || p.seller || 'Anónimo',
             last_updated: now - (index * 1000),
             sold: false
