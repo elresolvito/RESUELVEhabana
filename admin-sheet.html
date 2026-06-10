@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Admin RESUELVEhabana - Carga Masiva</title>
+    <title>Admin RESUELVEhabana - Generador CSV</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -21,8 +21,7 @@
         }
         h1, h2 { color: #ff9800; }
         h1 { margin-bottom: 20px; font-size: 1.5rem; }
-        h2 { margin: 20px 0 10px; font-size: 1.2rem; }
-        input, select, textarea {
+        input, textarea {
             width: 100%;
             padding: 12px;
             margin-bottom: 12px;
@@ -45,387 +44,112 @@
             font-size: 1rem;
             margin-bottom: 8px;
         }
-        .logout { background: #e74c3c; }
         .success { background: #2ecc71; color: white; padding: 10px; border-radius: 10px; margin: 10px 0; text-align: center; }
-        .error { background: #e74c3c; color: white; padding: 10px; border-radius: 10px; margin: 10px 0; text-align: center; }
-        .warning { background: #f39c12; color: #1a1a2e; padding: 10px; border-radius: 10px; margin: 10px 0; text-align: center; }
-        hr { margin: 20px 0; border-color: #0f3460; }
-        .batch-preview {
+        .output {
             background: #0a1a2a;
             padding: 12px;
             border-radius: 12px;
             margin-top: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .batch-item {
-            padding: 10px;
-            border-bottom: 1px solid #0f3460;
+            font-family: monospace;
             font-size: 0.8rem;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
-        .batch-item strong { color: #ff9800; }
-        .stats-batch {
-            font-size: 0.8rem;
-            margin: 10px 0;
-            color: #aaa;
-        }
-        .seller-group {
-            background: #0f3460;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 12px;
-        }
-        .seller-name {
-            font-weight: bold;
-            color: #ff9800;
-            margin-bottom: 8px;
-        }
-        .product-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            border-bottom: 1px solid #16213e;
-            font-size: 0.8rem;
-        }
-        .delete-icon {
-            color: #e74c3c;
-            cursor: pointer;
-            padding: 5px;
-        }
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .tab {
-            flex: 1;
-            background: #0f3460;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-        .tab.active {
-            background: #ff9800;
-            color: #1a1a2e;
-        }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
-<div id="app"></div>
+<div class="container">
+    <h1>📝 Generador de CSV para RESUELVEhabana</h1>
+    <p style="margin-bottom:16px;">Completa los datos del producto y obtén la línea CSV para copiar a GitHub.</p>
+    
+    <input type="text" id="title" placeholder="Título del producto">
+    <input type="text" id="price" placeholder="Precio (ej: 850 CUP)">
+    <select id="category" style="background:#0f3460; color:white; width:100%; padding:12px; margin-bottom:12px; border-radius:12px;">
+        <option value="ropa">👕 Ropa</option>
+        <option value="electronica">📱 Electrónica</option>
+        <option value="hogar">🏠 Hogar</option>
+        <option value="trabajo">💼 Trabajo</option>
+        <option value="servicios">🔧 Servicios</option>
+        <option value="vehiculos">🚗 Vehículos</option>
+        <option value="inmuebles">🏢 Inmuebles</option>
+        <option value="belleza">💄 Belleza</option>
+        <option value="deportes">⚽ Deportes</option>
+        <option value="mascotas">🐾 Mascotas</option>
+    </select>
+    <input type="text" id="contact" placeholder="WhatsApp (ej: 5351234567)">
+    <input type="text" id="image" placeholder="URL de la imagen (sin https://)">
+    <input type="text" id="seller" placeholder="Nombre del vendedor">
+    
+    <button id="generateBtn">🔧 Generar línea CSV</button>
+    
+    <div id="output" class="output" style="display:none;"></div>
+    
+    <hr style="margin:20px 0;">
+    
+    <h2>📋 Instrucciones</h2>
+    <ol style="margin-left:20px; font-size:0.85rem;">
+        <li>Completa los datos del producto</li>
+        <li>Haz clic en "Generar línea CSV"</li>
+        <li>Copia la línea generada (incluye las comillas)</li>
+        <li>Ve a GitHub → Edita el archivo <code>productos.csv</code></li>
+        <li>Pega la línea al final del archivo</li>
+        <li>Guarda los cambios</li>
+        <li>✅ En 1-2 minutos la web se actualiza</li>
+    </ol>
+    
+    <p style="margin-top:20px; font-size:0.8rem; color:#aaa;">
+        ⚠️ <strong>Importante:</strong> La URL de la imagen debe ir SIN "https://"<br>
+        ✅ Ejemplo correcto: <code>i.postimg.cc/VkLVvgkM/CHANCLETAS-BLANCAS.webp</code><br>
+        ❌ Ejemplo incorrecto: <code>https://i.postimg.cc/...</code>
+    </p>
+</div>
 
 <script>
-    // ==========================================================
-    // CONFIGURACIÓN - URL ACTUALIZADA
-    // ==========================================================
-    const ADMIN_PASSWORD = "ResuelveHabana2026";
-    
-    // ----> URL DE TU GOOGLE APPS SCRIPT (ACTUALIZADA) <----
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxHvbO9lQwlfK8dMNwKTkAekLBh1F0ieo3UN5-qGb5J7pbXBvsArrN9nwOBwlCo0FyMNw/exec";
-    
-    let products = [];
-    let isLoggedIn = false;
-
-    // --- Autenticación ---
-    function checkAuth() {
-        if (localStorage.getItem('admin_auth') === 'true') {
-            isLoggedIn = true;
-            renderAdminPanel();
-            loadProducts();
-        } else {
-            renderLogin();
-        }
-    }
-
-    function renderLogin() {
-        document.getElementById('app').innerHTML = `
-            <div style="max-width:400px; margin:100px auto; background:#16213e; padding:30px; border-radius:20px; text-align:center;">
-                <h1>🔐 Panel Admin</h1>
-                <input type="password" id="password" placeholder="Contraseña" autocomplete="off">
-                <button id="loginBtn">Acceder</button>
-                <div id="errorMsg"></div>
-            </div>
-        `;
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            if (document.getElementById('password').value === ADMIN_PASSWORD) {
-                localStorage.setItem('admin_auth', 'true');
-                isLoggedIn = true;
-                renderAdminPanel();
-                loadProducts();
-            } else {
-                document.getElementById('errorMsg').innerHTML = '<div class="error">❌ Contraseña incorrecta</div>';
-            }
-        });
-    }
-
-    // --- FUNCIÓN DE ESCRITURA (GUARDAR) CON BASE64 ---
-    async function saveProductsToSheet(productsList) {
-        try {
-            // Codificar las URLs en Base64 antes de enviar
-            const productsToSend = productsList.map(p => ({
-                ...p,
-                image: btoa(unescape(encodeURIComponent(p.image)))
-            }));
-            
-            console.log("📤 Enviando productos a Google Sheets (URLs codificadas)");
-            
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'add', products: productsToSend })
-            });
-            
-            console.log("✅ Solicitud enviada correctamente");
-            return true;
-        } catch (error) {
-            console.error("❌ Error al guardar:", error);
-            return false;
-        }
-    }
-
-    // --- FUNCIÓN DE LECTURA (PENDIENTE) ---
-    async function loadProductsFromSheet() {
-        console.log("📖 Función de lectura (pendiente de implementar)");
-        return [];
-    }
-
-    // --- Parser de productos desde texto de WhatsApp ---
-    function parseProductsFromWhatsApp(text) {
-        const lines = text.split('\n').filter(l => l.trim());
-        const products = [];
-        let current = {};
+    document.getElementById('generateBtn').addEventListener('click', () => {
+        const title = document.getElementById('title').value;
+        const price = document.getElementById('price').value;
+        const category = document.getElementById('category').value;
+        const contact = document.getElementById('contact').value;
+        const image = document.getElementById('image').value;
+        const seller = document.getElementById('seller').value || 'Anónimo';
         
-        for (let line of lines) {
-            line = line.trim();
-            if (line.toLowerCase().startsWith('título:') || line.toLowerCase().startsWith('titulo:')) {
-                if (current.title && current.price && current.category && current.contact && current.image) {
-                    products.push({ ...current });
-                }
-                current = { title: line.split(':')[1].trim() };
-            } else if (line.toLowerCase().startsWith('precio:')) {
-                current.price = line.split(':')[1].trim();
-            } else if (line.toLowerCase().startsWith('categoría:') || line.toLowerCase().startsWith('categoria:')) {
-                current.category = line.split(':')[1].trim().toLowerCase();
-            } else if (line.toLowerCase().startsWith('whatsapp:') || line.toLowerCase().startsWith('contacto:')) {
-                current.contact = line.split(':')[1].trim();
-            } else if (line.toLowerCase().startsWith('foto:') || line.toLowerCase().startsWith('imagen:')) {
-                current.image = line.split(':')[1].trim();
-            } else if (line.toLowerCase().startsWith('vendedor:')) {
-                current.seller = line.split(':')[1].trim();
-            }
-        }
-        if (current.title && current.price && current.category && current.contact && current.image) {
-            products.push(current);
-        }
-        
-        if (products.length === 0) {
-            for (let line of lines) {
-                const parts = line.split('|').map(p => p.trim());
-                if (parts.length >= 5) {
-                    products.push({
-                        title: parts[0],
-                        price: parts[1],
-                        category: parts[2].toLowerCase(),
-                        contact: parts[3],
-                        image: parts[4],
-                        seller: parts[5] || ''
-                    });
-                }
-            }
-        }
-        return products;
-    }
-    
-    function checkDuplicates(newProducts, existingProducts) {
-        return { unique: newProducts, duplicates: [] };
-    }
-    
-    // --- FUNCIÓN PUBLISH BATCH ---
-    async function publishBatch(productsList, sellerInfo) {
-        const now = Date.now();
-        const newProducts = productsList.map((p, index) => ({
-            id: `prod_${now}_${index}_${Math.random().toString(36).substr(2, 4)}`,
-            title: p.title,
-            price: p.price,
-            category: p.category,
-            contact: p.contact,
-            image: p.image,  // La codificación se hará en saveProductsToSheet
-            seller: sellerInfo.name || p.seller || 'Anónimo',
-            last_updated: now - (index * 1000),
-            sold: false
-        }));
-        
-        const success = await saveProductsToSheet(newProducts);
-        return { success, count: newProducts.length, products: newProducts };
-    }
-    
-    // --- Renderizado del Panel ---
-    async function loadProducts() {
-        products = await loadProductsFromSheet();
-        renderProductList();
-    }
-    
-    function renderProductList() {
-        const listDiv = document.getElementById('productList');
-        if (!listDiv) return;
-        
-        if (products.length === 0) {
-            listDiv.innerHTML = '<p>No hay productos aún. Publica algunos usando la pestaña "Carga desde WhatsApp".</p>';
+        if (!title || !price || !category || !contact || !image) {
+            alert('❌ Completa todos los campos obligatorios');
             return;
         }
         
-        const grouped = {};
-        for (let p of products) {
-            const seller = p.seller || 'Anónimo';
-            if (!grouped[seller]) grouped[seller] = [];
-            grouped[seller].push(p);
-        }
+        const id = 'prod_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+        const last_updated = Date.now();
+        const sold = 'FALSE';
         
-        let html = '';
-        for (let [seller, sellerProducts] of Object.entries(grouped)) {
-            html += `
-                <div class="seller-group">
-                    <div class="seller-name">📦 Vendedor: ${escapeHtml(seller)} (${sellerProducts.length} productos)</div>
-                    ${sellerProducts.map(p => `
-                        <div class="product-row">
-                            <span>${escapeHtml(p.title)} - ${escapeHtml(p.price)}</span>
-                            <span>
-                                ${p.sold ? '🔴 Vendido' : '🟢 Activo'}
-                                <span class="delete-icon" onclick="deleteProduct('${p.id}')">🗑️</span>
-                            </span>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-        listDiv.innerHTML = html;
-    }
-    
-    async function deleteProduct(id) {
-        if (!confirm('¿Eliminar este producto?')) return;
-        alert("Función de eliminar pendiente de implementar en la hoja de cálculo.");
-    }
-    
-    function renderAdminPanel() {
-        document.getElementById('app').innerHTML = `
-            <div class="container">
-                <h1>👑 WhatsApp Admin - RESUELVEhabana</h1>
-                <p style="margin-bottom:16px; color:#aaa;">Gestiona productos enviados por vendedores de WhatsApp</p>
-                
-                <div class="tabs">
-                    <div class="tab active" data-tab="batch">📦 Carga desde WhatsApp</div>
-                    <div class="tab" data-tab="manage">📋 Gestionar productos</div>
-                </div>
-                
-                <div id="tab-batch" class="tab-content active">
-                    <h2>📱 Productos enviados por WhatsApp</h2>
-                    <div style="background:#0a1a2a; padding:12px; border-radius:12px; margin-bottom:16px;">
-                        <label style="display:block; margin-bottom:8px;">📝 Nombre del vendedor (quien envió los productos):</label>
-                        <input type="text" id="sellerName" placeholder="Ej: Carlos Pérez">
-                        <label style="display:block; margin-bottom:8px; margin-top:12px;">📞 Teléfono del vendedor:</label>
-                        <input type="text" id="sellerPhone" placeholder="Ej: 5351234567">
-                    </div>
-                    <textarea id="batchText" rows="8" placeholder="Pega aquí los productos que llegaron por WhatsApp..."></textarea>
-                    <button id="previewBatchBtn">🔍 Previsualizar y verificar duplicados</button>
-                    <div id="batchPreview" class="batch-preview" style="display:none;"></div>
-                    <button id="publishBatchBtn" style="background:#2ecc71;">🚀 Publicar todos los productos</button>
-                    <div id="batchResult"></div>
-                </div>
-                
-                <div id="tab-manage" class="tab-content">
-                    <h2>📋 Productos actuales</h2>
-                    <div id="productList">Cargando...</div>
-                </div>
-                
-                <hr>
-                <button class="logout" id="logoutBtn">🔒 Cerrar sesión</button>
-            </div>
+        // Generar línea CSV con comillas para evitar problemas con comas
+        const csvLine = `"${id}","${title}","${price}","${category}","${contact}","${image}","${seller}","${last_updated}","${sold}"`;
+        
+        const outputDiv = document.getElementById('output');
+        outputDiv.innerHTML = `
+            <strong>📋 Copia esta línea y pégala en tu archivo productos.csv:</strong><br><br>
+            <code style="word-break:break-all;">${escapeHtml(csvLine)}</code><br><br>
+            <button id="copyBtn" style="background:#2ecc71; width:auto; padding:8px 16px;">📋 Copiar al portapapeles</button>
         `;
+        outputDiv.style.display = 'block';
         
-        // Tabs
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
-            });
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(csvLine);
+            alert('✅ Línea copiada al portapapeles');
         });
         
-        // Previsualizar
-        document.getElementById('previewBatchBtn').addEventListener('click', () => {
-            const text = document.getElementById('batchText').value;
-            const productsList = parseProductsFromWhatsApp(text);
-            const previewDiv = document.getElementById('batchPreview');
-            
-            if (productsList.length === 0) {
-                previewDiv.innerHTML = '<div class="error">No se encontraron productos. Revisa el formato.</div>';
-                previewDiv.style.display = 'block';
-                return;
-            }
-            
-            const { unique } = checkDuplicates(productsList, products);
-            let html = `<div class="stats-batch">📦 Se encontraron ${productsList.length} productos (${unique.length} nuevos)</div>`;
-            if (unique.length > 0) {
-                html += `<div class="success">✅ Productos a publicar (${unique.length}):</div>`;
-                unique.forEach((p, i) => {
-                    html += `<div class="batch-item"><strong>${i+1}.</strong> ${escapeHtml(p.title)}<br>💰 ${escapeHtml(p.price)} | 📂 ${p.category} | 📞 ${p.contact}<br>📷 ${p.image ? escapeHtml(p.image.substring(0, 70)) + '...' : 'Sin imagen'}</div>`;
-                });
-            }
-            previewDiv.innerHTML = html;
-            previewDiv.style.display = 'block';
-            window.pendingProducts = unique;
-        });
-        
-        // Publicar lote
-        document.getElementById('publishBatchBtn').addEventListener('click', async () => {
-            const text = document.getElementById('batchText').value;
-            let productsList = parseProductsFromWhatsApp(text);
-            if (productsList.length === 0) {
-                document.getElementById('batchResult').innerHTML = '<div class="error">No hay productos para publicar</div>';
-                return;
-            }
-            
-            const sellerName = document.getElementById('sellerName').value;
-            const sellerPhone = document.getElementById('sellerPhone').value;
-            if (!confirm(`¿Publicar ${productsList.length} productos de ${sellerName || 'vendedor'}?`)) return;
-            
-            document.getElementById('batchResult').innerHTML = '<div class="success">⏳ Publicando...</div>';
-            const result = await publishBatch(productsList, { name: sellerName, phone: sellerPhone });
-            
-            if (result.success) {
-                document.getElementById('batchResult').innerHTML = `<div class="success">✅ ¡${result.count} productos publicados exitosamente!</div>`;
-                document.getElementById('batchText').value = '';
-                document.getElementById('batchPreview').style.display = 'none';
-                document.getElementById('sellerName').value = '';
-                document.getElementById('sellerPhone').value = '';
-                await loadProducts();
-            } else {
-                document.getElementById('batchResult').innerHTML = '<div class="error">❌ Error al publicar</div>';
-            }
-        });
-        
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('admin_auth');
-            isLoggedIn = false;
-            renderLogin();
-        });
-        
-        loadProducts();
-    }
+        // Limpiar campos
+        document.getElementById('title').value = '';
+        document.getElementById('price').value = '';
+        document.getElementById('contact').value = '';
+        document.getElementById('image').value = '';
+        document.getElementById('seller').value = '';
+    });
     
     function escapeHtml(str) {
         if (!str) return "";
         return str.replace(/[&<>]/g, (m) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
     }
-    
-    window.deleteProduct = deleteProduct;
-    checkAuth();
 </script>
 </body>
 </html>
