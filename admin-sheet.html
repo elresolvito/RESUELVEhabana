@@ -125,7 +125,7 @@
     const ADMIN_PASSWORD = "ResuelveHabana2026";
     
     // ----> URL DE TU GOOGLE APPS SCRIPT (ACTUALIZADA) <----
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyaircXce50nw6e7pmo3hlF3MhcWoaKHfKtmKFQMpxKuD3TnDlxqZDp4RpXR5Uv7gkQ_w/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxF_5ALYxcmkjF3lVslXxgs7X97UscJ0Drx5EpxE5lSNteoiD1yqufniunUK9v1dDd8/exec";
     
     let products = [];
     let isLoggedIn = false;
@@ -248,8 +248,8 @@
             price: p.price,
             category: p.category,
             contact: p.contact,
-            // CODIFICAR LA URL PARA QUE NO SE ROMPA AL ENVIARLA
-            image: encodeURIComponent(p.image),
+            // Reemplazar https:// para que no se rompa
+            image: p.image.replace(/https:\/\//g, 'HTTPS_'),
             seller: sellerInfo.name || p.seller || 'Anónimo',
             last_updated: now - (index * 1000),
             sold: false
