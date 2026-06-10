@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f0f2f5;
+            background: #f8f9fa;
             padding: 12px;
             padding-bottom: 80px;
         }
@@ -23,19 +23,27 @@
             background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
             color: white;
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 24px;
             margin-bottom: 16px;
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .header h1 { font-size: 1.8rem; letter-spacing: 1px; }
-        .header p { font-size: 0.85rem; opacity: 0.9; margin-top: 6px; }
+        .header h1 {
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 6px;
+        }
 
         /* Toolbar */
         .toolbar {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 12px;
             margin-bottom: 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -91,11 +99,11 @@
             color: white;
         }
 
-        /* Categorías */
+        /* Categorías - scroll horizontal */
         .categories {
             display: flex;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             overflow-x: auto;
             padding-bottom: 6px;
             scrollbar-width: thin;
@@ -118,13 +126,34 @@
             border-color: #1a472a;
         }
 
+        /* ============================================ */
+        /* GRID DE PRODUCTOS - Estilo tipo tienda */
+        /* ============================================ */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Para tablets y pantallas más grandes */
+        @media (min-width: 600px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .products-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
         /* Tarjeta de producto */
         .product-card {
             background: white;
             border-radius: 20px;
-            margin-bottom: 14px;
             overflow: hidden;
-            display: flex;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
@@ -132,7 +161,7 @@
         }
 
         .product-card:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
 
         .product-card.sold {
@@ -140,82 +169,165 @@
             background: #f5f5f5;
         }
 
+        /* Botón favorito */
         .favorite-icon {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(255,255,255,0.9);
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.95);
             border-radius: 50%;
             width: 32px;
             height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             z-index: 2;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            backdrop-filter: blur(2px);
         }
 
         .favorite-icon.active {
             color: #ff4757;
         }
 
+        /* Imagen del producto */
         .product-img {
-            width: 110px;
-            height: 110px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
             background: #e0e0e0;
-            flex-shrink: 0;
         }
 
+        /* Información del producto */
         .product-info {
             padding: 12px;
-            flex: 1;
         }
 
         .product-title {
-            font-weight: bold;
-            font-size: 1rem;
-            margin-bottom: 4px;
-            padding-right: 35px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 38px;
         }
 
         .product-price {
             color: #1a472a;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin: 6px 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
         }
 
         .product-contact {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #666;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
+            gap: 4px;
         }
 
-        .product-date {
-            font-size: 0.7rem;
-            color: #999;
-            margin-top: 6px;
+        /* Botón WhatsApp en la tarjeta */
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 8px 0;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .whatsapp-btn:active {
+            opacity: 0.8;
         }
 
         .new-badge {
-            display: inline-block;
+            position: absolute;
+            top: 10px;
+            left: 10px;
             background: #ff9800;
             color: white;
             font-size: 0.6rem;
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 20px;
-            margin-left: 6px;
-            vertical-align: middle;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .sold-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 12px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border-radius: 30px;
+            pointer-events: none;
+            z-index: 3;
+            white-space: nowrap;
+        }
+
+        /* Estadísticas */
+        .stats {
+            font-size: 0.75rem;
+            text-align: center;
+            margin: 16px 0;
+            color: #666;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+            grid-column: 1 / -1;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #1a472a;
+            grid-column: 1 / -1;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+
+        /* Footer */
+        .footer-note {
+            background: #e8f5e9;
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            text-align: center;
         }
 
         /* ============================================ */
-        /* MODAL - Vista detallada del producto */
+        /* MODAL - Vista detallada (sin cambios) */
         /* ============================================ */
         .modal {
             display: none;
@@ -264,10 +376,6 @@
             color: #333;
         }
 
-        .modal-close:active, .modal-share:active, .modal-fav:active {
-            background: #e0e0e0;
-        }
-
         .modal-fav.active {
             color: #ff4757;
         }
@@ -308,11 +416,6 @@
             gap: 12px;
         }
 
-        .modal-contact-info {
-            font-size: 1rem;
-            font-weight: bold;
-        }
-
         .modal-whatsapp {
             background: #25D366;
             color: white;
@@ -335,7 +438,6 @@
             font-size: 1rem;
             font-weight: bold;
             margin-bottom: 12px;
-            color: #333;
         }
 
         .related-grid {
@@ -346,7 +448,7 @@
         }
 
         .related-card {
-            flex: 0 0 140px;
+            flex: 0 0 130px;
             background: #f5f5f5;
             border-radius: 12px;
             overflow: hidden;
@@ -364,7 +466,7 @@
         }
 
         .related-title-small {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
         }
 
@@ -380,48 +482,6 @@
             text-align: center;
             padding: 16px;
             border-top: 1px solid #eee;
-            margin-top: 20px;
-        }
-
-        .empty-message {
-            text-align: center;
-            padding: 60px 20px;
-            color: #888;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: #1a472a;
-        }
-
-        .stats {
-            font-size: 0.7rem;
-            text-align: center;
-            margin-top: 16px;
-            color: #666;
-        }
-
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 16px;
-            border-radius: 16px;
-            margin: 16px;
-            text-align: center;
-        }
-
-        @media (max-width: 480px) {
-            .product-img {
-                width: 100px;
-                height: 100px;
-            }
-            .modal-title {
-                font-size: 1.3rem;
-            }
-            .modal-price {
-                font-size: 1.5rem;
-            }
         }
     </style>
 </head>
@@ -429,7 +489,7 @@
 
 <div class="header">
     <h1>🇨🇺 RESUELVEhabana</h1>
-    <p>Clasificados de Cuba • Toca cualquier producto para verlo en detalle</p>
+    <p>Clasificados de Cuba • Compra y vende fácil</p>
 </div>
 
 <div class="toolbar">
@@ -455,13 +515,19 @@
     <button class="category-btn" data-category="mascotas">🐾 Mascotas</button>
 </div>
 
-<div id="productList" class="product-list">
+<div id="productsGrid" class="products-grid">
     <div class="loading">📡 Cargando clasificados...</div>
 </div>
 
 <div class="stats" id="stats"></div>
 
-<!-- Modal para vista detallada del producto -->
+<div class="footer-note">
+    📌 <strong>¿Quieres vender?</strong><br>
+    Envía los datos de tu producto por WhatsApp al <strong>+53 12345678</strong> y nosotros lo publicamos.<br>
+    ❤️ Toca el corazón para guardar favoritos
+</div>
+
+<!-- Modal -->
 <div id="productModal" class="modal">
     <div class="modal-content" id="modalContent">
         <div class="modal-header">
@@ -481,8 +547,6 @@
                 <a href="#" id="modalWhatsappLink" class="modal-whatsapp" target="_blank">💬 WhatsApp</a>
             </div>
             <div id="modalCategory" style="font-size: 0.85rem; color: #666; margin-top: 8px;"></div>
-            
-            <!-- Productos relacionados -->
             <div class="related-section" id="relatedSection">
                 <div class="related-title">🔄 Productos relacionados</div>
                 <div class="related-grid" id="relatedGrid"></div>
@@ -490,12 +554,6 @@
         </div>
         <div class="modal-date" id="modalDate"></div>
     </div>
-</div>
-
-<div style="background: #e8f5e9; border-radius: 16px; padding: 14px; margin-top: 16px; font-size: 0.7rem; text-align: center;">
-    📌 <strong>¿Quieres vender?</strong><br>
-    Envía los datos de tu producto por WhatsApp al <strong>+53 12345678</strong> y nosotros lo publicamos.<br>
-    ❤️ Puedes guardar productos como favoritos tocando el corazón.
 </div>
 
 <script>
@@ -509,29 +567,21 @@
     let products = [];
     let favorites = [];
 
-    // Cargar favoritos desde localStorage
     function loadFavorites() {
         const saved = localStorage.getItem('resuelvehabana_favorites');
-        if (saved) {
-            favorites = JSON.parse(saved);
-        }
+        if (saved) favorites = JSON.parse(saved);
     }
 
-    // Guardar favoritos en localStorage
     function saveFavorites() {
         localStorage.setItem('resuelvehabana_favorites', JSON.stringify(favorites));
     }
 
-    // Alternar favorito
     function toggleFavorite(productId) {
         const index = favorites.indexOf(productId);
-        if (index === -1) {
-            favorites.push(productId);
-        } else {
-            favorites.splice(index, 1);
-        }
+        if (index === -1) favorites.push(productId);
+        else favorites.splice(index, 1);
         saveFavorites();
-        renderProducts(); // Actualizar la vista
+        renderProducts();
         return favorites.indexOf(productId) !== -1;
     }
 
@@ -539,10 +589,8 @@
         return favorites.includes(productId);
     }
 
-    // Swipe down para cerrar modal
+    // Swipe to close modal
     let touchStartY = 0;
-    let touchEndY = 0;
-
     function setupSwipeToClose() {
         const modalContent = document.getElementById('modalContent');
         const modal = document.getElementById('productModal');
@@ -552,8 +600,7 @@
         });
         
         modalContent.addEventListener('touchmove', (e) => {
-            touchEndY = e.touches[0].clientY;
-            const diff = touchEndY - touchStartY;
+            const diff = e.touches[0].clientY - touchStartY;
             if (diff > 50 && modalContent.scrollTop === 0) {
                 modal.style.transform = `translateY(${diff}px)`;
                 modal.style.transition = 'none';
@@ -561,70 +608,50 @@
         });
         
         modalContent.addEventListener('touchend', (e) => {
-            const diff = touchEndY - touchStartY;
-            if (diff > 100) {
-                closeModal();
-            }
+            const diff = e.changedTouches[0].clientY - touchStartY;
+            if (diff > 100) closeModal();
             modal.style.transform = '';
             modal.style.transition = '';
         });
     }
 
-    // Compartir producto
     function shareProduct(product) {
-        const shareText = `🇨🇺 ${product.title} - ${product.price}\n📞 ${product.contact}\n\nVer en RESUELVEhabana: ${window.location.href}`;
-        
+        const text = `🇨🇺 ${product.title} - ${product.price}\n📞 ${product.contact}\n\nVer en RESUELVEhabana: ${window.location.href}`;
         if (navigator.share) {
-            navigator.share({
-                title: product.title,
-                text: shareText,
-                url: window.location.href
-            }).catch(() => {
-                copyToClipboard(shareText);
-            });
+            navigator.share({ title: product.title, text: text }).catch(() => copyToClipboard(text));
         } else {
-            copyToClipboard(shareText);
+            copyToClipboard(text);
         }
     }
 
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text);
-        alert('✅ Enlace copiado al portapapeles. ¡Compártelo donde quieras!');
+        alert('✅ Enlace copiado');
     }
 
-    // Modal functions
     let currentModalProduct = null;
 
-    function renderRelatedProducts(category, currentProductId) {
-        const related = products.filter(p => p.category === category && p.id !== currentProductId && !p.sold).slice(0, 6);
+    function renderRelatedProducts(category, currentId) {
+        const related = products.filter(p => p.category === category && p.id !== currentId && !p.sold).slice(0, 6);
         const grid = document.getElementById('relatedGrid');
-        
         if (related.length === 0) {
-            grid.innerHTML = '<div style="color:#999; font-size:0.8rem; padding:8px;">No hay productos relacionados</div>';
+            grid.innerHTML = '<div style="color:#999;padding:8px;">No hay productos relacionados</div>';
             return;
         }
-        
-        let html = '';
-        related.forEach(p => {
-            html += `
-                <div class="related-card" data-id="${p.id}">
-                    <img class="related-img" src="${p.image}" alt="${p.title}" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'">
-                    <div class="related-info">
-                        <div class="related-title-small">${escapeHtml(p.title.substring(0, 30))}${p.title.length > 30 ? '...' : ''}</div>
-                        <div class="related-price">${escapeHtml(p.price)}</div>
-                    </div>
+        grid.innerHTML = related.map(p => `
+            <div class="related-card" data-id="${p.id}">
+                <img class="related-img" src="${p.image}" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'">
+                <div class="related-info">
+                    <div class="related-title-small">${escapeHtml(p.title.substring(0, 30))}</div>
+                    <div class="related-price">${escapeHtml(p.price)}</div>
                 </div>
-            `;
-        });
-        grid.innerHTML = html;
+            </div>
+        `).join('');
         
         document.querySelectorAll('.related-card').forEach(card => {
             card.addEventListener('click', () => {
-                const id = card.getAttribute('data-id');
-                const product = products.find(p => p.id === id);
-                if (product) {
-                    openModal(product);
-                }
+                const product = products.find(p => p.id === card.dataset.id);
+                if (product) openModal(product);
             });
         });
     }
@@ -632,171 +659,137 @@
     function openModal(product) {
         currentModalProduct = product;
         const modal = document.getElementById('productModal');
-        
         document.getElementById('modalImage').src = product.image;
         document.getElementById('modalTitle').innerText = product.title;
         document.getElementById('modalPrice').innerText = '💰 ' + product.price;
         document.getElementById('modalContact').innerHTML = '📞 ' + product.contact;
+        document.getElementById('modalWhatsappLink').href = `https://wa.me/${product.contact.replace(/[^0-9]/g, '')}`;
         
-        const whatsappLink = document.getElementById('modalWhatsappLink');
-        const cleanNumber = product.contact.replace(/[^0-9]/g, '');
-        whatsappLink.href = `https://wa.me/${cleanNumber}`;
+        const categoryNames = { 'ropa':'👕 Ropa', 'electronica':'📱 Electrónica', 'hogar':'🏠 Hogar', 'trabajo':'💼 Trabajo', 'servicios':'🔧 Servicios', 'vehiculos':'🚗 Vehículos', 'inmuebles':'🏢 Inmuebles', 'belleza':'💄 Belleza', 'deportes':'⚽ Deportes', 'mascotas':'🐾 Mascotas' };
+        document.getElementById('modalCategory').innerHTML = `📂 ${categoryNames[product.category] || product.category}`;
+        document.getElementById('modalDate').innerHTML = `📅 Publicado: ${new Date(product.last_updated).toLocaleDateString("es-CU", { year:'numeric', month:'long', day:'numeric' })}`;
         
-        const categoryNames = {
-            'ropa': '👕 Ropa', 'electronica': '📱 Electrónica', 'hogar': '🏠 Hogar',
-            'trabajo': '💼 Trabajo', 'servicios': '🔧 Servicios', 'vehiculos': '🚗 Vehículos',
-            'inmuebles': '🏢 Inmuebles', 'belleza': '💄 Belleza', 'deportes': '⚽ Deportes',
-            'mascotas': '🐾 Mascotas'
-        };
-        const categoryName = categoryNames[product.category] || product.category;
-        document.getElementById('modalCategory').innerHTML = `📂 ${categoryName}`;
+        const favBtn = document.getElementById('modalFavBtn');
+        favBtn.innerHTML = isFavorite(product.id) ? '❤️' : '🤍';
+        favBtn.classList.toggle('active', isFavorite(product.id));
         
-        const dateStr = new Date(product.last_updated).toLocaleDateString("es-CU", {
-            year: 'numeric', month: 'long', day: 'numeric'
-        });
-        document.getElementById('modalDate').innerHTML = `📅 Publicado: ${dateStr}`;
-        
-        // Actualizar botón de favorito en modal
-        const modalFavBtn = document.getElementById('modalFavBtn');
-        if (isFavorite(product.id)) {
-            modalFavBtn.classList.add('active');
-            modalFavBtn.innerHTML = '❤️';
-        } else {
-            modalFavBtn.classList.remove('active');
-            modalFavBtn.innerHTML = '🤍';
-        }
-        
-        // Mostrar productos relacionados
         renderRelatedProducts(product.category, product.id);
-        
         modal.style.display = 'block';
-        modal.style.transform = '';
         document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
-        const modal = document.getElementById('productModal');
-        modal.style.display = 'none';
+        document.getElementById('productModal').style.display = 'none';
         document.body.style.overflow = '';
-        currentModalProduct = null;
-    }
-
-    function getPriceValue(priceStr) {
-        if (!priceStr) return null;
-        const match = priceStr.toString().match(/\d+/);
-        return match ? parseInt(match[0]) : null;
     }
 
     async function loadProducts() {
-        const container = document.getElementById('productList');
-        container.innerHTML = '<div class="loading">📡 Cargando...</div>';
+        const grid = document.getElementById('productsGrid');
+        grid.innerHTML = '<div class="loading">📡 Cargando...</div>';
         try {
             const url = currentCategory === 'all' ? API_URL : `${API_URL}?category=${currentCategory}`;
             const response = await fetch(url);
-            if (!response.ok) throw new Error('Error');
+            if (!response.ok) throw new Error();
             products = await response.json();
             renderProducts();
         } catch (error) {
-            container.innerHTML = `<div class="error-message">⚠️ Error de conexión. El servidor puede estar "despertando", espera 1 minuto y recarga.</div>`;
+            grid.innerHTML = '<div class="error-message">⚠️ Error de conexión. Recarga en 1 minuto.</div>';
         }
     }
 
+    function getPriceValue(priceStr) {
+        const match = priceStr?.toString().match(/\d+/);
+        return match ? parseInt(match[0]) : null;
+    }
+
     function filterProducts() {
-        let filtered = products.filter(p => {
+        return products.filter(p => {
             if (searchTerm && !p.title.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-            const priceVal = getPriceValue(p.price);
-            if (minPriceFilter && priceVal !== null && priceVal < parseFloat(minPriceFilter)) return false;
-            if (maxPriceFilter && priceVal !== null && priceVal > parseFloat(maxPriceFilter)) return false;
+            const val = getPriceValue(p.price);
+            if (minPriceFilter && val && val < parseFloat(minPriceFilter)) return false;
+            if (maxPriceFilter && val && val > parseFloat(maxPriceFilter)) return false;
             return true;
-        });
-        const active = filtered.filter(p => !p.sold);
-        const sold = filtered.filter(p => p.sold);
-        active.sort((a, b) => b.last_updated - a.last_updated);
-        sold.sort((a, b) => b.last_updated - a.last_updated);
-        return [...active, ...sold];
+        }).sort((a, b) => b.last_updated - a.last_updated);
     }
 
     function renderProducts() {
         const filtered = filterProducts();
-        const container = document.getElementById('productList');
+        const grid = document.getElementById('productsGrid');
         const activeCount = products.filter(p => !p.sold).length;
-        const favCount = favorites.length;
-        document.getElementById('stats').innerHTML = `📊 ${activeCount} anuncios activos | ❤️ ${favCount} favoritos | Toca para ver detalles`;
+        document.getElementById('stats').innerHTML = `📊 ${activeCount} anuncios activos | ❤️ ${favorites.length} favoritos`;
         
         if (filtered.length === 0) {
-            container.innerHTML = '<div class="empty-message">📭 No hay anuncios en esta categoría.</div>';
+            grid.innerHTML = '<div class="empty-message">📭 No hay anuncios en esta categoría.</div>';
             return;
         }
         
-        let html = "";
-        filtered.forEach((product) => {
+        grid.innerHTML = filtered.map(product => {
             const isNew = (Date.now() - product.last_updated) < 86400000;
-            const dateStr = new Date(product.last_updated).toLocaleDateString("es-CU");
             const isSold = product.sold;
             const isFav = isFavorite(product.id);
+            const contactClean = product.contact.replace(/[^0-9]/g, '');
             
-            let imageHtml = dataSaverMode 
-                ? `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;font-size:11px;text-align:center;">📷<br>Modo<br>ahorro</div>`
+            let imageHtml = dataSaverMode
+                ? `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;font-size:12px;">📷 Modo ahorro</div>`
                 : `<img class="product-img" src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=Sin+foto'">`;
             
-            html += `
+            return `
                 <div class="product-card ${isSold ? 'sold' : ''}" data-id="${product.id}">
+                    ${isNew && !isSold ? '<span class="new-badge">✨ NUEVO</span>' : ''}
+                    ${isSold ? '<div class="sold-badge">VENDIDO</div>' : ''}
                     <div class="favorite-icon ${isFav ? 'active' : ''}" data-fav="${product.id}">${isFav ? '❤️' : '🤍'}</div>
                     ${imageHtml}
                     <div class="product-info">
-                        <div class="product-title">
-                            ${escapeHtml(product.title)}
-                            ${isNew && !isSold ? '<span class="new-badge">NUEVO</span>' : ''}
-                        </div>
+                        <div class="product-title">${escapeHtml(product.title)}</div>
                         <div class="product-price">💰 ${escapeHtml(product.price)}</div>
-                        <div class="product-contact">
-                            📞 ${escapeHtml(product.contact)}
-                        </div>
-                        <div class="product-date">📅 ${dateStr}</div>
+                        <div class="product-contact">📞 ${escapeHtml(product.contact)}</div>
+                        <button class="whatsapp-btn" data-wa="${contactClean}" data-id="${product.id}">
+                            💬 WhatsApp
+                        </button>
                     </div>
                 </div>
             `;
-        });
-        container.innerHTML = html;
+        }).join('');
         
         // Event listeners para tarjetas (abrir modal)
         document.querySelectorAll('.product-card').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (e.target.closest('.favorite-icon')) return;
-                const id = card.getAttribute('data-id');
-                const product = products.find(p => p.id === id);
-                if (product) {
-                    openModal(product);
-                }
+                if (e.target.closest('.favorite-icon') || e.target.closest('.whatsapp-btn')) return;
+                const product = products.find(p => p.id === card.dataset.id);
+                if (product) openModal(product);
             });
         });
         
-        // Event listeners para favoritos en tarjetas
+        // Favoritos
         document.querySelectorAll('.favorite-icon').forEach(icon => {
             icon.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const id = icon.getAttribute('data-fav');
+                const id = icon.dataset.fav;
                 const isNowFav = toggleFavorite(id);
                 icon.innerHTML = isNowFav ? '❤️' : '🤍';
                 icon.classList.toggle('active', isNowFav);
-                const modalFavBtn = document.getElementById('modalFavBtn');
                 if (currentModalProduct && currentModalProduct.id === id) {
-                    modalFavBtn.innerHTML = isNowFav ? '❤️' : '🤍';
-                    modalFavBtn.classList.toggle('active', isNowFav);
+                    const modalBtn = document.getElementById('modalFavBtn');
+                    modalBtn.innerHTML = isNowFav ? '❤️' : '🤍';
+                    modalBtn.classList.toggle('active', isNowFav);
                 }
-                document.getElementById('stats').innerHTML = `📊 ${products.filter(p => !p.sold).length} anuncios activos | ❤️ ${favorites.length} favoritos | Toca para ver detalles`;
+                document.getElementById('stats').innerHTML = `📊 ${products.filter(p => !p.sold).length} anuncios activos | ❤️ ${favorites.length} favoritos`;
+            });
+        });
+        
+        // Botones WhatsApp
+        document.querySelectorAll('.whatsapp-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const waNumber = btn.dataset.wa;
+                window.open(`https://wa.me/${waNumber}`, '_blank');
             });
         });
     }
 
     function escapeHtml(str) {
         if (!str) return "";
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+        return str.replace(/[&<>]/g, (m) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
     }
 
     function setupFilters() {
@@ -804,7 +797,7 @@
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                currentCategory = btn.getAttribute('data-category');
+                currentCategory = btn.dataset.category;
                 loadProducts();
             });
         });
@@ -817,48 +810,26 @@
         const btn = document.getElementById('dataSaverBtn');
         btn.addEventListener('click', () => {
             dataSaverMode = !dataSaverMode;
-            btn.textContent = dataSaverMode ? "💾 Modo ahorro: ON (imágenes ocultas)" : "💾 Modo ahorro: OFF";
+            btn.textContent = dataSaverMode ? "💾 Modo ahorro: ON" : "💾 Modo ahorro: OFF";
             btn.classList.toggle('active', dataSaverMode);
             renderProducts();
         });
     }
 
     function setupModal() {
-        const closeBtn = document.getElementById('closeModalBtn');
-        closeBtn.addEventListener('click', closeModal);
-        
-        const shareBtn = document.getElementById('modalShareBtn');
-        shareBtn.addEventListener('click', () => {
-            if (currentModalProduct) {
-                shareProduct(currentModalProduct);
-            }
-        });
-        
-        const favBtn = document.getElementById('modalFavBtn');
-        favBtn.addEventListener('click', () => {
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+        document.getElementById('modalShareBtn').addEventListener('click', () => currentModalProduct && shareProduct(currentModalProduct));
+        document.getElementById('modalFavBtn').addEventListener('click', () => {
             if (currentModalProduct) {
                 const isNowFav = toggleFavorite(currentModalProduct.id);
-                favBtn.innerHTML = isNowFav ? '❤️' : '🤍';
-                favBtn.classList.toggle('active', isNowFav);
+                const btn = document.getElementById('modalFavBtn');
+                btn.innerHTML = isNowFav ? '❤️' : '🤍';
+                btn.classList.toggle('active', isNowFav);
                 renderProducts();
-                document.getElementById('stats').innerHTML = `📊 ${products.filter(p => !p.sold).length} anuncios activos | ❤️ ${favorites.length} favoritos | Toca para ver detalles`;
             }
         });
-        
-        const modal = document.getElementById('productModal');
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-        
-        window.addEventListener('popstate', (e) => {
-            if (modal.style.display === 'block') {
-                closeModal();
-                e.preventDefault();
-            }
-        });
-        
+        document.getElementById('productModal').addEventListener('click', (e) => { if (e.target === document.getElementById('productModal')) closeModal(); });
+        window.addEventListener('popstate', () => { if (document.getElementById('productModal').style.display === 'block') closeModal(); });
         setupSwipeToClose();
     }
 
