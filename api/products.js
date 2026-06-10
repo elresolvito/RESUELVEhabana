@@ -1,4 +1,5 @@
 import pg from 'pg';
+import http from 'http';
 const { Pool } = pg;
 
 // Configurar conexión a PostgreSQL
@@ -34,9 +35,7 @@ async function initTable() {
 // Inicializar la tabla al arrancar
 initTable();
 
-// Servidor HTTP básico
-const http = require('http');
-
+// Servidor HTTP
 const server = http.createServer(async (req, res) => {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
