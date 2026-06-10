@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>RESUELVEhabana - Clasificados Rotativos de Cuba</title>
+    <title>RESUELVEhabana - Clasificados de Cuba</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #f0f2f5;
             padding: 12px;
             padding-bottom: 80px;
         }
-
         .header {
             background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
             color: white;
@@ -25,20 +19,9 @@
             border-radius: 16px;
             margin-bottom: 16px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-
-        .header h1 {
-            font-size: 1.8rem;
-            letter-spacing: 1px;
-        }
-
-        .header p {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            margin-top: 6px;
-        }
-
+        .header h1 { font-size: 1.8rem; }
+        .header p { font-size: 0.85rem; opacity: 0.9; margin-top: 6px; }
         .toolbar {
             background: white;
             border-radius: 16px;
@@ -46,7 +29,6 @@
             margin-bottom: 16px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-
         .search-box {
             width: 100%;
             padding: 12px;
@@ -54,20 +36,13 @@
             border-radius: 30px;
             font-size: 0.9rem;
             margin-bottom: 12px;
-            outline: none;
         }
-
-        .search-box:focus {
-            border-color: #1a472a;
-        }
-
         .price-filters {
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
             flex-wrap: wrap;
         }
-
         .price-input {
             flex: 1;
             padding: 8px 12px;
@@ -75,36 +50,23 @@
             border-radius: 20px;
             font-size: 0.8rem;
         }
-
         .data-saver {
             background: #ffc107;
-            color: #1a1a2e;
             padding: 10px;
             border-radius: 30px;
             text-align: center;
-            margin-bottom: 12px;
             font-weight: bold;
-            font-size: 0.85rem;
             cursor: pointer;
-            transition: 0.3s;
             border: none;
             width: 100%;
         }
-
-        .data-saver.active {
-            background: #4caf50;
-            color: white;
-        }
-
+        .data-saver.active { background: #4caf50; color: white; }
         .categories {
             display: flex;
             gap: 8px;
             margin-bottom: 16px;
             overflow-x: auto;
-            padding-bottom: 4px;
-            scrollbar-width: thin;
         }
-
         .category-btn {
             background: white;
             border: 1px solid #ddd;
@@ -113,48 +75,18 @@
             font-size: 0.8rem;
             cursor: pointer;
             white-space: nowrap;
-            transition: 0.2s;
         }
-
-        .category-btn.active {
-            background: #1a472a;
-            color: white;
-            border-color: #1a472a;
-        }
-
+        .category-btn.active { background: #1a472a; color: white; }
         .product-card {
             background: white;
             border-radius: 16px;
             margin-bottom: 16px;
             overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             display: flex;
             position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
-
-        .product-card.sold {
-            opacity: 0.6;
-            background: #f5f5f5;
-        }
-
-        .product-rank {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: rgba(0,0,0,0.7);
-            color: gold;
-            width: 28px;
-            height: 28px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.8rem;
-            z-index: 2;
-            backdrop-filter: blur(4px);
-        }
-
+        .product-card.sold { opacity: 0.6; background: #f5f5f5; }
         .sold-badge {
             position: absolute;
             top: 50%;
@@ -164,13 +96,10 @@
             color: white;
             padding: 8px 20px;
             font-weight: bold;
-            font-size: 1.2rem;
             border-radius: 40px;
             pointer-events: none;
             z-index: 3;
-            white-space: nowrap;
         }
-
         .product-img {
             width: 110px;
             height: 110px;
@@ -178,34 +107,10 @@
             background: #e0e0e0;
             flex-shrink: 0;
         }
-
-        .product-info {
-            padding: 12px;
-            flex: 1;
-        }
-
-        .product-title {
-            font-weight: bold;
-            font-size: 1rem;
-            margin-bottom: 4px;
-        }
-
-        .product-price {
-            color: #1a472a;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin: 6px 0;
-        }
-
-        .product-contact {
-            font-size: 0.75rem;
-            color: #666;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
+        .product-info { padding: 12px; flex: 1; }
+        .product-title { font-weight: bold; font-size: 1rem; margin-bottom: 4px; }
+        .product-price { color: #1a472a; font-weight: bold; font-size: 1.2rem; margin: 6px 0; }
+        .product-contact { font-size: 0.75rem; color: #666; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         .contact-icon {
             background: #25D366;
             color: white;
@@ -214,129 +119,36 @@
             font-size: 0.7rem;
             text-decoration: none;
         }
-
-        .product-date {
-            font-size: 0.7rem;
-            color: #999;
-            margin-top: 6px;
-        }
-
-        .product-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .renew-btn {
+        .product-date { font-size: 0.7rem; color: #999; margin-top: 6px; }
+        .admin-badge {
+            display: inline-block;
             background: #ff9800;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            cursor: pointer;
+            color: #333;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
         }
-
-        .sold-btn {
-            background: #9e9e9e;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            cursor: pointer;
-            color: white;
-        }
-
-        .admin-panel {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .admin-panel h3 {
-            margin-bottom: 12px;
-            color: #1a472a;
-        }
-
-        .admin-panel input, .admin-panel textarea, .admin-panel select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-family: inherit;
-        }
-
-        .admin-panel button {
-            background: #1a472a;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            width: 100%;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .empty-message {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #1a472a;
-        }
-
-        .stats {
-            font-size: 0.7rem;
-            text-align: center;
-            margin-top: 16px;
-            color: #666;
-        }
-
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 12px;
-            border-radius: 12px;
-            margin: 12px;
-            text-align: center;
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 480px) {
-            .product-img {
-                width: 90px;
-                height: 90px;
-            }
-        }
+        .empty-message { text-align: center; padding: 40px; color: #888; }
+        .loading { text-align: center; padding: 40px; color: #1a472a; }
+        .stats { font-size: 0.7rem; text-align: center; margin-top: 16px; color: #666; }
+        .error-message { background: #ffebee; color: #c62828; padding: 12px; border-radius: 12px; margin: 12px; text-align: center; }
+        @media (max-width: 480px) { .product-img { width: 90px; height: 90px; } }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>🇨🇺 RESUELVEhabana</h1>
-    <p>Clasificados rotativos de Cuba • Todos comparten el mismo catálogo</p>
+    <p>Clasificados de Cuba • Anuncios revisados por administrador</p>
 </div>
 
 <div class="toolbar">
-    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Buscar productos... (ej: zapatos, laptop, trabajo)">
-    
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Buscar productos...">
     <div class="price-filters">
-        <input type="number" id="minPrice" class="price-input" placeholder="Precio mínimo (CUP)" step="100">
-        <input type="number" id="maxPrice" class="price-input" placeholder="Precio máximo (CUP)" step="100">
+        <input type="number" id="minPrice" class="price-input" placeholder="Precio mínimo (CUP)">
+        <input type="number" id="maxPrice" class="price-input" placeholder="Precio máximo (CUP)">
     </div>
-    
     <button class="data-saver" id="dataSaverBtn">💾 Modo ahorro de datos: OFF</button>
 </div>
 
@@ -355,46 +167,18 @@
 </div>
 
 <div id="productList" class="product-list">
-    <div class="loading">📡 Cargando clasificados desde la nube...</div>
+    <div class="loading">📡 Cargando clasificados...</div>
 </div>
 
-<div id="adminPanel" class="admin-panel hidden">
-    <h3>➕ Publicar anuncio en RESUELVEhabana</h3>
-    <input type="text" id="prodTitle" placeholder="Título del producto/servicio" maxlength="60">
-    <input type="text" id="prodPrice" placeholder="Precio (ej: 1500 CUP o 'Negociable')">
-    <select id="prodCategory">
-        <option value="ropa">👕 Ropa</option>
-        <option value="electronica">📱 Electrónica</option>
-        <option value="hogar">🏠 Hogar</option>
-        <option value="trabajo">💼 Trabajo (oferta/demanda)</option>
-        <option value="servicios">🔧 Servicios profesionales</option>
-        <option value="vehiculos">🚗 Vehículos y repuestos</option>
-        <option value="inmuebles">🏢 Inmuebles (venta/alquiler)</option>
-        <option value="belleza">💄 Belleza y cuidado personal</option>
-        <option value="deportes">⚽ Deportes y fitness</option>
-        <option value="mascotas">🐾 Mascotas y accesorios</option>
-    </select>
-    <input type="text" id="prodContact" placeholder="WhatsApp / Teléfono (ej: 5351234567)">
-    <textarea id="prodImageUrl" rows="2" placeholder="URL de la imagen (usa imgbb.com para subirla gratis)"></textarea>
-    <button id="saveProductBtn">📌 Publicar anuncio (aparece arriba del todo)</button>
-    <p style="font-size: 0.7rem; margin-top: 8px; color:#666;">* Al publicar, tu anuncio va al primer lugar. Todos los usuarios lo verán.</p>
-</div>
+<div class="stats" id="stats"></div>
 
-<div class="stats" id="stats">Cargando...</div>
-
-<div style="background: #e8f5e9; border-radius: 12px; padding: 12px; margin-top: 16px; font-size: 0.75rem; text-align: center;">
-    📌 <strong>¿Cómo vender en RESUELVEhabana?</strong><br>
-    1. Añade <strong>#admin</strong> al final de la URL (ej: elresolvito.github.io/RESUELVEhabana/#admin)<br>
-    2. Rellena el formulario (sube tu foto gratis a imgbb.com)<br>
-    3. Tu anuncio aparece <strong>ARRIBA DEL TODO</strong>. ¡Todos los usuarios lo verán!<br>
-    4. Comparte el enlace en grupos de WhatsApp
+<div style="background: #e8f5e9; border-radius: 12px; padding: 12px; margin-top: 16px; font-size: 0.7rem; text-align: center;">
+    📌 <strong>¿Quieres vender?</strong><br>
+    Envía los datos de tu producto por WhatsApp al <strong>+53 XXXXXXXX</strong> y nosotros lo publicamos.<br>
+    📝 Incluye: Título, Precio, Categoría, Teléfono de contacto y una foto.
 </div>
 
 <script>
-    // ============================================================
-    // IMPORTANTE: Verifica que esta URL sea la correcta
-    // Tu backend en Render debe estar corriendo aquí:
-    // ============================================================
     const API_URL = 'https://resuelvehabana-api.onrender.com/api/products';
     
     let currentCategory = "all";
@@ -404,225 +188,79 @@
     let dataSaverMode = false;
     let products = [];
 
-    // Obtener valor numérico del precio
     function getPriceValue(priceStr) {
         if (!priceStr) return null;
         const match = priceStr.toString().match(/\d+/);
-        if (match) return parseInt(match[0]);
-        return null;
+        return match ? parseInt(match[0]) : null;
     }
 
-    // Cargar productos desde el backend
     async function loadProducts() {
         const container = document.getElementById('productList');
-        container.innerHTML = '<div class="loading">📡 Conectando con el servidor...</div>';
-        
+        container.innerHTML = '<div class="loading">📡 Cargando...</div>';
         try {
-            const url = currentCategory === 'all' 
-                ? API_URL 
-                : `${API_URL}?category=${currentCategory}`;
-            
+            const url = currentCategory === 'all' ? API_URL : `${API_URL}?category=${currentCategory}`;
             const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}`);
-            }
-            
+            if (!response.ok) throw new Error('Error');
             products = await response.json();
             renderProducts();
         } catch (error) {
-            console.error('Error al cargar:', error);
-            container.innerHTML = `<div class="error-message">⚠️ Error de conexión. ¿El servidor está activo?<br><small>Recuerda que el plan gratis de Render se "duerme" tras 15 min sin uso. La primera visita puede tardar hasta 50 segundos en responder.</small></div>`;
+            container.innerHTML = `<div class="error-message">⚠️ Error de conexión. El servidor puede estar "despertando", espera 1 minuto y recarga.</div>`;
         }
     }
 
-    // Renovar producto
-    async function renewProduct(id) {
-        const product = products.find(p => p.id === id);
-        if (!product || product.sold) return;
-        
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: id,
-                    title: product.title,
-                    price: product.price,
-                    category: product.category,
-                    contact: product.contact,
-                    image: product.image,
-                    sold: false
-                })
-            });
-            
-            if (response.ok) {
-                alert('✅ Anuncio renovado. ¡Subió al primer lugar!');
-                loadProducts();
-            } else {
-                alert('❌ Error al renovar');
-            }
-        } catch (error) {
-            alert('❌ Error de conexión');
-        }
-    }
-
-    // Marcar como vendido
-    async function markAsSold(id) {
-        if (!confirm('¿Marcar este producto como VENDIDO? Aparecerá al final del catálogo.')) return;
-        
-        const product = products.find(p => p.id === id);
-        if (!product) return;
-        
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: id,
-                    title: product.title,
-                    price: product.price,
-                    category: product.category,
-                    contact: product.contact,
-                    image: product.image,
-                    sold: true
-                })
-            });
-            
-            if (response.ok) {
-                alert('✅ Producto marcado como vendido');
-                loadProducts();
-            } else {
-                alert('❌ Error al marcar');
-            }
-        } catch (error) {
-            alert('❌ Error de conexión');
-        }
-    }
-
-    // Publicar nuevo producto
-    async function publishProduct(title, price, category, contact, imageUrl) {
-        if (!title || !price || !contact || !imageUrl) {
-            alert('❌ Completa todos los campos');
-            return false;
-        }
-        
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title: title.trim(),
-                    price: price.trim(),
-                    category: category,
-                    contact: contact.trim(),
-                    image: imageUrl.trim(),
-                    sold: false
-                })
-            });
-            
-            if (response.ok) {
-                alert('✅ Anuncio publicado exitosamente. ¡Todos los usuarios lo verán!');
-                return true;
-            } else {
-                alert('❌ Error al publicar');
-                return false;
-            }
-        } catch (error) {
-            alert('❌ Error de conexión. ¿El servidor está activo?');
-            return false;
-        }
-    }
-
-    // Filtrar productos (cliente-side)
     function filterProducts() {
         let filtered = products.filter(p => {
             if (searchTerm && !p.title.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-            
             const priceVal = getPriceValue(p.price);
             if (minPriceFilter && priceVal !== null && priceVal < parseFloat(minPriceFilter)) return false;
             if (maxPriceFilter && priceVal !== null && priceVal > parseFloat(maxPriceFilter)) return false;
-            
             return true;
         });
-        
-        // Ordenar: no vendidos primero, luego por fecha
         const active = filtered.filter(p => !p.sold);
         const sold = filtered.filter(p => p.sold);
         active.sort((a, b) => b.last_updated - a.last_updated);
         sold.sort((a, b) => b.last_updated - a.last_updated);
-        
         return [...active, ...sold];
     }
 
-    // Renderizar productos
     function renderProducts() {
         const filtered = filterProducts();
         const container = document.getElementById('productList');
-        
         const activeCount = products.filter(p => !p.sold).length;
-        const soldCount = products.filter(p => p.sold).length;
-        document.getElementById('stats').innerHTML = `📊 ${activeCount} anuncios activos | ${soldCount} vendidos | Rotación automática`;
+        document.getElementById('stats').innerHTML = `📊 ${activeCount} anuncios activos | Rotación automática`;
         
         if (filtered.length === 0) {
-            container.innerHTML = '<div class="empty-message">📭 No hay anuncios. ¡Sé el primero en publicar!</div>';
+            container.innerHTML = '<div class="empty-message">📭 No hay anuncios en esta categoría.</div>';
             return;
         }
         
         let html = "";
         filtered.forEach((product, index) => {
-            const rank = index + 1;
             const isNew = (Date.now() - product.last_updated) < 86400000;
             const dateStr = new Date(product.last_updated).toLocaleDateString("es-CU");
-            const hourStr = new Date(product.last_updated).toLocaleTimeString("es-CU", {hour:"2-digit", minute:"2-digit"});
             const isSold = product.sold;
             
-            let imageHtml = "";
-            if (dataSaverMode) {
-                imageHtml = `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#ddd;font-size:10px;">📷<br>Modo<br>ahorro</div>`;
-            } else {
-                imageHtml = `<img class="product-img" src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://placehold.co/400x400/ccc/white?text=Sin+foto'">`;
-            }
-            
-            const soldBadge = isSold ? '<div class="sold-badge">VENDIDO</div>' : '';
+            let imageHtml = dataSaverMode 
+                ? `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#ddd;font-size:10px;">📷 Modo ahorro</div>`
+                : `<img class="product-img" src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://placehold.co/400x400/ccc/white?text=Sin+foto'">`;
             
             html += `
-                <div class="product-card ${isSold ? 'sold' : ''}" data-id="${product.id}">
-                    ${soldBadge}
-                    <div class="product-rank">#${rank} ${isNew && !isSold ? '✨' : ''}</div>
+                <div class="product-card ${isSold ? 'sold' : ''}">
+                    ${isSold ? '<div class="sold-badge">VENDIDO</div>' : ''}
                     ${imageHtml}
                     <div class="product-info">
-                        <div class="product-title">${escapeHtml(product.title)}</div>
+                        <div class="product-title">${escapeHtml(product.title)} ${isNew && !isSold ? '✨' : ''}</div>
                         <div class="product-price">💰 ${escapeHtml(product.price)}</div>
                         <div class="product-contact">
                             📞 ${escapeHtml(product.contact)}
                             <a href="https://wa.me/${product.contact.replace(/[^0-9]/g, '')}" target="_blank" class="contact-icon">WhatsApp</a>
                         </div>
-                        <div class="product-date">🕒 Publicado: ${dateStr} ${hourStr}</div>
-                        <div class="product-actions">
-                            ${!isSold ? `<button class="renew-btn" data-id="${product.id}">🔄 Renovar (sube al #1)</button>` : ''}
-                            ${!isSold ? `<button class="sold-btn" data-id="${product.id}">✅ Marcar como vendido</button>` : ''}
-                        </div>
+                        <div class="product-date">📅 ${dateStr}</div>
                     </div>
                 </div>
             `;
         });
-        
         container.innerHTML = html;
-        
-        document.querySelectorAll('.renew-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                renewProduct(btn.getAttribute('data-id'));
-            });
-        });
-        
-        document.querySelectorAll('.sold-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                markAsSold(btn.getAttribute('data-id'));
-            });
-        });
     }
 
     function escapeHtml(str) {
@@ -636,84 +274,36 @@
     }
 
     function setupFilters() {
-        const catBtns = document.querySelectorAll('.category-btn');
-        catBtns.forEach(btn => {
+        document.querySelectorAll('.category-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                catBtns.forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentCategory = btn.getAttribute('data-category');
                 loadProducts();
             });
         });
-        
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            searchTerm = e.target.value;
-            renderProducts();
-        });
-        
-        document.getElementById('minPrice').addEventListener('input', (e) => {
-            minPriceFilter = e.target.value;
-            renderProducts();
-        });
-        
-        document.getElementById('maxPrice').addEventListener('input', (e) => {
-            maxPriceFilter = e.target.value;
-            renderProducts();
-        });
+        document.getElementById('searchInput').addEventListener('input', (e) => { searchTerm = e.target.value; renderProducts(); });
+        document.getElementById('minPrice').addEventListener('input', (e) => { minPriceFilter = e.target.value; renderProducts(); });
+        document.getElementById('maxPrice').addEventListener('input', (e) => { maxPriceFilter = e.target.value; renderProducts(); });
     }
 
     function setupDataSaver() {
         const btn = document.getElementById('dataSaverBtn');
         btn.addEventListener('click', () => {
             dataSaverMode = !dataSaverMode;
-            btn.textContent = dataSaverMode ? "💾 Modo ahorro de datos: ON (imágenes ocultas)" : "💾 Modo ahorro de datos: OFF";
+            btn.textContent = dataSaverMode ? "💾 Modo ahorro: ON" : "💾 Modo ahorro: OFF";
             btn.classList.toggle('active', dataSaverMode);
             renderProducts();
-        });
-    }
-
-    function checkAdminAccess() {
-        if (window.location.hash === '#admin') {
-            document.getElementById('adminPanel').classList.remove('hidden');
-        }
-    }
-
-    function setupAdminForm() {
-        document.getElementById('saveProductBtn').addEventListener('click', async () => {
-            const title = document.getElementById('prodTitle').value;
-            const price = document.getElementById('prodPrice').value;
-            const category = document.getElementById('prodCategory').value;
-            const contact = document.getElementById('prodContact').value;
-            const imageUrl = document.getElementById('prodImageUrl').value;
-            
-            const success = await publishProduct(title, price, category, contact, imageUrl);
-            if (success) {
-                document.getElementById('prodTitle').value = '';
-                document.getElementById('prodPrice').value = '';
-                document.getElementById('prodContact').value = '';
-                document.getElementById('prodImageUrl').value = '';
-                loadProducts();
-            }
         });
     }
 
     function init() {
         setupFilters();
         setupDataSaver();
-        checkAdminAccess();
-        setupAdminForm();
         loadProducts();
-        
-        // Recargar cada 60 segundos para mantener actualizado
-        setInterval(() => {
-            if (document.visibilityState === 'visible') {
-                loadProducts();
-            }
-        }, 60000);
+        setInterval(() => { if (document.visibilityState === 'visible') loadProducts(); }, 60000);
     }
-    
     init();
 </script>
-
 </body>
 </html>
