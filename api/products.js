@@ -39,7 +39,7 @@ initTable();
 const server = http.createServer(async (req, res) => {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
   if (req.method === 'OPTIONS') {
@@ -119,11 +119,47 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   
-  res.writeHead(405);
-  res.end();
+  // ==========================================================
+  // DELETE: Eliminar producto (solo para el administrador)
+  // ==========================================================
+  if (req.method === 'DELETE') {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    // Extraer el ID de la URL: /api/products/ID_DEL_PRODUCTO
+    const pathParts = url.pathname.split('/');
+    const id = pathParts[pathParts.length - 1];
+    
+    if (!id || id === 'products') {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'ID de producto requerido' }));
+      return;
+    }
+    
+    try {
+      const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING id', [id]);
+      
+      if (result.rowCount === 0) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Producto no encontrado' }));
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, message: 'Producto eliminado' }));
+    } catch (err) {
+      console.error('Error DELETE:', err);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Error al eliminar producto' }));
+    }
+    return;
+  }
+  
+  // Si el método no está soportado
+  res.writeHead(405, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Método no permitido' }));
 });
 
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  console.log(`📦 DELETE endpoint disponible en: /api/products/:id`);
 });
