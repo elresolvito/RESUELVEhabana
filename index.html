@@ -11,16 +11,47 @@
             box-sizing: border-box;
         }
 
+        /* ============================================ */
+        /* VARIABLES PARA MODO OSCURO/CLARO */
+        /* ============================================ */
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: white;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --card-bg: white;
+            --border-color: #e0e0e0;
+            --header-bg: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
+            --toolbar-bg: white;
+            --category-bg: white;
+            --modal-bg: white;
+        }
+
+        body.dark {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #eee;
+            --text-secondary: #aaa;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --header-bg: linear-gradient(135deg, #0d2e1a 0%, #061a0d 100%);
+            --toolbar-bg: #1e1e1e;
+            --category-bg: #1e1e1e;
+            --modal-bg: #1e1e1e;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f8f9fa;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             padding: 12px;
             padding-bottom: 80px;
+            transition: background 0.3s, color 0.3s;
         }
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
+            background: var(--header-bg);
             color: white;
             padding: 20px;
             border-radius: 24px;
@@ -29,20 +60,12 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .header h1 {
-            font-size: 1.8rem;
-            letter-spacing: 1px;
-        }
-
-        .header p {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            margin-top: 6px;
-        }
+        .header h1 { font-size: 1.8rem; letter-spacing: 1px; }
+        .header p { font-size: 0.85rem; opacity: 0.9; margin-top: 6px; }
 
         /* Toolbar */
         .toolbar {
-            background: white;
+            background: var(--toolbar-bg);
             border-radius: 24px;
             padding: 12px;
             margin-bottom: 16px;
@@ -52,20 +75,20 @@
         .search-box {
             width: 100%;
             padding: 14px 16px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             border-radius: 40px;
             font-size: 1rem;
             margin-bottom: 12px;
             outline: none;
-            background: #fafafa;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
         .search-box:focus {
             border-color: #1a472a;
-            background: white;
         }
 
-        .price-filters {
+        .filters-row {
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
@@ -75,14 +98,27 @@
         .price-input {
             flex: 1;
             padding: 10px 14px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             border-radius: 40px;
             font-size: 0.85rem;
-            background: #fafafa;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .sort-select {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 40px;
+            font-size: 0.85rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
         }
 
         .data-saver {
             background: #ffc107;
+            color: #1a1a2e;
             padding: 12px;
             border-radius: 40px;
             text-align: center;
@@ -99,6 +135,25 @@
             color: white;
         }
 
+        .dark-mode-btn {
+            background: #333;
+            color: white;
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        body.dark .dark-mode-btn {
+            background: #ff9800;
+            color: #1a1a2e;
+        }
+
         /* Categorías */
         .categories {
             display: flex;
@@ -110,8 +165,9 @@
         }
 
         .category-btn {
-            background: white;
-            border: 1px solid #e0e0e0;
+            background: var(--category-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
             padding: 10px 18px;
             border-radius: 40px;
             font-size: 0.85rem;
@@ -135,26 +191,23 @@
         }
 
         @media (min-width: 600px) {
-            .products-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+            .products-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
         @media (min-width: 900px) {
-            .products-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
+            .products-grid { grid-template-columns: repeat(4, 1fr); }
         }
 
         /* Tarjeta de producto */
         .product-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
             position: relative;
+            border: 1px solid var(--border-color);
         }
 
         .product-card:active {
@@ -164,6 +217,10 @@
         .product-card.sold {
             opacity: 0.6;
             background: #f5f5f5;
+        }
+
+        body.dark .product-card.sold {
+            background: #2a2a2a;
         }
 
         .favorite-icon {
@@ -181,7 +238,10 @@
             cursor: pointer;
             z-index: 2;
             box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-            backdrop-filter: blur(2px);
+        }
+
+        body.dark .favorite-icon {
+            background: #333;
         }
 
         .favorite-icon.active {
@@ -218,11 +278,29 @@
             margin-bottom: 8px;
         }
 
+        body.dark .product-price {
+            color: #4caf50;
+        }
+
         .product-contact {
             font-size: 0.7rem;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 8px;
             display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .product-stats {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .product-stats span {
+            display: inline-flex;
             align-items: center;
             gap: 4px;
         }
@@ -261,6 +339,20 @@
             z-index: 2;
         }
 
+        .views-badge {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 0.6rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 2;
+            backdrop-filter: blur(2px);
+        }
+
         /* ============================================ */
         /* MODAL - VISTA DETALLADA */
         /* ============================================ */
@@ -271,35 +363,31 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: white;
+            background: var(--modal-bg);
             z-index: 1000;
             overflow-y: auto;
             animation: slideUp 0.3s ease-out;
         }
 
         @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-            to {
-                transform: translateY(0);
-            }
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
 
         .modal-content {
             max-width: 600px;
             margin: 0 auto;
             min-height: 100vh;
-            background: white;
+            background: var(--modal-bg);
             position: relative;
         }
 
         .modal-header {
             position: sticky;
             top: 0;
-            background: white;
+            background: var(--modal-bg);
             padding: 16px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -320,8 +408,9 @@
             color: #333;
         }
 
-        .modal-close:active {
-            background: #e0e0e0;
+        body.dark .modal-close {
+            background: #333;
+            color: white;
         }
 
         .modal-actions {
@@ -341,6 +430,11 @@
             align-items: center;
             justify-content: center;
             color: #333;
+        }
+
+        body.dark .modal-fav, body.dark .modal-share {
+            background: #333;
+            color: white;
         }
 
         .modal-fav.active {
@@ -373,6 +467,10 @@
             margin-bottom: 16px;
         }
 
+        body.dark .modal-price {
+            color: #4caf50;
+        }
+
         .modal-contact {
             background: #f5f5f5;
             padding: 16px;
@@ -383,6 +481,10 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
+        }
+
+        body.dark .modal-contact {
+            background: #2a2a2a;
         }
 
         .modal-contact-info {
@@ -404,7 +506,7 @@
 
         .modal-category {
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-secondary);
             margin-top: 8px;
             padding: 8px 12px;
             background: #f5f5f5;
@@ -412,17 +514,71 @@
             display: inline-block;
         }
 
+        body.dark .modal-category {
+            background: #2a2a2a;
+        }
+
+        .modal-views {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin: 12px 0;
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border-radius: 30px;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        body.dark .modal-views {
+            background: #2a2a2a;
+        }
+
+        .messenger-banner {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 20px 0 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .messenger-banner:active {
+            transform: scale(0.98);
+        }
+
+        .messenger-banner h4 {
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .messenger-banner p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .messenger-banner .btn-messenger {
+            background: white;
+            color: #ff5722;
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
         .related-section {
             margin-top: 24px;
             padding-top: 16px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color);
         }
 
         .related-title {
             font-size: 1rem;
             font-weight: bold;
             margin-bottom: 12px;
-            color: #333;
         }
 
         .related-grid {
@@ -439,6 +595,10 @@
             overflow: hidden;
             cursor: pointer;
             transition: transform 0.2s;
+        }
+
+        body.dark .related-card {
+            background: #2a2a2a;
         }
 
         .related-card:active {
@@ -471,12 +631,16 @@
             margin-top: 4px;
         }
 
+        body.dark .related-price {
+            color: #4caf50;
+        }
+
         .modal-date {
-            color: #999;
+            color: var(--text-secondary);
             font-size: 0.75rem;
             text-align: center;
             padding: 16px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color);
             margin-top: 20px;
         }
 
@@ -484,13 +648,13 @@
             font-size: 0.75rem;
             text-align: center;
             margin: 16px 0;
-            color: #666;
+            color: var(--text-secondary);
         }
 
         .empty-message, .loading {
             text-align: center;
             padding: 60px 20px;
-            color: #888;
+            color: var(--text-secondary);
             grid-column: 1 / -1;
         }
 
@@ -499,17 +663,32 @@
             border-radius: 16px;
             padding: 14px;
             margin-top: 16px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-align: center;
         }
 
+        body.dark .footer-note {
+            background: #1a2a1a;
+        }
+
+        .footer-messenger {
+            background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .footer-messenger:active {
+            transform: scale(0.98);
+        }
+
         @media (max-width: 480px) {
-            .modal-title {
-                font-size: 1.3rem;
-            }
-            .modal-price {
-                font-size: 1.5rem;
-            }
+            .modal-title { font-size: 1.3rem; }
+            .modal-price { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -517,16 +696,25 @@
 
 <div class="header">
     <h1>🇨🇺 RESUELVEhabana</h1>
-    <p>Clasificados de Cuba • Toca cualquier producto para verlo en detalle</p>
+    <p>Clasificados de Cuba • Compra y vende fácil</p>
 </div>
 
 <div class="toolbar">
     <input type="text" id="searchInput" class="search-box" placeholder="🔍 Buscar productos...">
-    <div class="price-filters">
+    <div class="filters-row">
         <input type="number" id="minPrice" class="price-input" placeholder="Precio mínimo (CUP)">
         <input type="number" id="maxPrice" class="price-input" placeholder="Precio máximo (CUP)">
     </div>
+    <div class="filters-row">
+        <select id="sortSelect" class="sort-select">
+            <option value="recent">🕒 Más recientes primero</option>
+            <option value="price_asc">💰 Precio: menor a mayor</option>
+            <option value="price_desc">💰 Precio: mayor a menor</option>
+            <option value="popular">👁️ Más vistos primero</option>
+        </select>
+    </div>
     <button class="data-saver" id="dataSaverBtn">💾 Modo ahorro de datos: OFF</button>
+    <button class="dark-mode-btn" id="darkModeBtn">🌙 Modo oscuro: OFF</button>
 </div>
 
 <div class="categories" id="categoryContainer">
@@ -555,12 +743,18 @@
     ❤️ Toca el corazón para guardar favoritos
 </div>
 
-<!-- MODAL - Vista detallada del producto -->
+<div class="footer-messenger" id="footerMessengerBtn">
+    🚚 <strong>¿Necesitas un mensajero en La Habana?</strong><br>
+    Precios claros por kilómetro | Entrega el mismo día<br>
+    <span style="font-size:0.7rem;">👆 Toca para calcular tu envío</span>
+</div>
+
+<!-- MODAL -->
 <div id="productModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <button class="modal-close" id="closeModalBtn">←</button>
-            <span style="font-size: 0.8rem; color: #888;">Detalle</span>
+            <span style="font-size: 0.8rem;">Detalle</span>
             <div class="modal-actions">
                 <button class="modal-fav" id="modalFavBtn">❤️</button>
                 <button class="modal-share" id="modalShareBtn">📤</button>
@@ -570,11 +764,20 @@
         <div class="modal-body">
             <div class="modal-title" id="modalTitle"></div>
             <div class="modal-price" id="modalPrice"></div>
+            <div>
+                <span class="modal-category" id="modalCategory"></span>
+                <span class="modal-views" id="modalViews"></span>
+            </div>
             <div class="modal-contact">
                 <span class="modal-contact-info" id="modalContact"></span>
                 <a href="#" id="modalWhatsappLink" class="modal-whatsapp" target="_blank">💬 WhatsApp</a>
             </div>
-            <span class="modal-category" id="modalCategory"></span>
+            
+            <div class="messenger-banner" id="modalMessengerBtn">
+                <h4>🚚 ¿Sin mensajero?</h4>
+                <p>Te ayudamos con la entrega en La Habana</p>
+                <div class="btn-messenger">Cotiza aquí tu envío →</div>
+            </div>
             
             <div class="related-section" id="relatedSection">
                 <div class="related-title">🔄 Productos relacionados</div>
@@ -587,9 +790,10 @@
 
 <script>
     // ==========================================================
-    // CONFIGURACIÓN - URL DEL CSV EN GITHUB
+    // CONFIGURACIÓN
     // ==========================================================
     const CSV_URL = 'https://raw.githubusercontent.com/elresolvito/RESUELVEhabana/main/productos.csv';
+    const MESSENGER_URL = 'https://elresolvito.github.io/mensajeriaresolvito/';
     
     let products = [];
     let favorites = [];
@@ -597,8 +801,32 @@
     let searchTerm = "";
     let minPriceFilter = "";
     let maxPriceFilter = "";
+    let sortMode = "recent";
     let dataSaverMode = false;
     let currentModalProduct = null;
+    let darkMode = false;
+
+    // --- Modo Oscuro ---
+    function toggleDarkMode() {
+        darkMode = !darkMode;
+        if (darkMode) {
+            document.body.classList.add('dark');
+            localStorage.setItem('darkMode', 'true');
+            document.getElementById('darkModeBtn').innerHTML = '☀️ Modo claro: OFF';
+        } else {
+            document.body.classList.remove('dark');
+            localStorage.setItem('darkMode', 'false');
+            document.getElementById('darkModeBtn').innerHTML = '🌙 Modo oscuro: OFF';
+        }
+    }
+
+    function loadDarkModePreference() {
+        const saved = localStorage.getItem('darkMode');
+        if (saved === 'true') {
+            darkMode = false;
+            toggleDarkMode();
+        }
+    }
 
     // --- Funciones de Favoritos ---
     function loadFavorites() {
@@ -628,6 +856,19 @@
             modalFavBtn.innerHTML = isFav ? '❤️' : '🤍';
             modalFavBtn.classList.toggle('active', isFav);
         }
+    }
+
+    // --- Contador de visitas (localStorage) ---
+    function incrementViews(productId) {
+        const views = JSON.parse(localStorage.getItem('product_views') || '{}');
+        views[productId] = (views[productId] || 0) + 1;
+        localStorage.setItem('product_views', JSON.stringify(views));
+        return views[productId];
+    }
+
+    function getProductViews(productId) {
+        const views = JSON.parse(localStorage.getItem('product_views') || '{}');
+        return views[productId] || 0;
     }
 
     // --- Parseo de CSV ---
@@ -665,10 +906,12 @@
             product.sold = product.sold === 'TRUE';
             product.last_updated = parseInt(product.last_updated) || Date.now();
             
-            // Restaurar https:// a las URLs
             if (product.image && !product.image.startsWith('http')) {
                 product.image = 'https://' + product.image;
             }
+            
+            // Agregar contador de visitas
+            product.views = getProductViews(product.id);
             
             productsList.push(product);
         }
@@ -701,16 +944,42 @@
         return match ? parseInt(match[0]) : null;
     }
     
+    function sortProducts(productsList) {
+        const active = productsList.filter(p => !p.sold);
+        const sold = productsList.filter(p => p.sold);
+        
+        const sortFn = (a, b) => {
+            if (sortMode === 'recent') return b.last_updated - a.last_updated;
+            if (sortMode === 'price_asc') {
+                const priceA = getPriceValue(a.price) || Infinity;
+                const priceB = getPriceValue(b.price) || Infinity;
+                return priceA - priceB;
+            }
+            if (sortMode === 'price_desc') {
+                const priceA = getPriceValue(a.price) || 0;
+                const priceB = getPriceValue(b.price) || 0;
+                return priceB - priceA;
+            }
+            if (sortMode === 'popular') return b.views - a.views;
+            return 0;
+        };
+        
+        active.sort(sortFn);
+        sold.sort(sortFn);
+        return [...active, ...sold];
+    }
+    
     function filterProducts() {
-        return products.filter(p => {
-            if (p.sold) return false;
+        let filtered = products.filter(p => {
             if (currentCategory !== 'all' && p.category !== currentCategory) return false;
             if (searchTerm && !p.title.toLowerCase().includes(searchTerm.toLowerCase())) return false;
             const val = getPriceValue(p.price);
             if (minPriceFilter && val && val < parseFloat(minPriceFilter)) return false;
             if (maxPriceFilter && val && val > parseFloat(maxPriceFilter)) return false;
             return true;
-        }).sort((a, b) => b.last_updated - a.last_updated);
+        });
+        
+        return sortProducts(filtered);
     }
     
     function renderProducts() {
@@ -718,7 +987,7 @@
         const grid = document.getElementById('productsGrid');
         const activeCount = products.filter(p => !p.sold).length;
         const statsDiv = document.getElementById('stats');
-        if (statsDiv) statsDiv.innerHTML = `📊 ${activeCount} anuncios activos | ❤️ ${favorites.length} favoritos`;
+        if (statsDiv) statsDiv.innerHTML = `📊 ${activeCount} anuncios activos | ❤️ ${favorites.length} favoritos | Orden: ${sortMode === 'recent' ? 'Más recientes' : sortMode === 'price_asc' ? 'Menor precio' : sortMode === 'price_desc' ? 'Mayor precio' : 'Más vistos'}`;
         
         if (!grid) return;
         if (filtered.length === 0) {
@@ -730,6 +999,7 @@
             const isNew = (Date.now() - product.last_updated) < 86400000;
             const isFav = isFavorite(product.id);
             const contactClean = product.contact.replace(/[^0-9]/g, '');
+            const views = product.views || 0;
             
             let imageHtml = dataSaverMode
                 ? `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;font-size:12px;">📷 Modo ahorro</div>`
@@ -744,6 +1014,10 @@
                         <div class="product-title">${escapeHtml(product.title)}</div>
                         <div class="product-price">💰 ${escapeHtml(product.price)}</div>
                         <div class="product-contact">📞 ${escapeHtml(product.contact)}</div>
+                        <div class="product-stats">
+                            <span>📅 ${formatDate(product.last_updated)}</span>
+                            <span>👁️ ${views} vistas</span>
+                        </div>
                         <button class="whatsapp-btn" data-wa="${contactClean}" data-id="${product.id}">
                             💬 WhatsApp
                         </button>
@@ -755,8 +1029,18 @@
         attachEventListeners();
     }
     
+    function formatDate(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 0) return 'Hoy';
+        if (diffDays === 1) return 'Ayer';
+        if (diffDays < 7) return `Hace ${diffDays} días`;
+        return date.toLocaleDateString('es-CU');
+    }
+    
     function attachEventListeners() {
-        // Favoritos en tarjetas
         document.querySelectorAll('.favorite-icon').forEach(icon => {
             icon.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -770,7 +1054,6 @@
             });
         });
         
-        // Botones WhatsApp en tarjetas
         document.querySelectorAll('.whatsapp-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -779,26 +1062,26 @@
             });
         });
         
-        // Abrir modal al hacer clic en tarjeta
         document.querySelectorAll('.product-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.favorite-icon') || e.target.closest('.whatsapp-btn')) return;
                 const id = card.dataset.id;
                 const product = products.find(p => p.id === id);
-                if (product) openModal(product);
+                if (product) {
+                    // Incrementar contador de visitas
+                    incrementViews(product.id);
+                    product.views = getProductViews(product.id);
+                    renderProducts(); // Actualizar contador en la tarjeta
+                    openModal(product);
+                }
             });
         });
     }
-    
-    // ==========================================================
-    // FUNCIONES DEL MODAL
-    // ==========================================================
     
     function openModal(product) {
         currentModalProduct = product;
         const modal = document.getElementById('productModal');
         
-        // Cargar datos
         document.getElementById('modalImage').src = product.image;
         document.getElementById('modalTitle').innerText = product.title;
         document.getElementById('modalPrice').innerText = '💰 ' + product.price;
@@ -816,16 +1099,14 @@
         };
         const categoryName = categoryNames[product.category] || product.category;
         document.getElementById('modalCategory').innerHTML = `📂 ${categoryName}`;
+        document.getElementById('modalViews').innerHTML = `👁️ ${product.views || 0} vistas`;
         
         const dateStr = new Date(product.last_updated).toLocaleDateString("es-CU", {
             year: 'numeric', month: 'long', day: 'numeric'
         });
         document.getElementById('modalDate').innerHTML = `📅 Publicado: ${dateStr}`;
         
-        // Actualizar botón de favorito en modal
         updateModalFavoriteButton();
-        
-        // Mostrar productos relacionados
         renderRelatedProducts(product.category, product.id);
         
         modal.style.display = 'block';
@@ -872,14 +1153,9 @@
     
     function shareProduct() {
         if (!currentModalProduct) return;
-        
         const text = `🇨🇺 ${currentModalProduct.title}\n💰 ${currentModalProduct.price}\n📞 ${currentModalProduct.contact}\n\nVer en RESUELVEhabana: ${window.location.href}`;
-        
         if (navigator.share) {
-            navigator.share({
-                title: currentModalProduct.title,
-                text: text
-            }).catch(() => copyToClipboard(text));
+            navigator.share({ title: currentModalProduct.title, text: text }).catch(() => copyToClipboard(text));
         } else {
             copyToClipboard(text);
         }
@@ -890,16 +1166,14 @@
         alert('✅ Información copiada al portapapeles');
     }
     
+    function openMessenger() {
+        window.open(MESSENGER_URL, '_blank');
+    }
+    
     function setupModal() {
         const modal = document.getElementById('productModal');
-        
-        // Botón cerrar
         document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-        
-        // Botón compartir
         document.getElementById('modalShareBtn').addEventListener('click', shareProduct);
-        
-        // Botón favorito en modal
         document.getElementById('modalFavBtn').addEventListener('click', () => {
             if (currentModalProduct) {
                 const isNowFav = toggleFavorite(currentModalProduct.id);
@@ -909,12 +1183,14 @@
             }
         });
         
-        // Cerrar al hacer clic fuera del contenido
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
+        const modalMessengerBtn = document.getElementById('modalMessengerBtn');
+        if (modalMessengerBtn) modalMessengerBtn.addEventListener('click', openMessenger);
         
-        // Cerrar con botón de retroceso en Android
+        const footerMessengerBtn = document.getElementById('footerMessengerBtn');
+        if (footerMessengerBtn) footerMessengerBtn.addEventListener('click', openMessenger);
+        
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        
         window.addEventListener('popstate', (e) => {
             if (modal.style.display === 'block') {
                 closeModal();
@@ -922,14 +1198,9 @@
             }
         });
         
-        // Deslizar para cerrar (swipe down)
         let touchStartY = 0;
         const modalContent = document.querySelector('.modal-content');
-        
-        modalContent.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-        });
-        
+        modalContent.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; });
         modalContent.addEventListener('touchmove', (e) => {
             const diff = e.touches[0].clientY - touchStartY;
             if (diff > 50 && modalContent.scrollTop === 0) {
@@ -937,7 +1208,6 @@
                 modal.style.transition = 'none';
             }
         });
-        
         modalContent.addEventListener('touchend', (e) => {
             const diff = e.changedTouches[0].clientY - touchStartY;
             if (diff > 100) closeModal();
@@ -975,6 +1245,11 @@
             maxPriceFilter = e.target.value;
             renderProducts();
         });
+        
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+            sortMode = e.target.value;
+            renderProducts();
+        });
     }
     
     function setupDataSaver() {
@@ -988,14 +1263,14 @@
     }
     
     function init() {
+        loadDarkModePreference();
+        document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
         loadFavorites();
         setupFilters();
         setupDataSaver();
         setupModal();
         loadProducts();
-        setInterval(() => {
-            if (document.visibilityState === 'visible') loadProducts();
-        }, 60000);
+        setInterval(() => { if (document.visibilityState === 'visible') loadProducts(); }, 60000);
     }
     
     init();
