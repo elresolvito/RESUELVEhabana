@@ -885,6 +885,9 @@
             const isNew = (Date.now() - product.last_updated) < 86400000;
             const isFav = isFavorite(product.id);
             const contactClean = product.contact.replace(/[^0-9]/g, '');
+            const productTitle = encodeURIComponent(product.title);
+            const message = encodeURIComponent(`Hola, estoy interesado en "${product.title}" que vi en RESUELVEhabana. ¿Está disponible?`);
+            const waUrl = `https://wa.me/${contactClean}?text=${message}`;
             const imageHtml = dataSaverMode
                 ? `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;font-size:12px;">📷 Modo ahorro</div>`
                 : `<img class="product-img" src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=Sin+foto'">`;
@@ -902,7 +905,7 @@
                             <span>📅 ${formatDate(product.last_updated)}</span>
                             <span>👁️ ${product.views} vistas</span>
                         </div>
-                        <button class="whatsapp-btn" data-wa="${contactClean}" data-id="${product.id}">💬 WhatsApp</button>
+                        <a href="${waUrl}" class="whatsapp-btn" target="_blank">💬 WhatsApp</a>
                     </div>
                 </div>
             `;
@@ -931,12 +934,6 @@
                 updateModalFavoriteButton();
             });
         });
-        document.querySelectorAll('.whatsapp-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.open(`https://wa.me/${btn.dataset.wa}`, '_blank');
-            });
-        });
         document.querySelectorAll('.product-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.favorite-icon') || e.target.closest('.whatsapp-btn')) return;
@@ -961,7 +958,8 @@
         document.getElementById('modalPrice').innerText = '💰 ' + product.price;
         document.getElementById('modalContact').innerHTML = '📞 ' + product.contact;
         const cleanNumber = product.contact.replace(/[^0-9]/g, '');
-        document.getElementById('modalWhatsappLink').href = `https://wa.me/${cleanNumber}`;
+        const message = encodeURIComponent(`Hola, estoy interesado en "${product.title}" que vi en RESUELVEhabana. ¿Está disponible?`);
+        document.getElementById('modalWhatsappLink').href = `https://wa.me/${cleanNumber}?text=${message}`;
         const catNames = { 'ropa':'👕 Ropa', 'electronica':'📱 Electrónica', 'hogar':'🏠 Hogar', 'trabajo':'💼 Trabajo', 'servicios':'🔧 Servicios', 'vehiculos':'🚗 Vehículos', 'inmuebles':'🏢 Inmuebles', 'belleza':'💄 Belleza', 'deportes':'⚽ Deportes', 'mascotas':'🐾 Mascotas', 'alimentos':'🥩 Alimentos' };
         document.getElementById('modalCategory').innerHTML = `📂 ${catNames[product.category] || product.category}`;
         document.getElementById('modalZone').innerHTML = `📍 ${product.zone}`;
