@@ -1,7 +1,7 @@
 id,title,price,category,contact,image,seller,last_updated,sold
-prod_1,Chancletas blancas,850 CUP,ropa,5351234567,https://i.postimg.cc/VkLVvgkM/CHANCLETAS-BLANCAS.webp,Joan,1734567890000,FALSE
-prod_1781074765457_xkgx,chancleta,5000.00 CUP,ropa,56382909,https://i.postimg.cc/vZHNThZ3/chancletas-negras.webp,joan,1781074765457,FALSE
-prod_3,Queso de cabra,28000.00 CUP,alimentos,5351234567,https://i.postimg.cc/sxqrVmdk/queso-de-cabra_precio_28000.00.webp,Ana,1734567890000,FALSE
-prod_4,Chorizo vela,11000.00 CUP,alimentos,5351234567,https://i.postimg.cc/R04zVqyz/chorizo-vela_precio_11000.00_cup.webp,Carlos,1734567890000,FALSE
-prod_5,Jamón barra,8000.00 CUP,alimentos,5351234567,https://i.postimg.cc/xdnSTqhT/jamon-barra_precio_8000.00_cup.webp,Marta,1734567890000,FALSE
-prod_6,Pepperroni,25000.00 CUP,alimentos,5351234567,https://i.postimg.cc/HxSmNHS7/pepperroni_precio_25000.00_cup.webp,Luis,1734567890000,FALSE
+prod_1,Chancletas blancas,5000.00 CUP,ropa,5358083490,https://i.postimg.cc/VkLVvgkM/CHANCLETAS-BLANCAS.webp,Joan,1734567890000,FALSE
+prod_1781074765457_xkgx,chancleta,5000.00 CUP,ropa,5358083490,https://i.postimg.cc/vZHNThZ3/chancletas-negras.webp,joan,1781074765457,FALSE
+prod_3,Queso de cabra,28000.00 CUP,alimentos,5354136441,https://i.postimg.cc/sxqrVmdk/queso-de-cabra_precio_28000.00.webp,Ana,1734567890000,FALSE
+prod_4,Chorizo vela,11000.00 CUP,alimentos,5354136441,https://i.postimg.cc/R04zVqyz/chorizo-vela_precio_11000.00_cup.webp,Carlos,1734567890000,FALSE
+prod_5,Jamón barra,8000.00 CUP,alimentos,5354136441,https://i.postimg.cc/xdnSTqhT/jamon-barra_precio_8000.00_cup.webp,Marta,1734567890000,FALSE
+prod_6,Pepperroni,25000.00 CUP,alimentos,5354136441,https://i.postimg.cc/HxSmNHS7/pepperroni_precio_25000.00_cup.webp,Luis,1734567890000,FALSE
