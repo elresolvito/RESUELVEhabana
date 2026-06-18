@@ -600,6 +600,7 @@
     <button class="category-btn" data-category="belleza">💄 Belleza</button>
     <button class="category-btn" data-category="deportes">⚽ Deportes</button>
     <button class="category-btn" data-category="mascotas">🐾 Mascotas</button>
+    <button class="category-btn" data-category="alimentos">🥩 Alimentos</button>
 </div>
 
 <div id="productsGrid" class="products-grid">
@@ -961,7 +962,7 @@
         document.getElementById('modalContact').innerHTML = '📞 ' + product.contact;
         const cleanNumber = product.contact.replace(/[^0-9]/g, '');
         document.getElementById('modalWhatsappLink').href = `https://wa.me/${cleanNumber}`;
-        const catNames = { 'ropa':'👕 Ropa', 'electronica':'📱 Electrónica', 'hogar':'🏠 Hogar', 'trabajo':'💼 Trabajo', 'servicios':'🔧 Servicios', 'vehiculos':'🚗 Vehículos', 'inmuebles':'🏢 Inmuebles', 'belleza':'💄 Belleza', 'deportes':'⚽ Deportes', 'mascotas':'🐾 Mascotas' };
+        const catNames = { 'ropa':'👕 Ropa', 'electronica':'📱 Electrónica', 'hogar':'🏠 Hogar', 'trabajo':'💼 Trabajo', 'servicios':'🔧 Servicios', 'vehiculos':'🚗 Vehículos', 'inmuebles':'🏢 Inmuebles', 'belleza':'💄 Belleza', 'deportes':'⚽ Deportes', 'mascotas':'🐾 Mascotas', 'alimentos':'🥩 Alimentos' };
         document.getElementById('modalCategory').innerHTML = `📂 ${catNames[product.category] || product.category}`;
         document.getElementById('modalZone').innerHTML = `📍 ${product.zone}`;
         document.getElementById('modalViews').innerHTML = `👁️ ${product.views} vistas`;
