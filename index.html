@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>RESOLVITOhabana - Catalogo de ventas</title>
+    <title>RESOLVITOhabana - Catálogo de ventas</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a472a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <style>
         * {
             margin: 0;
@@ -185,6 +192,19 @@
             margin-top: 8px;
         }
         body.dark .dark-mode-btn { background: #ff9800; color: #1a1a2e; }
+        
+        /* Badge de estado offline */
+        .offline-badge {
+            display: none;
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-top: 6px;
+        }
+        .offline-badge.show { display: inline-block; }
 
         /* ========== CATEGORÍAS ========== */
         .categories {
@@ -193,7 +213,10 @@
             margin-bottom: 20px;
             overflow-x: auto;
             padding-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+        .categories::-webkit-scrollbar { display: none; }
         .category-btn {
             background: var(--category-bg);
             border: 1px solid var(--border-color);
@@ -204,6 +227,7 @@
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
         .category-btn.active { background: #1a472a; color: white; border-color: #1a472a; }
 
@@ -264,6 +288,15 @@
             object-fit: cover;
             background: #e0e0e0;
         }
+        .product-img.loading {
+            background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
         .product-info { padding: 12px; }
         .product-title {
             font-weight: 600;
@@ -322,6 +355,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
+            text-decoration: none;
         }
         .whatsapp-btn:active { opacity: 0.8; }
         .new-badge {
@@ -335,19 +369,6 @@
             border-radius: 20px;
             font-weight: bold;
             z-index: 2;
-        }
-        .views-badge {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            font-size: 0.6rem;
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-weight: bold;
-            z-index: 2;
-            backdrop-filter: blur(2px);
         }
 
         /* ========== TOAST ========== */
@@ -365,6 +386,7 @@
             animation: fadeInUp 0.3s ease-out;
             white-space: nowrap;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            max-width: 90%;
         }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
@@ -533,13 +555,38 @@
             text-align: center;
         }
         body.dark .footer-note { background: #1a2a1a; }
+
+        /* ========== BOTÓN DE ACTUALIZAR ========== */
+        .refresh-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            background: #1a472a;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .refresh-btn:active { transform: scale(0.9); }
+        .refresh-btn.show { display: flex; }
+        body.dark .refresh-btn { background: #4caf50; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1> RESOLVITOhabana</h1>
-    <p>Catalogo de ventas • Compra y vende fácil</p>
+    <h1>🇨🇺 RESOLVITOhabana</h1>
+    <p>Catálogo de ventas • Compra y vende fácil</p>
+    <span class="offline-badge" id="offlineBadge">📡 OFFLINE</span>
 </div>
 
 <!-- Banner hero dinámico -->
@@ -615,6 +662,9 @@
     ❤️ Toca el corazón para guardar favoritos
 </div>
 
+<!-- Botón de actualizar (se muestra cuando hay nueva versión) -->
+<button class="refresh-btn" id="refreshBtn">🔄</button>
+
 <!-- MODAL -->
 <div id="productModal" class="modal">
     <div class="modal-content">
@@ -661,6 +711,9 @@
     // CONFIGURACIÓN
     // ==========================================================
     const CSV_URL = 'https://raw.githubusercontent.com/elresolvito/RESUELVEhabana/main/productos.csv';
+    const CACHE_KEY = 'resolvitohaba_products_cache';
+    const CACHE_TIME_KEY = 'resolvitohaba_products_timestamp';
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos en caché
     
     let products = [];
     let favorites = [];
@@ -673,9 +726,28 @@
     let dataSaverMode = false;
     let currentModalProduct = null;
     let darkMode = false;
+    let isOffline = false;
+
+    // --- Detectar estado offline ---
+    function updateOfflineStatus() {
+        isOffline = !navigator.onLine;
+        const badge = document.getElementById('offlineBadge');
+        if (isOffline) {
+            badge.classList.add('show');
+            showToast('📡 Modo offline - mostrando datos guardados');
+        } else {
+            badge.classList.remove('show');
+        }
+    }
+    window.addEventListener('online', () => {
+        updateOfflineStatus();
+        // Recargar productos silenciosamente si hay conexión
+        loadProducts(true);
+    });
+    window.addEventListener('offline', updateOfflineStatus);
 
     // --- Toast ---
-    function showToast(message, duration = 2000) {
+    function showToast(message, duration = 2500) {
         const existingToast = document.querySelector('.toast');
         if (existingToast) existingToast.remove();
         const toast = document.createElement('div');
@@ -685,33 +757,29 @@
         setTimeout(() => toast.remove(), duration);
     }
 
-    // --- Modo Oscuro (manual y automático) ---
-    function updateHeroBanner() {
-        // No necesita acción porque CSS ya lo maneja con las clases .dark y :not(.dark)
-    }
+    // --- Modo Oscuro ---
     function toggleDarkMode() {
         darkMode = !darkMode;
         if (darkMode) {
             document.body.classList.add('dark');
             localStorage.setItem('darkMode', 'true');
             document.getElementById('darkModeBtn').innerHTML = '☀️ Modo claro: OFF';
-            showToast('🌙 Modo oscuro activado');
         } else {
             document.body.classList.remove('dark');
             localStorage.setItem('darkMode', 'false');
             document.getElementById('darkModeBtn').innerHTML = '🌙 Modo oscuro: OFF';
-            showToast('☀️ Modo claro activado');
         }
     }
     function loadDarkModePreference() {
         const saved = localStorage.getItem('darkMode');
         if (saved === 'true') {
-            darkMode = false;
-            toggleDarkMode();
+            darkMode = true;
+            document.body.classList.add('dark');
+            document.getElementById('darkModeBtn').innerHTML = '☀️ Modo claro: OFF';
         }
     }
 
-    // --- Welcome Banner (solo una vez) ---
+    // --- Welcome Banner ---
     function showWelcomeBanner() {
         const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
         if (!hasSeenWelcome) {
@@ -724,18 +792,18 @@
             document.getElementById('gotItBtn').addEventListener('click', () => {
                 banner.style.display = 'none';
                 localStorage.setItem('hasSeenWelcome', 'true');
-                showToast('✅ ¡Listo! Ya puedes empezar a usar RESUELVEhabana');
+                showToast('✅ ¡Listo! Ya puedes empezar a usar RESOLVITOhabana');
             });
         }
     }
 
-    // --- Favoritos con animación ---
+    // --- Favoritos ---
     function loadFavorites() {
-        const saved = localStorage.getItem('resuelvehabana_favorites');
+        const saved = localStorage.getItem('resolvitohaba_favorites');
         if (saved) favorites = JSON.parse(saved);
     }
     function saveFavorites() {
-        localStorage.setItem('resuelvehabana_favorites', JSON.stringify(favorites));
+        localStorage.setItem('resolvitohaba_favorites', JSON.stringify(favorites));
     }
     function isFavorite(productId) {
         return favorites.includes(productId);
@@ -746,10 +814,10 @@
         if (index === -1) {
             favorites.push(productId);
             isNowFav = true;
-            showToast('❤️ Producto agregado a favoritos');
+            showToast('❤️ Agregado a favoritos');
         } else {
             favorites.splice(index, 1);
-            showToast('💔 Producto eliminado de favoritos');
+            showToast('💔 Eliminado de favoritos');
         }
         saveFavorites();
         if (element) {
@@ -781,7 +849,36 @@
         return views[productId] || 0;
     }
 
-    // --- Parseo CSV ---
+    // --- Cache de productos ---
+    function saveProductsToCache(productsList) {
+        try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify(productsList));
+            localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+        } catch (e) {
+            console.warn('No se pudo guardar en caché:', e);
+        }
+    }
+    function getProductsFromCache() {
+        try {
+            const cached = localStorage.getItem(CACHE_KEY);
+            const timestamp = localStorage.getItem(CACHE_TIME_KEY);
+            if (cached && timestamp) {
+                const age = Date.now() - parseInt(timestamp);
+                if (age < CACHE_DURATION || isOffline) {
+                    return JSON.parse(cached);
+                }
+            }
+            return null;
+        } catch (e) {
+            return null;
+        }
+    }
+    function hasValidCache() {
+        const cached = getProductsFromCache();
+        return cached && cached.length > 0;
+    }
+
+    // --- Parseo CSV optimizado ---
     function parseCSV(csvText) {
         const lines = csvText.split('\n').filter(l => l.trim());
         if (lines.length < 2) return [];
@@ -815,26 +912,57 @@
         }
         return productsList;
     }
-    async function loadProductsFromCSV() {
-        try {
-            const response = await fetch(CSV_URL);
-            const csvText = await response.text();
-            return parseCSV(csvText);
-        } catch (error) {
-            console.error(error);
-            return [];
+
+    // --- Carga de productos (con caché) ---
+    async function loadProducts(silent = false) {
+        // Primero mostrar caché si existe
+        const cachedProducts = getProductsFromCache();
+        if (cachedProducts && cachedProducts.length > 0 && !silent) {
+            products = cachedProducts;
+            renderProducts();
+            if (!isOffline) {
+                showToast('📦 Cargando desde caché...');
+            }
         }
-    }
-    async function loadProducts() {
-        document.getElementById('productsGrid').innerHTML = '<div class="loading">📡 Cargando productos...</div>';
-        products = await loadProductsFromCSV();
-        renderProducts();
+
+        // Si estamos offline, no intentar cargar
+        if (isOffline) {
+            if (!cachedProducts || cachedProducts.length === 0) {
+                document.getElementById('productsGrid').innerHTML = '<div class="empty-message">📡 Sin conexión y sin datos guardados</div>';
+            }
+            return;
+        }
+
+        // Intentar cargar desde CSV
+        try {
+            const response = await fetch(CSV_URL, {
+                headers: { 'Cache-Control': 'no-cache' }
+            });
+            if (!response.ok) throw new Error('Error al cargar CSV');
+            const csvText = await response.text();
+            const newProducts = parseCSV(csvText);
+            if (newProducts.length > 0) {
+                products = newProducts;
+                saveProductsToCache(products);
+                renderProducts();
+                if (!silent) {
+                    showToast('✅ Productos actualizados');
+                }
+            }
+        } catch (error) {
+            console.error('Error cargando productos:', error);
+            if (!cachedProducts || cachedProducts.length === 0) {
+                document.getElementById('productsGrid').innerHTML = '<div class="empty-message">❌ Error al cargar productos</div>';
+            } else if (!silent) {
+                showToast('⚠️ Usando datos guardados');
+            }
+        }
     }
 
     // --- Filtros y orden ---
     function getPriceValue(priceStr) {
         const match = priceStr?.toString().match(/\d+/);
-        return match ? parseInt(match[0]) : null;
+        return match ? parseFloat(match[0]) : null;
     }
     function sortProducts(productsList) {
         const active = productsList.filter(p => !p.sold);
@@ -875,22 +1003,29 @@
         const filtered = filterProducts();
         const grid = document.getElementById('productsGrid');
         const activeCount = products.filter(p => !p.sold).length;
-        document.getElementById('stats').innerHTML = `📊 ${activeCount} anuncios activos | ❤️ ${favorites.length} favoritos | 📍 ${zoneFilter === 'all' ? 'Todos los municipios' : zoneFilter} | Orden: ${sortMode === 'recent' ? 'Más recientes' : sortMode === 'price_asc' ? 'Menor precio' : sortMode === 'price_desc' ? 'Mayor precio' : 'Más vistos'}`;
+        
+        let statusText = `📊 ${activeCount} anuncios activos | ❤️ ${favorites.length} favoritos`;
+        if (isOffline) statusText += ' | 📡 OFFLINE';
+        document.getElementById('stats').innerHTML = statusText;
+        
         if (!grid) return;
         if (filtered.length === 0) {
             grid.innerHTML = '<div class="empty-message">📭 No hay anuncios en esta categoría o ubicación.</div>';
             return;
         }
+        
         grid.innerHTML = filtered.map(product => {
             const isNew = (Date.now() - product.last_updated) < 86400000;
             const isFav = isFavorite(product.id);
             const contactClean = product.contact.replace(/[^0-9]/g, '');
-            const productTitle = encodeURIComponent(product.title);
-            const message = encodeURIComponent(`Hola, estoy interesado en "${product.title}" que vi en RESUELVEhabana. ¿Está disponible?`);
+            const message = encodeURIComponent(`Hola, estoy interesado en "${product.title}" que vi en RESOLVITOhabana. ¿Está disponible?`);
             const waUrl = `https://wa.me/${contactClean}?text=${message}`;
+            
+            // Imagen con lazy loading optimizado
             const imageHtml = dataSaverMode
                 ? `<div class="product-img" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;font-size:12px;">📷 Modo ahorro</div>`
-                : `<img class="product-img" src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=Sin+foto'">`;
+                : `<img class="product-img" src="${product.image}" alt="${escapeHtml(product.title)}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=Sin+foto'">`;
+            
             return `
                 <div class="product-card" data-id="${product.id}">
                     ${isNew ? '<span class="new-badge">✨ NUEVO</span>' : ''}
@@ -949,7 +1084,7 @@
         });
     }
 
-    // --- Modal y funciones relacionadas ---
+    // --- Modal ---
     function openModal(product) {
         currentModalProduct = product;
         const modal = document.getElementById('productModal');
@@ -958,7 +1093,7 @@
         document.getElementById('modalPrice').innerText = '💰 ' + product.price;
         document.getElementById('modalContact').innerHTML = '📞 ' + product.contact;
         const cleanNumber = product.contact.replace(/[^0-9]/g, '');
-        const message = encodeURIComponent(`Hola, estoy interesado en "${product.title}" que vi en RESUELVEhabana. ¿Está disponible?`);
+        const message = encodeURIComponent(`Hola, estoy interesado en "${product.title}" que vi en RESOLVITOhabana. ¿Está disponible?`);
         document.getElementById('modalWhatsappLink').href = `https://wa.me/${cleanNumber}?text=${message}`;
         const catNames = { 'ropa':'👕 Ropa', 'electronica':'📱 Electrónica', 'hogar':'🏠 Hogar', 'trabajo':'💼 Trabajo', 'servicios':'🔧 Servicios', 'vehiculos':'🚗 Vehículos', 'inmuebles':'🏢 Inmuebles', 'belleza':'💄 Belleza', 'deportes':'⚽ Deportes', 'mascotas':'🐾 Mascotas', 'alimentos':'🥩 Alimentos' };
         document.getElementById('modalCategory').innerHTML = `📂 ${catNames[product.category] || product.category}`;
@@ -983,7 +1118,7 @@
             grid.innerHTML = '<div style="color:#999; padding:8px;">No hay más productos de este vendedor</div>';
             return;
         }
-        grid.innerHTML = sellerProducts.map(p => `<div class="related-card" data-id="${p.id}"><img class="related-img" src="${p.image}" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'"><div class="related-info"><div class="related-title-small">${escapeHtml(p.title.substring(0,35))}</div><div class="related-price">${escapeHtml(p.price)}</div></div></div>`).join('');
+        grid.innerHTML = sellerProducts.map(p => `<div class="related-card" data-id="${p.id}"><img class="related-img" src="${p.image}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'"><div class="related-info"><div class="related-title-small">${escapeHtml(p.title.substring(0,35))}</div><div class="related-price">${escapeHtml(p.price)}</div></div></div>`).join('');
         document.querySelectorAll('#relatedGrid .related-card').forEach(card => card.addEventListener('click', () => { const p = products.find(p => p.id === card.dataset.id); if(p) openModal(p); }));
     }
     function renderSuggestedProducts(category, currentId) {
@@ -993,12 +1128,12 @@
             grid.innerHTML = '<div style="color:#999; padding:8px;">No hay productos sugeridos</div>';
             return;
         }
-        grid.innerHTML = suggested.map(p => `<div class="related-card" data-id="${p.id}"><img class="related-img" src="${p.image}" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'"><div class="related-info"><div class="related-title-small">${escapeHtml(p.title.substring(0,35))}</div><div class="related-price">${escapeHtml(p.price)}</div></div></div>`).join('');
+        grid.innerHTML = suggested.map(p => `<div class="related-card" data-id="${p.id}"><img class="related-img" src="${p.image}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'"><div class="related-info"><div class="related-title-small">${escapeHtml(p.title.substring(0,35))}</div><div class="related-price">${escapeHtml(p.price)}</div></div></div>`).join('');
         document.querySelectorAll('#suggestedGrid .related-card').forEach(card => card.addEventListener('click', () => { const p = products.find(p => p.id === card.dataset.id); if(p) openModal(p); }));
     }
     function shareProduct() {
         if (!currentModalProduct) return;
-        const text = `🇨🇺 ${currentModalProduct.title}\n💰 ${currentModalProduct.price}\n📍 ${currentModalProduct.zone}\n📞 ${currentModalProduct.contact}\n\nVer en RESUELVEhabana: ${window.location.href}`;
+        const text = `🇨🇺 ${currentModalProduct.title}\n💰 ${currentModalProduct.price}\n📍 ${currentModalProduct.zone}\n📞 ${currentModalProduct.contact}\n\nVer en RESOLVITOhabana: ${window.location.href}`;
         if (navigator.share) navigator.share({ title: currentModalProduct.title, text }).catch(() => copyToClipboard(text));
         else copyToClipboard(text);
     }
@@ -1042,6 +1177,7 @@
         if (!str) return '';
         return str.replace(/[&<>]/g, (m) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
     }
+    
     function setupFilters() {
         document.querySelectorAll('.category-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1057,6 +1193,7 @@
         document.getElementById('zoneSelect').addEventListener('change', (e) => { zoneFilter = e.target.value; renderProducts(); });
         document.getElementById('sortSelect').addEventListener('change', (e) => { sortMode = e.target.value; renderProducts(); });
     }
+    
     function setupDataSaver() {
         const btn = document.getElementById('dataSaverBtn');
         btn.addEventListener('click', () => {
@@ -1064,8 +1201,24 @@
             btn.textContent = dataSaverMode ? "💾 Modo ahorro: ON (imágenes ocultas)" : "💾 Modo ahorro: OFF";
             btn.classList.toggle('active', dataSaverMode);
             renderProducts();
+            showToast(dataSaverMode ? '📴 Modo ahorro activado - imágenes ocultas' : '📷 Modo ahorro desactivado');
         });
     }
+
+    // --- Service Worker Registration ---
+    function registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => {
+                    console.log('✅ Service Worker registrado');
+                })
+                .catch((err) => {
+                    console.warn('⚠️ Service Worker no disponible:', err);
+                });
+        }
+    }
+
+    // --- Inicialización ---
     function init() {
         loadDarkModePreference();
         document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
@@ -1073,10 +1226,21 @@
         setupFilters();
         setupDataSaver();
         setupModal();
+        updateOfflineStatus();
+        registerServiceWorker();
+        
+        // Cargar productos con caché
         loadProducts();
         showWelcomeBanner();
-        setInterval(() => { if (document.visibilityState === 'visible') loadProducts(); }, 60000);
+        
+        // Actualizar cada 5 minutos solo si está visible
+        setInterval(() => { 
+            if (document.visibilityState === 'visible' && !isOffline) {
+                loadProducts(true);
+            }
+        }, 300000);
     }
+    
     init();
 </script>
 </body>
