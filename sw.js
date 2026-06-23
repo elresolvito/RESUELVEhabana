@@ -1,9 +1,10 @@
-// Service Worker para RESOLVITOhabana - v2
-const CACHE_NAME = 'resolvitohaba-v2';
+// Service Worker para RESOLVITOhabana - v3 (CORREGIDO)
+const CACHE_NAME = 'resolvitohaba-v3';
+
+// Solo cachear recursos que SABEMOS que existen
 const URLS_TO_CACHE = [
     '/',
-    '/index.html',
-    '/manifest.json'
+    '/index.html'
 ];
 
 // Instalación
@@ -12,7 +13,16 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME)
             .then(cache => {
                 console.log('✅ Cacheando recursos...');
-                return cache.addAll(URLS_TO_CACHE);
+                // Intentar cachear, pero si falla, no romper la instalación
+                return cache.addAll(URLS_TO_CACHE).catch(err => {
+                    console.warn('⚠️ Error cacheando algunos recursos:', err);
+                    // Intentar cachear individualmente los que se puedan
+                    return Promise.all(
+                        URLS_TO_CACHE.map(url => 
+                            cache.add(url).catch(() => {})
+                        )
+                    );
+                });
             })
             .then(() => self.skipWaiting())
     );
@@ -34,19 +44,18 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Interceptar peticiones - ESTRATEGIA: Network first, fallback a caché
+// Interceptar peticiones
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
     
-    // Para el CSV - SIEMPRE usar red con proxy CORS, NUNCA caché directa
-    if (url.pathname.includes('productos.csv')) {
+    // Para el CSV - usar proxy CORS
+    if (url.pathname.includes('productos.csv') || url.href.includes('corsproxy')) {
         event.respondWith(
-            fetch('https://api.allorigins.win/raw?url=https://raw.githubusercontent.com/elresolvito/RESUELVEhabana/main/productos.csv', { 
+            fetch(event.request, { 
                 cache: 'no-store',
                 headers: { 'Cache-Control': 'no-cache' }
             })
             .then(response => {
-                // Guardar en caché para offline
                 const clone = response.clone();
                 caches.open(CACHE_NAME).then(cache => {
                     cache.put(event.request, clone);
@@ -54,7 +63,6 @@ self.addEventListener('fetch', event => {
                 return response;
             })
             .catch(() => {
-                // Fallback a caché si hay error
                 return caches.match(event.request);
             })
         );
@@ -62,7 +70,7 @@ self.addEventListener('fetch', event => {
     }
     
     // Para imágenes - usar caché primero
-    if (url.pathname.match(/\.(webp|jpg|jpeg|png|gif)$/)) {
+    if (url.pathname.match(/\.(webp|jpg|jpeg|png|gif|svg)$/)) {
         event.respondWith(
             caches.match(event.request)
                 .then(cachedResponse => {
