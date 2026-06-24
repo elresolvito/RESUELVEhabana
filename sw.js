@@ -1,4 +1,4 @@
-// Service Worker para RESOLVITOhabana - v3 (CORREGIDO)
+// Service Worker para RESOLVITOhabana - v3
 const CACHE_NAME = 'resolvitohaba-v3';
 
 // Solo cachear recursos que SABEMOS que existen
@@ -13,10 +13,8 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME)
             .then(cache => {
                 console.log('✅ Cacheando recursos...');
-                // Intentar cachear, pero si falla, no romper la instalación
                 return cache.addAll(URLS_TO_CACHE).catch(err => {
                     console.warn('⚠️ Error cacheando algunos recursos:', err);
-                    // Intentar cachear individualmente los que se puedan
                     return Promise.all(
                         URLS_TO_CACHE.map(url => 
                             cache.add(url).catch(() => {})
