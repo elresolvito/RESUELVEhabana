@@ -11,6 +11,13 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="msapplication-TileColor" content="#1a472a">
+    
+    <!-- Iconos para diferentes dispositivos -->
+    <link rel="icon" type="image/png" sizes="32x32" href="https://placehold.co/32x32/1a472a/ffffff?text=🇨🇺">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://placehold.co/16x16/1a472a/ffffff?text=🇨🇺">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://placehold.co/180x180/1a472a/ffffff?text=🇨🇺">
+    <link rel="mask-icon" href="https://placehold.co/180x180/1a472a/ffffff?text=🇨🇺" color="#1a472a">
     
     <style>
         * {
@@ -676,7 +683,7 @@
 
 <script>
     // ==========================================================
-    // CONFIGURACIÓN - CON PROXY CORS CORREGIDO
+    // CONFIGURACIÓN
     // ==========================================================
     const CSV_URL = 'https://corsproxy.io/?url=https://raw.githubusercontent.com/elresolvito/RESUELVEhabana/main/productos.csv';
     const CACHE_KEY = 'resolvitohaba_products_cache';
@@ -841,7 +848,7 @@
         }
     }
 
-    // --- DATOS DE RESPALDO (si no carga el CSV) ---
+    // --- DATOS DE RESPALDO ---
     const FALLBACK_PRODUCTS = [
         { id: 'prod_1', title: 'Chancletas blancas', price: '5000.00 CUP', category: 'ropa', contact: '5358083490', image: 'https://i.postimg.cc/VkLVvgkM/CHANCLETAS-BLANCAS.webp', seller: 'Joan', zone: 'No especificada', last_updated: Date.now(), sold: false, views: 0 },
         { id: 'prod_1781074765457_xkgx', title: 'chancleta', price: '5000.00 CUP', category: 'ropa', contact: '5358083490', image: 'https://i.postimg.cc/vZHNThZ3/chancletas-negras.webp', seller: 'joan', zone: 'No especificada', last_updated: Date.now(), sold: false, views: 0 },
@@ -886,9 +893,8 @@
         return productsList.length > 0 ? productsList : null;
     }
 
-    // --- Carga de productos (con fallback) ---
+    // --- Carga de productos ---
     async function loadProducts(silent = false) {
-        // Intentar cargar desde caché primero
         const cachedProducts = getProductsFromCache();
         if (cachedProducts && cachedProducts.length > 0) {
             products = cachedProducts;
@@ -897,7 +903,6 @@
                 showToast('📦 Desde caché local');
             }
         } else {
-            // Si no hay caché, usar datos de respaldo
             products = FALLBACK_PRODUCTS;
             renderProducts();
             if (!silent) {
@@ -905,15 +910,11 @@
             }
         }
 
-        // Si estamos offline, no intentar cargar
-        if (isOffline) {
-            return;
-        }
+        if (isOffline) return;
 
-        // Intentar cargar desde CSV (con proxy CORS)
         try {
             const response = await fetch(CSV_URL, {
-                signal: AbortSignal.timeout(10000) // Timeout de 10 segundos
+                signal: AbortSignal.timeout(10000)
             });
             if (!response.ok) throw new Error('Error al cargar CSV');
             const csvText = await response.text();
@@ -1202,18 +1203,15 @@
         setupModal();
         updateOfflineStatus();
         
-        // Registrar SW (con manejo de errores)
         try {
             registerServiceWorker();
         } catch (e) {
             console.warn('SW registration skipped:', e);
         }
         
-        // Cargar productos
         loadProducts();
         showWelcomeBanner();
         
-        // Actualizar cada 10 minutos
         setInterval(() => { 
             if (document.visibilityState === 'visible' && !isOffline) {
                 loadProducts(true);
