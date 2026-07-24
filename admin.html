@@ -2,166 +2,724 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>RESOLVITOhabana - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin RESOLVITOhabana</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #1a1a2e;
+            background: #0f0f1a;
             padding: 20px;
             color: #eee;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #16213e;
-            padding: 20px;
-            border-radius: 20px;
-        }
-        h1, h2 { color: #ff9800; }
-        h1 { margin-bottom: 20px; font-size: 1.5rem; }
-        input, textarea, select {
+            max-width: 820px;
             width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            padding: 30px 28px;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        h1 {
+            color: #ff9800;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 small {
+            font-size: 0.7rem;
+            color: #888;
+            font-weight: normal;
+        }
+
+        .badge {
+            background: #2ecc71;
+            color: #0f0f1a;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            border-left: 3px solid #ff9800;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #aaa;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            font-size: 0.95rem;
+            background: #0f1a2e;
+            color: #eee;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #ff9800;
+            background: #0f1a2e;
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.1);
+        }
+
+        input::placeholder {
+            color: #555;
+        }
+
+        select option {
+            background: #0f1a2e;
+            color: #eee;
+        }
+
+        textarea {
+            font-family: monospace;
+            resize: vertical;
+            min-height: 60px;
+            font-size: 0.85rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .required {
+            color: #ff6b6b;
+            font-size: 0.7rem;
+            margin-left: 4px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
+            font-weight: 700;
             font-size: 1rem;
-            background: #0f3460;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            flex: 1;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: #0f0f1a;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 152, 0, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #0f0f1a;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
         }
-        select option { background: #0f3460; }
-        textarea { font-family: monospace; resize: vertical; }
-        button {
-            background: #ff9800;
-            color: #1a1a2e;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-            margin-bottom: 8px;
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(231, 76, 60, 0.3);
         }
-        button:hover { opacity: 0.9; }
-        .output {
-            background: #0a1a2a;
-            padding: 12px;
-            border-radius: 12px;
-            margin-top: 12px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            white-space: pre-wrap;
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #aaa;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .output-section {
+            margin-top: 24px;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .output-section.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .output-box {
+            background: #0a1525;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 152, 0, 0.15);
+            position: relative;
+        }
+
+        .output-box .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #ff9800;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .output-box code {
+            display: block;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: #7bed9f;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 14px;
+            border-radius: 10px;
             word-break: break-all;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .output-box .copy-btn {
+            margin-top: 12px;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: #0f0f1a;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .output-box .copy-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
+        }
+
+        .output-box .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 2000;
+            animation: fadeInUp 0.3s ease-out;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-width: 90%;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .instructions {
+            margin-top: 28px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .instructions h3 {
+            color: #ff9800;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            font-size: 0.85rem;
+            line-height: 2;
+            color: #bbb;
+        }
+
+        .instructions ol li strong {
+            color: #eee;
+        }
+
+        .instructions code {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #7bed9f;
+        }
+
+        .image-preview {
+            margin-top: 8px;
             display: none;
         }
-        .output.show { display: block; }
-        .copy-btn {
-            background: #2ecc71;
-            width: auto;
-            padding: 8px 16px;
-            margin-top: 8px;
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            margin: 24px 0;
+        }
+
+        .tip {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .tip code {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 18px 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .form-grid .full-width {
+                grid-column: 1;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                min-width: unset;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>📝 Generador de CSV - RESOLVITOhabana</h1>
-    <p style="margin-bottom:16px;">Completa los datos y obtén la línea CSV para copiar a GitHub.</p>
-    
-    <input type="text" id="title" placeholder="Título del producto">
-    <input type="text" id="price" placeholder="Precio (ej: 5000.00 CUP)">
-    <select id="category">
-        <option value="ropa">👕 Ropa</option>
-        <option value="electronica">📱 Electrónica</option>
-        <option value="hogar">🏠 Hogar</option>
-        <option value="trabajo">💼 Trabajo</option>
-        <option value="servicios">🔧 Servicios</option>
-        <option value="vehiculos">🚗 Vehículos</option>
-        <option value="inmuebles">🏢 Inmuebles</option>
-        <option value="belleza">💄 Belleza</option>
-        <option value="deportes">⚽ Deportes</option>
-        <option value="mascotas">🐾 Mascotas</option>
-        <option value="alimentos">🥩 Alimentos</option>
-    </select>
-    <input type="text" id="contact" placeholder="WhatsApp (ej: 5354136441)">
-    <input type="text" id="image" placeholder="URL de la imagen (ej: i.postimg.cc/xxx.webp)">
-    <input type="text" id="seller" placeholder="Nombre del vendedor">
-    <input type="text" id="zone" placeholder="Municipio (opcional)">
-    
-    <button id="generateBtn">🔧 Generar línea CSV</button>
-    
-    <div id="output" class="output"></div>
-    
-    <hr style="margin:20px 0;">
-    
-    <h2>📋 Instrucciones</h2>
-    <ol style="margin-left:20px; font-size:0.85rem; line-height:1.8;">
-        <li>Completa los datos del producto</li>
-        <li>Haz clic en "Generar línea CSV"</li>
-        <li>Copia la línea generada</li>
-        <li>Ve a GitHub → Edita <code>productos.csv</code></li>
-        <li>Pega la línea al final del archivo</li>
-        <li>Guarda los cambios</li>
-        <li>✅ En 1-2 minutos la web se actualiza</li>
-    </ol>
-    
-    <p style="margin-top:20px; font-size:0.8rem; color:#aaa;">
-        ⚠️ La URL de la imagen debe ir SIN "https://"<br>
-        ✅ Ejemplo: <code>i.postimg.cc/VkLVvgkM/CHANCLETAS-BLANCAS.webp</code>
-    </p>
-</div>
 
-<script>
-document.getElementById('generateBtn').addEventListener('click', () => {
-    const title = document.getElementById('title').value;
-    const price = document.getElementById('price').value;
-    const category = document.getElementById('category').value;
-    const contact = document.getElementById('contact').value;
-    const image = document.getElementById('image').value;
-    const seller = document.getElementById('seller').value || 'Anónimo';
-    const zone = document.getElementById('zone').value || 'No especificada';
-    
-    if (!title || !price || !category || !contact || !image) {
-        alert('❌ Completa todos los campos obligatorios');
-        return;
-    }
-    
-    const id = 'prod_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-    const last_updated = Date.now();
-    const sold = 'FALSE';
-    
-    // Generar línea CSV
-    const csvLine = `"${id}","${title}","${price}","${category}","${contact}","${image}","${seller}","${last_updated}","${sold}"`;
-    
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = `
-        <strong>📋 Copia esta línea:</strong><br><br>
-        <code style="word-break:break-all;">${escapeHtml(csvLine)}</code><br><br>
-        <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(csvLine)}')">📋 Copiar</button>
-    `;
-    outputDiv.classList.add('show');
-    
-    // Limpiar campos
-    document.getElementById('title').value = '';
-    document.getElementById('price').value = '';
-    document.getElementById('contact').value = '';
-    document.getElementById('image').value = '';
-    document.getElementById('seller').value = '';
-    document.getElementById('zone').value = '';
-});
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>
+                📝 Admin
+                <small>RESOLVITOhabana</small>
+            </h1>
+            <span class="badge">🔧 Generador CSV</span>
+        </div>
 
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text);
-    alert('✅ Línea copiada al portapapeles');
-}
+        <div class="subtitle">
+            ⚡ Completa los campos y obtén la línea CSV lista para copiar a GitHub.
+            <span style="display:block; margin-top:4px; font-size:0.75rem; color:#666;">
+                Todos los campos marcados con <span class="required">*</span> son obligatorios
+            </span>
+        </div>
 
-function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, (m) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
-}
-</script>
+        <!-- FORMULARIO -->
+        <form id="productForm" autocomplete="off">
+            <div class="form-grid">
+                <!-- Título -->
+                <div class="input-group full-width">
+                    <label>Nombre del producto <span class="required">*</span></label>
+                    <input type="text" id="title" placeholder="Ej: Zapatillas Nike, Queso de cabra, etc." required>
+                </div>
+
+                <!-- Precio -->
+                <div class="input-group">
+                    <label>Precio <span class="required">*</span></label>
+                    <input type="text" id="price" placeholder="Ej: 5000.00 CUP" required>
+                </div>
+
+                <!-- Categoría -->
+                <div class="input-group">
+                    <label>Categoría <span class="required">*</span></label>
+                    <select id="category" required>
+                        <option value="">Selecciona una categoría</option>
+                        <option value="alimentos">🥩 Alimentos</option>
+                        <option value="ropa">👕 Ropa</option>
+                        <option value="electronica">📱 Electrónica</option>
+                        <option value="hogar">🏠 Hogar</option>
+                        <option value="trabajo">💼 Trabajo</option>
+                        <option value="servicios">🔧 Servicios</option>
+                        <option value="vehiculos">🚗 Vehículos</option>
+                        <option value="inmuebles">🏢 Inmuebles</option>
+                        <option value="belleza">💄 Belleza</option>
+                        <option value="deportes">⚽ Deportes</option>
+                        <option value="mascotas">🐾 Mascotas</option>
+                    </select>
+                </div>
+
+                <!-- WhatsApp -->
+                <div class="input-group">
+                    <label>WhatsApp <span class="required">*</span></label>
+                    <input type="text" id="contact" placeholder="Ej: 5354136441" required>
+                    <span class="tip">Solo números, sin + ni espacios</span>
+                </div>
+
+                <!-- Vendedor -->
+                <div class="input-group">
+                    <label>Nombre del vendedor</label>
+                    <input type="text" id="seller" placeholder="Ej: Joan, Ana, Carlos">
+                </div>
+
+                <!-- Ubicación/Municipio -->
+                <div class="input-group">
+                    <label>Municipio / Ubicación</label>
+                    <select id="zone">
+                        <option value="No especificada">📍 No especificada</option>
+                        <option value="Habana Vieja">📍 Habana Vieja</option>
+                        <option value="Centro Habana">📍 Centro Habana</option>
+                        <option value="Vedado">📍 Vedado</option>
+                        <option value="Plaza">📍 Plaza</option>
+                        <option value="Miramar">📍 Miramar</option>
+                        <option value="Marianao">📍 Marianao</option>
+                        <option value="Boyeros">📍 Boyeros</option>
+                        <option value="Arroyo Naranjo">📍 Arroyo Naranjo</option>
+                        <option value="10 de Octubre">📍 10 de Octubre</option>
+                        <option value="Cerro">📍 Cerro</option>
+                        <option value="Guanabacoa">📍 Guanabacoa</option>
+                        <option value="San Miguel del Padrón">📍 San Miguel del Padrón</option>
+                        <option value="La Habana del Este">📍 La Habana del Este</option>
+                    </select>
+                </div>
+
+                <!-- URL Imagen -->
+                <div class="input-group full-width">
+                    <label>URL de la imagen <span class="required">*</span></label>
+                    <input type="text" id="image" placeholder="i.postimg.cc/VkLVvgkM/CHANCLETAS-BLANCAS.webp" required>
+                    <span class="tip">⚠️ <strong>Sin</strong> https:// — Ejemplo: <code>i.postimg.cc/xxx.webp</code></span>
+                    <div class="image-preview" id="imagePreview">
+                        <img id="previewImg" src="" alt="Vista previa">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTONES -->
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" id="generateBtn">
+                    🔧 Generar línea CSV
+                </button>
+                <button type="reset" class="btn btn-secondary">
+                    🗑️ Limpiar campos
+                </button>
+            </div>
+        </form>
+
+        <!-- OUTPUT -->
+        <div class="output-section" id="outputSection">
+            <div class="output-box">
+                <div class="label">📋 Línea CSV generada</div>
+                <code id="outputCode"></code>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+                    <button class="copy-btn" id="copyBtn">📋 Copiar línea</button>
+                    <button class="copy-btn" style="background:#3498db;" id="copyFullBtn">📄 Copiar con comillas dobles</button>
+                </div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- INSTRUCCIONES -->
+        <div class="instructions">
+            <h3>📋 Instrucciones paso a paso</h3>
+            <ol>
+                <li>Completa todos los campos obligatorios (<span class="required">*</span>)</li>
+                <li>Haz clic en <strong>"Generar línea CSV"</strong></li>
+                <li>Copia la línea generada con el botón <strong>"Copiar línea"</strong></li>
+                <li>Ve a <strong>GitHub</strong> → <code>productos.csv</code> → Editar</li>
+                <li>Pega la línea al <strong>final del archivo</strong> (en una nueva línea)</li>
+                <li>Haz <strong>Commit</strong> (Guardar cambios)</li>
+                <li>✅ En <strong>1-2 minutos</strong> el producto aparecerá en la web</li>
+            </ol>
+            <p style="margin-top:12px; font-size:0.8rem; color:#555;">
+                💡 <strong>Consejo:</strong> Si quieres <strong>eliminar</strong> un producto, borra su línea del archivo CSV en GitHub.
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="margin-top:20px; text-align:center; font-size:0.7rem; color:#444; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;">
+            🔄 RESOLVITOhabana &bull; Admin v2.0
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ADMIN UNIFICADO - RESOLVITOhabana
+        // ============================================================
+
+        const generateBtn = document.getElementById('generateBtn');
+        const outputSection = document.getElementById('outputSection');
+        const outputCode = document.getElementById('outputCode');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyFullBtn = document.getElementById('copyFullBtn');
+
+        let lastCsvLine = '';
+
+        // --- Vista previa de imagen ---
+        const imageInput = document.getElementById('image');
+        const previewContainer = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+
+        imageInput.addEventListener('input', () => {
+            const url = imageInput.value.trim();
+            if (url) {
+                const fullUrl = url.startsWith('http') ? url : 'https://' + url;
+                previewImg.src = fullUrl;
+                previewContainer.style.display = 'block';
+                previewImg.onerror = () => {
+                    previewImg.src = '';
+                    previewContainer.style.display = 'none';
+                };
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+
+        // --- Generar CSV ---
+        generateBtn.addEventListener('click', () => {
+            const title = document.getElementById('title').value.trim();
+            const price = document.getElementById('price').value.trim();
+            const category = document.getElementById('category').value;
+            const contact = document.getElementById('contact').value.trim();
+            const image = document.getElementById('image').value.trim();
+            const seller = document.getElementById('seller').value.trim() || 'Anónimo';
+            const zone = document.getElementById('zone').value || 'No especificada';
+
+            // Validaciones
+            if (!title || !price || !category || !contact || !image) {
+                showToast('❌ Completa todos los campos obligatorios', '#e74c3c');
+                return;
+            }
+
+            if (contact.replace(/\D/g, '').length < 5) {
+                showToast('⚠️ El número de WhatsApp parece inválido', '#f39c12');
+                return;
+            }
+
+            const id = 'p_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+            const lastUpdated = Date.now();
+            const sold = 'FALSE';
+
+            // IMPORTANTE: Zone ahora se guarda en el CSV
+            const csvLine =
+                `"${id}","${title}","${price}","${category}","${contact}","${image}","${seller}","${zone}","${lastUpdated}","${sold}"`;
+
+            lastCsvLine = csvLine;
+
+            // Mostrar resultado
+            outputCode.textContent = csvLine;
+            outputSection.classList.add('show');
+
+            showToast('✅ Línea CSV generada correctamente', '#2ecc71');
+
+            // Limpiar campos (opcional - comentar si no quieres que se limpie)
+            // document.getElementById('title').value = '';
+            // document.getElementById('price').value = '';
+            // document.getElementById('contact').value = '';
+            // document.getElementById('image').value = '';
+            // document.getElementById('seller').value = '';
+        });
+
+        // --- Copiar ---
+        copyBtn.addEventListener('click', () => {
+            if (!lastCsvLine) {
+                showToast('⚠️ Genera primero una línea CSV', '#f39c12');
+                return;
+            }
+            navigator.clipboard.writeText(lastCsvLine).then(() => {
+                showToast('📋 Línea copiada al portapapeles', '#2ecc71');
+            }).catch(() => {
+                // Fallback
+                copyTextManually(lastCsvLine);
+            });
+        });
+
+        copyFullBtn.addEventListener('click', () => {
+            if (!lastCsvLine) {
+                showToast('⚠️ Genera primero una línea CSV', '#f39c12');
+                return;
+            }
+            const fullText = `"${lastCsvLine.replace(/"/g, '""')}"`;
+            navigator.clipboard.writeText(fullText).then(() => {
+                showToast('📋 Línea con comillas dobles copiada', '#2ecc71');
+            }).catch(() => {
+                copyTextManually(fullText);
+            });
+        });
+
+        function copyTextManually(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('📋 Copiado (método alternativo)', '#2ecc71');
+            } catch (e) {
+                showToast('❌ No se pudo copiar. Selecciona el texto manualmente.', '#e74c3c');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // --- Toast ---
+        function showToast(message, color = '#1a1a2e') {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toast.style.background = color || '#1a1a2e';
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.4s';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // --- Enter para generar ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                generateBtn.click();
+            }
+        });
+
+        // --- Mostrar ejemplo al cargar (opcional) ---
+        console.log('✅ Admin unificado de RESOLVITOhabana cargado');
+        console.log('📌 Recuerda: las imágenes deben ir SIN https://');
+    </script>
+
 </body>
 </html>
