@@ -386,21 +386,32 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--modal-bg);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
+            animation: fadeInModal 0.3s ease-out;
+            padding: 16px;
         }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .modal-content {
             max-width: 600px;
             margin: 0 auto;
-            min-height: 100vh;
+            min-height: 90vh;
             background: var(--modal-bg);
+            border-radius: 28px;
+            overflow: hidden;
             position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: slideUpModal 0.3s ease-out;
+        }
+        @keyframes slideUpModal {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .modal-header {
             position: sticky;
@@ -414,8 +425,8 @@
             z-index: 10;
         }
         .modal-close, .modal-fav, .modal-share {
-            background: #f0f0f0;
-            border: none;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -424,13 +435,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #333;
+            color: var(--text-primary);
+            transition: all 0.2s;
         }
-        body.dark .modal-close, body.dark .modal-fav, body.dark .modal-share {
-            background: #333;
-            color: white;
-        }
-        .modal-fav.active { background: #ff4757; color: white; }
+        .modal-close:active, .modal-fav:active, .modal-share:active { transform: scale(0.9); }
+        .modal-fav.active { background: #ff4757; color: white; border-color: #ff4757; }
         .modal-actions { display: flex; gap: 8px; }
         .modal-image {
             width: 100%;
@@ -438,12 +447,13 @@
             object-fit: contain;
             background: #f5f5f5;
         }
+        body.dark .modal-image { background: #1a1a1a; }
         .modal-body { padding: 20px; }
         .modal-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 12px; }
         .modal-price { font-size: 1.8rem; color: #1a472a; font-weight: bold; margin-bottom: 16px; }
         body.dark .modal-price { color: #4caf50; }
         .modal-contact {
-            background: #f5f5f5;
+            background: var(--bg-secondary);
             padding: 16px;
             border-radius: 16px;
             margin: 16px 0;
@@ -452,8 +462,8 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
+            border: 1px solid var(--border-color);
         }
-        body.dark .modal-contact { background: #2a2a2a; }
         .modal-contact-info { font-size: 1rem; font-weight: bold; }
         .modal-whatsapp {
             background: #25D366;
@@ -465,19 +475,19 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            transition: opacity 0.2s;
         }
+        .modal-whatsapp:active { opacity: 0.8; }
         .modal-category, .modal-zone-detail, .modal-views {
             font-size: 0.85rem;
             color: var(--text-secondary);
             padding: 8px 12px;
-            background: #f5f5f5;
+            background: var(--bg-secondary);
             border-radius: 30px;
             display: inline-block;
             margin-right: 8px;
             margin-top: 8px;
-        }
-        body.dark .modal-category, body.dark .modal-zone-detail, body.dark .modal-views {
-            background: #2a2a2a;
+            border: 1px solid var(--border-color);
         }
         .related-section {
             margin-top: 24px;
@@ -490,16 +500,17 @@
             gap: 12px;
             overflow-x: auto;
             padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
         }
         .related-card {
             flex: 0 0 130px;
-            background: #f5f5f5;
+            background: var(--bg-secondary);
             border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
             transition: transform 0.2s;
+            border: 1px solid var(--border-color);
         }
-        body.dark .related-card { background: #2a2a2a; }
         .related-card:active { transform: scale(0.95); }
         .related-img {
             width: 100%;
@@ -645,13 +656,16 @@
 
 <button class="refresh-btn" id="refreshBtn">🔄</button>
 
+<!-- ========================================================== -->
+<!-- MODAL MEJORADO - Sin gesto de cierre sensible              -->
+<!-- ========================================================== -->
 <div id="productModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <button class="modal-close" id="closeModalBtn">←</button>
-            <span style="font-size: 0.8rem;">Detalle</span>
+            <span style="font-size: 0.8rem; opacity: 0.7;">Detalle</span>
             <div class="modal-actions">
-                <button class="modal-fav" id="modalFavBtn">❤️</button>
+                <button class="modal-fav" id="modalFavBtn">🤍</button>
                 <button class="modal-share" id="modalShareBtn">📤</button>
             </div>
         </div>
@@ -850,12 +864,12 @@
 
     // --- DATOS DE RESPALDO ---
     const FALLBACK_PRODUCTS = [
-        { id: 'prod_1', title: 'Chancletas blancas', price: '5000.00 CUP', category: 'ropa', contact: '5358083490', image: 'https://i.postimg.cc/VkLVvgkM/CHANCLETAS-BLANCAS.webp', seller: 'Joan', zone: 'No especificada', last_updated: Date.now(), sold: false, views: 0 },
-        { id: 'prod_1781074765457_xkgx', title: 'chancleta', price: '5000.00 CUP', category: 'ropa', contact: '5358083490', image: 'https://i.postimg.cc/vZHNThZ3/chancletas-negras.webp', seller: 'joan', zone: 'No especificada', last_updated: Date.now(), sold: false, views: 0 },
-        { id: 'prod_3', title: 'Queso de cabra', price: '28000.00 CUP', category: 'alimentos', contact: '5354136441', image: 'https://i.postimg.cc/sxqrVmdk/queso-de-cabra_precio_28000.00.webp', seller: 'Ana', zone: 'No especificada', last_updated: Date.now(), sold: false, views: 0 },
-        { id: 'prod_4', title: 'Chorizo vela', price: '11000.00 CUP', category: 'alimentos', contact: '5354136441', image: 'https://i.postimg.cc/R04zVqyz/chorizo-vela_precio_11000.00_cup.webp', seller: 'Carlos', zone: 'No especificada', last_updated: Date.now(), sold: false, views: 0 },
-        { id: 'prod_5', title: 'Jamón barra', price: '8000.00 CUP', category: 'alimentos', contact: '5354136441', image: 'https://i.postimg.cc/xdnSTqhT/jamon-barra_precio_8000.00_cup.webp', seller: 'Marta', zone: 'No especificada', last_updated: Date.now(), sold: false, views: 0 },
-        { id: 'prod_6', title: 'Pepperroni', price: '25000.00 CUP', category: 'alimentos', contact: '5354136441', image: 'https://i.postimg.cc/HxSmNHS7/pepperroni_precio_25000.00_cup.webp', seller: 'Luis', zone: 'No especificada', last_updated: Date.now(), sold: false, views: 0 }
+        { id: 'prod_1', title: 'Chancletas blancas', price: '5000.00 CUP', category: 'ropa', contact: '5358083490', image: 'https://i.postimg.cc/VkLVvgkM/CHANCLETAS-BLANCAS.webp', seller: 'Joan', zone: 'Habana Vieja', last_updated: Date.now(), sold: false, views: 0 },
+        { id: 'prod_1781074765457_xkgx', title: 'chancleta', price: '5000.00 CUP', category: 'ropa', contact: '5358083490', image: 'https://i.postimg.cc/vZHNThZ3/chancletas-negras.webp', seller: 'joan', zone: 'Cerro', last_updated: Date.now(), sold: false, views: 0 },
+        { id: 'prod_3', title: 'Queso de cabra', price: '28000.00 CUP', category: 'alimentos', contact: '5354136441', image: 'https://i.postimg.cc/sxqrVmdk/queso-de-cabra_precio_28000.00.webp', seller: 'Ana', zone: 'Plaza', last_updated: Date.now(), sold: false, views: 0 },
+        { id: 'prod_4', title: 'Chorizo vela', price: '11000.00 CUP', category: 'alimentos', contact: '5354136441', image: 'https://i.postimg.cc/R04zVqyz/chorizo-vela_precio_11000.00_cup.webp', seller: 'Carlos', zone: 'Vedado', last_updated: Date.now(), sold: false, views: 0 },
+        { id: 'prod_5', title: 'Jamón barra', price: '8000.00 CUP', category: 'alimentos', contact: '5354136441', image: 'https://i.postimg.cc/xdnSTqhT/jamon-barra_precio_8000.00_cup.webp', seller: 'Marta', zone: 'Miramar', last_updated: Date.now(), sold: false, views: 0 },
+        { id: 'prod_6', title: 'Pepperroni', price: '25000.00 CUP', category: 'alimentos', contact: '5354136441', image: 'https://i.postimg.cc/HxSmNHS7/pepperroni_precio_25000.00_cup.webp', seller: 'Luis', zone: 'Boyeros', last_updated: Date.now(), sold: false, views: 0 }
     ];
 
     // --- Parseo CSV ---
@@ -1059,7 +1073,10 @@
         });
     }
 
-    // --- Modal ---
+    // ==========================================================
+    // MODAL MEJORADO - Sin gesto de cierre sensible
+    // ==========================================================
+
     function openModal(product) {
         currentModalProduct = product;
         const modal = document.getElementById('productModal');
@@ -1078,14 +1095,16 @@
         updateModalFavoriteButton();
         renderSellerProducts(product.seller, product.id);
         renderSuggestedProducts(product.category, product.id);
-        modal.style.display = 'block';
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
+
     function closeModal() {
         document.getElementById('productModal').style.display = 'none';
         document.body.style.overflow = '';
         currentModalProduct = null;
     }
+
     function renderSellerProducts(seller, currentId) {
         const sellerProducts = products.filter(p => p.seller === seller && p.id !== currentId && !p.sold).slice(0, 6);
         const grid = document.getElementById('relatedGrid');
@@ -1096,6 +1115,7 @@
         grid.innerHTML = sellerProducts.map(p => `<div class="related-card" data-id="${p.id}"><img class="related-img" src="${p.image}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'"><div class="related-info"><div class="related-title-small">${escapeHtml(p.title.substring(0,35))}</div><div class="related-price">${escapeHtml(p.price)}</div></div></div>`).join('');
         document.querySelectorAll('#relatedGrid .related-card').forEach(card => card.addEventListener('click', () => { const p = products.find(p => p.id === card.dataset.id); if(p) openModal(p); }));
     }
+
     function renderSuggestedProducts(category, currentId) {
         const suggested = products.filter(p => p.category === category && p.id !== currentId && !p.sold).slice(0, 6);
         const grid = document.getElementById('suggestedGrid');
@@ -1106,20 +1126,35 @@
         grid.innerHTML = suggested.map(p => `<div class="related-card" data-id="${p.id}"><img class="related-img" src="${p.image}" loading="lazy" onerror="this.src='https://placehold.co/400x400/e0e0e0/999?text=No+foto'"><div class="related-info"><div class="related-title-small">${escapeHtml(p.title.substring(0,35))}</div><div class="related-price">${escapeHtml(p.price)}</div></div></div>`).join('');
         document.querySelectorAll('#suggestedGrid .related-card').forEach(card => card.addEventListener('click', () => { const p = products.find(p => p.id === card.dataset.id); if(p) openModal(p); }));
     }
+
     function shareProduct() {
         if (!currentModalProduct) return;
         const text = `🇨🇺 ${currentModalProduct.title}\n💰 ${currentModalProduct.price}\n📍 ${currentModalProduct.zone}\n📞 ${currentModalProduct.contact}\n\nVer en RESOLVITOhabana: ${window.location.href}`;
         if (navigator.share) navigator.share({ title: currentModalProduct.title, text }).catch(() => copyToClipboard(text));
         else copyToClipboard(text);
     }
+
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text);
         showToast('✅ Información copiada al portapapeles');
     }
+
+    // --- Configuración del modal (mejorada) ---
     function setupModal() {
         const modal = document.getElementById('productModal');
+
+        // Cerrar con botón ←
         document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+
+        // Cerrar tocando fuera (fondo)
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Compartir
         document.getElementById('modalShareBtn').addEventListener('click', shareProduct);
+
+        // Favoritos desde el modal
         document.getElementById('modalFavBtn').addEventListener('click', () => {
             if (currentModalProduct) {
                 const isNowFav = toggleFavorite(currentModalProduct.id);
@@ -1128,23 +1163,17 @@
                 btn.classList.toggle('active', isNowFav);
             }
         });
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-        window.addEventListener('popstate', () => { if (modal.style.display === 'block') closeModal(); });
-        let touchStartY = 0;
-        const modalContent = document.querySelector('.modal-content');
-        modalContent.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; });
-        modalContent.addEventListener('touchmove', (e) => {
-            const diff = e.touches[0].clientY - touchStartY;
-            if (diff > 50 && modalContent.scrollTop === 0) {
-                modal.style.transform = `translateY(${diff}px)`;
-                modal.style.transition = 'none';
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                closeModal();
             }
         });
-        modalContent.addEventListener('touchend', (e) => {
-            const diff = e.changedTouches[0].clientY - touchStartY;
-            if (diff > 100) closeModal();
-            modal.style.transform = '';
-            modal.style.transition = '';
+
+        // Cerrar con botón atrás del navegador (historial)
+        window.addEventListener('popstate', () => {
+            if (modal.style.display === 'flex') closeModal();
         });
     }
 
@@ -1200,7 +1229,7 @@
         loadFavorites();
         setupFilters();
         setupDataSaver();
-        setupModal();
+        setupModal(); // <-- Modal mejorado
         updateOfflineStatus();
         
         try {
